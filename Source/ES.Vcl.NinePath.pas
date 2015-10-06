@@ -285,17 +285,17 @@ type
     property Caption;
   end;
   
-procedure Register;
+//procedure Register;
 
 implementation
 
 uses
   Vcl.Themes;
 
-procedure Register;
-begin
-  RegisterComponents('ErrorSoft', [TEsNinePathImage, TEsImageLabel, TEsImageLayout, TEsLabelLayout]);
-end;
+//procedure Register;
+//begin
+//  RegisterComponents('ErrorSoft', [TEsNinePathImage, TEsImageLabel, TEsImageLayout, TEsLabelLayout]);
+//end;
 
 { TEsNinePathImage }
 

@@ -99,17 +99,17 @@ type
     property OnUnDock;
   end;
 
-procedure Register;
+//procedure Register;
 
 implementation
 
 uses
   ES.Vcl.ExGraphics;
 
-procedure Register;
-begin
-  RegisterComponents('ErrorSoft', [TEsLayout]);
-end;
+//procedure Register;
+//begin
+//  RegisterComponents('ErrorSoft', [TEsLayout]);
+//end;
 
 { TESCustomLayout }
 
