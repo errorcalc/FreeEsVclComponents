@@ -98,7 +98,7 @@ function IsStyledTextControl(Control: TControl): Boolean;
 implementation
 
 uses
-  Vcl.Themes;
+  Vcl.Themes, ES.Vcl.BaseControls;
 
 function IsStyledTextControl(Control: TControl): Boolean;
 begin
@@ -386,26 +386,30 @@ begin
     taCenter:
       begin
         Format := Format + [tfCenter];
-        R := Rect;
+        //R := Rect;
         if TextMultiline then
         begin
           R := ContentRect;
           R.Inflate(-FTextDistance, -FTextDistance);
         end
         else
-        if Assigned(Overlay) then
+        if not Overlay.Empty then
         begin
-          case FOverlayAlign of
-            iaLeft: R.Left := ContentRect.Left;
-            iaRight: R.Right := ContentRect.Right;
-            iaTop: R.Top := ContentRect.Top;
-            iaBottom: R.Bottom := ContentRect.Bottom;
-          end;
-        end;
+//          case FOverlayAlign of
+//            iaLeft: R.Left := ContentRect.Left;
+//            iaRight: R.Right := ContentRect.Right;
+//            iaTop: R.Top := ContentRect.Top;
+//            iaBottom: R.Bottom := ContentRect.Bottom;
+//          end;
+          R.Inflate(-FTextDistance, 0);
+        end else
+        begin
+          //R.Inflate(-FTextDistance, 0);
+          R.Left := Rect.Left;
+          R.Right := Rect.Right;
+        end
       end;
   end;
-
-  Canvas.Brush.Style := bsClear;
 
   case TextLayout of
     tlCenter:
@@ -416,18 +420,40 @@ begin
         Temp := R;
         CalcRect(Temp);
         R.Top := R.Top + (R.Height div 2) - (Temp.Height div 2);
+        R.Height := Temp.Height;
       end;
     tlBottom:
       if not TextMultiline then
-        Format := Format + [tfVerticalCenter]
-      else
+      begin
+        Format := Format + [tfBottom];
+        R.Bottom := R.Bottom - FTextDistance;
+      end else
       begin
         Temp := R;
         CalcRect(Temp);
-        R.Top := R.Bottom - Temp.Height;
+        R.Top := R.Top + (R.Height - Temp.Height) - FTextDistance;
+      end;
+    tlTop:
+      if not TextMultiline then
+      begin
+        R.Top := R.Top + FTextDistance;
+      end else
+      begin
+        Temp := R;
+        CalcRect(Temp);
+        R.Height := Temp.Height;
       end;
   end;
 
+  if (Control <> nil)and(csDesigning in Control.ComponentState)and
+     (Control is TEsCustomControl) then
+  begin
+    if TEsCustomControl(Control).IsDrawHelper then
+      Canvas.DrawChessFrame(R, $00FFFF, $F04040);
+    //Canvas.DrawChessFrame(ContentRect, clRed, $C0C0C0);
+  end;
+
+  Canvas.Brush.Style := bsClear;
   if IsStyledTextControl(Control) then
     Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
       R, Text, Format)
@@ -443,6 +469,7 @@ begin
       Canvas.Font.Color := clBtnShadow;
       Canvas.TextRect(R, Text, Format);
     end;
+  Canvas.Brush.Style := bsSolid;
 end;
 
 procedure TTextNinePathObject.SetShowCaption(const Value: Boolean);
