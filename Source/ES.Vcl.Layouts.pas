@@ -4,6 +4,8 @@
 {                                                                              }
 {            errorsoft@mail.ch | errorsoft-demoscene.narod.ru                  }
 { errorsoft@protonmail.ch | github.com/errorcalc | habrahabr.ru/user/error1024 }
+{                                                                              }
+{ Open this on github: github.com/errorcalc/FreeEsVclComponents                }
 {******************************************************************************}
 unit ES.Vcl.Layouts;
 
