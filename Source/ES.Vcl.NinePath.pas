@@ -693,6 +693,7 @@ end;
 
 procedure TEsCustomImageLayout.UpdateStyleElements;
 begin
+  inherited;
   Invalidate;
 end;
 
