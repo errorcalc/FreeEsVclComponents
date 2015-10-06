@@ -40,6 +40,7 @@ type
     FIsOpaque: Boolean;
     FBufferedChildrens: Boolean;
     FParentBufferedChildrens: Boolean;
+    FIsTransparentMouse: Boolean;
     // paint
     procedure SetCachedBuffer(Value: Boolean);
     procedure SetCachedBackground(Value: Boolean);
@@ -53,8 +54,11 @@ type
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
     procedure CMParentBufferedChildrensChanged(var Message: TMessage); message CM_PARENT_BUFFEREDCHILDRENS_CHANGED;
     procedure PaintHandler(var Message: TWMPaint);
+    // Intercept Mouse
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
     // other
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
+    procedure WMTextChanges(var Message: TMessage); message WM_SETTEXT;
     function IsBufferedChildrensStored: Boolean;
   protected
     // paint
@@ -86,6 +90,7 @@ type
     property CachedBackground: Boolean read FCachedBackground write SetCachedBackground default False;
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
     property IsOpaque: Boolean read FIsOpaque write SetIsOpaque default False;
+    property IsTransparentMouse: Boolean read FIsTransparentMouse write FIsTransparentMouse default False;
   end;
 
 implementation
@@ -98,6 +103,21 @@ type
   public
     property BorderWidth;
   end;
+
+function IsStyledClientControl(Control: TControl): Boolean;
+begin
+  Result := False;
+
+  {$IFDEF VER210UP}
+  if Control = nil then
+    Exit;
+
+  if StyleServices.Enabled then
+  begin
+    Result := (seClient in Control.StyleElements) and TStyleManager.IsCustomStyleActive;
+  end;
+  {$ENDIF}
+end;
 
 procedure DrawParentImage(Control: TControl; DC: HDC; InvalidateParent: Boolean = False);
 var
@@ -181,6 +201,13 @@ begin
   UpdateText;
 end;
 
+procedure TEsCustomControl.WMTextChanges(var Message: TMessage);
+begin
+  Inherited;
+  UpdateText;
+end;
+
+
 constructor TEsCustomControl.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -193,8 +220,8 @@ begin
   FParentBufferedChildrens := True;// !!
   CacheBitmap := 0;
   CacheBackground := 0;
-  FCachedBuffer := false;
-  FCachedBackground := false;
+  FCachedBuffer := False;
+  FCachedBackground := False;
 end;
 
 procedure TEsCustomControl.DeleteCache;
@@ -223,6 +250,12 @@ end;
 
 procedure TEsCustomControl.Paint;
 begin
+  // for Design time
+  if IsDrawHelper and(csDesigning in ComponentState) then
+  begin
+    SetBkColor(Canvas.Handle, RGB(127,255,255));
+    DrawFocusRect(Canvas.Handle, Self.ClientRect);
+  end;
 end;
 
 // Main crap located here:
@@ -561,14 +594,13 @@ begin
         DrawParentImage(Self, BufferDC, False);
     end else
       if (not DoubleBuffered) then
-        FillRect(BufferDC, ClientRect, Brush.Handle);
-
-  // for Design time
-  if IsDrawHelper and(csDesigning in ComponentState) then
-  begin
-    SetBkColor(BufferDC, RGB(127,255,255));
-    DrawFocusRect(BufferDC, Self.ClientRect);
-  end;
+        if not IsStyledClientControl(Self) then
+          FillRect(BufferDC, ClientRect, Brush.Handle)
+        else
+        begin
+          SetDCBrushColor(BufferDC, ColorToRGB(StyleServices.GetSystemColor(Color)));
+          FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
+        end;
 
   FCanvas.Lock;
   try
@@ -723,6 +755,14 @@ begin
     exit;
   end;
   Message.Result := 1;
+end;
+
+procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
+begin
+  if (not FIsTransparentMouse) and not(csDesigning in ComponentState) then
+    Message.Result := HTTRANSPARENT
+  else
+    inherited;
 end;
 
 procedure TEsCustomControl.WMPaint(var Message: TWMPaint);
