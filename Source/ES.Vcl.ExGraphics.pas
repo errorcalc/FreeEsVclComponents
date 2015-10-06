@@ -175,6 +175,7 @@ var
   Brush: HBRUSH;
   Bitmap: TBitmap;
 begin
+  Brush := 0;
   Bitmap := TBitmap.Create;
   try
     Bitmap.PixelFormat := pf24bit;
