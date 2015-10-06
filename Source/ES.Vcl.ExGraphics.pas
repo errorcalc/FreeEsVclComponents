@@ -29,6 +29,7 @@ type
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte); overload;
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
+    procedure DrawChessFrame(R: TRect; Color1, Color2: TColor);
   end;
 
   TEsBitMap = class(TBitmap)
@@ -48,6 +49,8 @@ type
     procedure LoadFromResourceName(Instance: THandle; const ResName: String; ResType: PChar); overload;
   end;
 
+function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+
 implementation
 
 uses
@@ -56,6 +59,15 @@ uses
 type
   TRGBAArray = array[Word] of TRGBQuad;
   PRGBAArray = ^TRGBAArray;
+
+function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+var
+  BRG: DWORD;
+begin
+  BRG := ColorToRGB(Color);
+
+  Result := ((BRG shl 16) and $00FF0000) or ((BRG shr 16) and $000000FF) or (BRG and $0000FF00) or (Alpha shl 24);
+end;
 
 {TEsBitMap}
 
@@ -153,6 +165,30 @@ procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
   DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap);
 begin
   DrawNinePath(Dest, Bounds, Bitmap, 255);
+end;
+
+procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
+  DrawChessFrame(R: TRect; Color1, Color2: TColor);
+var
+  Brush: HBRUSH;
+  Bitmap: TBitmap;
+begin
+  Bitmap := TBitmap.Create;
+  try
+    Bitmap.PixelFormat := pf24bit;
+    Bitmap.SetSize(2, 2);
+    Bitmap.Canvas.Pixels[0, 0] := ColorToRGB(Color1);
+    Bitmap.Canvas.Pixels[1, 1] := ColorToRGB(Color1);
+    Bitmap.Canvas.Pixels[1, 0] := ColorToRGB(Color2);
+    Bitmap.Canvas.Pixels[0, 1] := ColorToRGB(Color2);
+
+    Brush := CreatePatternBrush(Bitmap.Handle);
+
+    Windows.FrameRect(Handle, R, Brush);
+  finally
+    DeleteObject(Brush);
+    Bitmap.Free;
+  end;
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
