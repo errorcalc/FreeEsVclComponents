@@ -451,7 +451,7 @@ begin
      (Control is TEsCustomControl) then
   begin
     if TEsCustomControl(Control).IsDrawHelper then
-      Canvas.DrawChessFrame(R, $00FFFF, $F04040);
+      Canvas.DrawChessFrame(R, $009900, $F0FF40);
     //Canvas.DrawChessFrame(ContentRect, clRed, $C0C0C0);
   end;
 
