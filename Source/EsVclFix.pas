@@ -11,12 +11,18 @@ unit EsVclFix;
 
 interface
 
+{$IF CompilerVersion >= 21}
+{$DEFINE VER210UP}
+{$ENDIF}
+
 uses
   ComCtrls, Messages, CommCtrl;
 
 type
   TCustomListView = class(ComCtrls.TCustomListView)
+    // Fix D1: Selection blinking if used LVM_SETEXTENDEDLISTVIEWSTYLE (blue transparent selection rect)
     procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    // Fix U2: Used style selection rectangle in Win3.1: inverted pixels, expected: blue transparent selection rect
     procedure LVMSetExtendedListViewStyle(var Message: TMessage); message LVM_SETEXTENDEDLISTVIEWSTYLE;
   end;
 
@@ -28,7 +34,7 @@ type
 implementation
 
 uses
-  Themes, Controls;
+  Themes, Controls {$IFDEF VER210UP}, ES.Vcl.StyleHooks{$ENDIF};
 
 { TCustomListView }
 

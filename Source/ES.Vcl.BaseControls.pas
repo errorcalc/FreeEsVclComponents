@@ -98,7 +98,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils{$IFDEF VER210UP}, ES.Vcl.StyleHooks{$ENDIF};
 
 type
   THackCtrl = class(TWinControl)
@@ -738,20 +738,9 @@ begin
 end;
 
 procedure TEsCustomControl.WMEraseBkgnd(var Message: TWMEraseBkgnd);
-//var
-//  UpdateRect: TRect;
 begin
   if DoubleBuffered {and not(csOpaque in ControlStyle)} then
   begin
-    //if (Parent <> nil) and Parent.DoubleBuffered then
-    //begin
-    //  Message.Result := 1;
-    //  exit;
-    //end;
-    //PerformEraseBackground(Self, Message.DC);
-    //PaintWindow(Message.DC);
-    //GetClipBox(Message.DC, UpdateRect);
-    //FillRect(Message.DC, UpdateRect{Rect(0, 0, Width, Height)}, Brush.Handle);
     Inherited;
     Message.Result := 1;
     exit;

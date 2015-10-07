@@ -39,6 +39,9 @@ contains
   ES.Vcl.Layouts in 'ES.Vcl.Layouts.pas',
   ES.Vcl.CfxClasses in 'ES.Vcl.CfxClasses.pas',
   ES.Vcl.Indicators in 'ES.Vcl.Indicators.pas',
-  ES.Vcl.ControlsReg in 'ES.Vcl.ControlsReg.pas';
+  ES.Vcl.ControlsReg in 'ES.Vcl.ControlsReg.pas',
+  EsVclFix in 'EsVclFix.pas',
+  ES.Vcl.StyleHooks in 'ES.Vcl.StyleHooks.pas';
 
 end.
+
