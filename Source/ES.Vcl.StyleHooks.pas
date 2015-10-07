@@ -15,12 +15,39 @@ type
 
 implementation
 
+uses
+  Graphics, Windows;
+
 { TFixScrollBoxStyleHook }
 
 procedure TFixScrollBoxStyleHook.WMEraseBkgnd(var Msg: TMessage);
+var
+  DC: HDC;
+  Canvas: TCanvas;
+  SaveIndex: Integer;
 begin
-  if (Self.Control <> nil) and (seClient in Self.Control.StyleElements) then
-    Self.DefaultHandler(Msg);
+  if OverrideEraseBkgnd and not DoubleBuffered then
+  begin
+    DC := HDC(Msg.WParam);
+    SaveIndex := SaveDC(DC);
+    Canvas := TCanvas.Create;
+    try
+      Canvas.Handle := DC;
+      Canvas.Brush.Color := Brush.Color;
+      Canvas.FillRect(Control.ClientRect);
+      PaintBackground(Canvas);// incorrectly work
+      if PaintOnEraseBkgnd then
+        Paint(Canvas);
+    finally
+      Canvas.Handle := 0;
+      Canvas.Free;
+      RestoreDC(DC, SaveIndex);
+    end;
+  end;
+  Handled := True;
+  Msg.Result := 1;
+  //if (Self.Control <> nil) and (seClient in Self.Control.StyleElements) then
+  //  Self.DefaultHandler(Msg);
 end;
 
 initialization
