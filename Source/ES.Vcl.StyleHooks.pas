@@ -35,7 +35,7 @@ begin
       Canvas.Handle := DC;
       Canvas.Brush.Color := Brush.Color;
       Canvas.FillRect(Control.ClientRect);
-      PaintBackground(Canvas);// incorrectly work
+      // PaintBackground(Canvas);// incorrectly work
       if PaintOnEraseBkgnd then
         Paint(Canvas);
     finally
