@@ -6,7 +6,7 @@ procedure Register;
 
 implementation
 
-{$R icons/EsNinePathControlsIcons.res}
+{$R 'Icons/Icons.res'}
 
 uses
   System.Classes, ES.Vcl.Layouts, ES.Vcl.NinePath, ES.Vcl.Indicators;
