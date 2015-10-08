@@ -98,7 +98,7 @@ type
 implementation
 
 uses
-  SysUtils{$IFDEF VER210UP}, ES.Vcl.StyleHooks{$ENDIF};
+  SysUtils;
 
 type
   THackCtrl = class(TWinControl)
