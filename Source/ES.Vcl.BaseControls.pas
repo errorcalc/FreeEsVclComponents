@@ -29,6 +29,8 @@ const
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
 type
+  TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
+
   TEsCustomControl = class(TWinControl)
   private
     FCanvas: TCanvas;
@@ -43,6 +45,8 @@ type
     FBufferedChildrens: Boolean;
     FParentBufferedChildrens: Boolean;
     FIsTransparentMouse: Boolean;
+    FOnPaint: TPaintEvent;
+    FOnPainting: TPaintEvent;
     // paint
     procedure SetCachedBuffer(Value: Boolean);
     procedure SetCachedBackground(Value: Boolean);
@@ -55,7 +59,7 @@ type
     procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
     procedure CMParentBufferedChildrensChanged(var Message: TMessage); message CM_PARENT_BUFFEREDCHILDRENS_CHANGED;
-    procedure PaintHandler(var Message: TWMPaint);
+    procedure DrawBackgroundForOpaqueControls(DC: HDC);
     // Intercept Mouse
     procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
     // other
@@ -72,6 +76,7 @@ type
     procedure BeginCachedBackground;{$IFDEF VER210UP}inline;{$ENDIF}
     procedure EndCachedBackground;{$IFDEF VER210UP}inline;{$ENDIF}
     procedure PaintWindow(DC: HDC); override;
+    procedure PaintHandler(var Message: TWMPaint);
     // other
     procedure UpdateText; dynamic;
   public
@@ -82,6 +87,9 @@ type
     procedure UpdateBackground; overload;
     property DoubleBuffered default False;
     property ParentDoubleBuffered default False;
+    // Painting for chidrens classes
+    property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
+    property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
   published
     property ParentBackground default True;
     // !!
@@ -240,6 +248,20 @@ begin
   inherited;
 end;
 
+procedure TEsCustomControl.DrawBackgroundForOpaqueControls(DC: HDC);
+var
+  i: integer;
+  Control: TControl;
+begin
+  for i := 0 to ControlCount - 1 do
+  begin
+    Control := Controls[i];
+    if (Control is TGraphicControl) and (csOpaque in Control.ControlStyle) and Control.Visible and (not (csDesigning in ComponentState) or
+      not (csDesignerHide in Control.ControlState) and not (csNoDesignVisible in ControlStyle)) then
+      FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
+  end;
+end;
+
 procedure TEsCustomControl.EndCachedBackground;
 begin
   FCachedBackground := StoredCachedBackground;
@@ -251,12 +273,15 @@ begin
 end;
 
 procedure TEsCustomControl.Paint;
+var
+  SaveBk: TColor;
 begin
   // for Design time
   if IsDrawHelper and(csDesigning in ComponentState) then
   begin
-    SetBkColor(Canvas.Handle, RGB(127,255,255));
+    SaveBk := SetBkColor(Canvas.Handle, RGB(127,255,255));
     DrawFocusRect(Canvas.Handle, Self.ClientRect);
+    SetBkColor(Canvas.Handle, SaveBk);
   end;
 end;
 
@@ -608,7 +633,12 @@ begin
   try
     Canvas.Handle := BufferDC;
     TControlCanvas(Canvas).UpdateTextFlags;
+
+    if Assigned(FOnPainting) then
+      FOnPainting(Self, Canvas, ClientRect);
     Paint;
+    if Assigned(FOnPaint) then
+      FOnPaint(Self, Canvas, ClientRect);
     // Canvas.Brush.Color := Random(256*256*256);
     // Canvas.FillRect(Updaterect);
   finally
@@ -739,12 +769,15 @@ end;
 
 procedure TEsCustomControl.WMEraseBkgnd(var Message: TWMEraseBkgnd);
 begin
+  // Inherited; exit;
   if DoubleBuffered {and not(csOpaque in ControlStyle)} then
   begin
     Inherited;
     Message.Result := 1;
     exit;
   end;
+  if ControlCount <> 0 then
+    DrawBackgroundForOpaqueControls(Message.DC);
   Message.Result := 1;
 end;
 

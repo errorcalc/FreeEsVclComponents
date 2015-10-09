@@ -94,6 +94,8 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnResize;
+    property OnPaint;
+    property OnPainting;
     property OnStartDock;
     property OnStartDrag;
     property OnUnDock;
