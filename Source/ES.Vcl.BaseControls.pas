@@ -21,7 +21,7 @@ interface
 
 uses
   Windows, Types, Classes, Controls,
-  Graphics, Themes, Messages, Uxtheme, Forms;
+  Graphics, {$IFDEF VER210UP}Themes{$ENDIF}, Messages, Uxtheme, Forms;
 
 const
   CM_ESBASE = CM_BASE + $0800;

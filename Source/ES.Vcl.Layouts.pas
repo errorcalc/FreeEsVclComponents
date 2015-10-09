@@ -42,7 +42,6 @@ type
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
-    property Caption;
     property Color;
     property Constraints;
     property Ctl3D;
