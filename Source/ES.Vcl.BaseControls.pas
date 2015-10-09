@@ -408,11 +408,13 @@ begin
     begin
       BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC,
         UpdateRect.Left, UpdateRect.Top, SRCCOPY);
-      DeleteObject(Region);
     end;
-    DeleteDC(BufferDC);
   end;
 
+  if BufferDC <> DC then
+    DeleteObject(BufferDC);
+  if Region <> 0 then
+    DeleteObject(Region);
   // delete buufer, if need
   if not FCachedBuffer and (BufferBitMap <> 0) then
     DeleteObject(BufferBitMap);
@@ -559,7 +561,7 @@ begin
   Region := 0;
 
   if GetClipBox(DC, UpdateRect) = ERROR then
-    UpdateRect := ClientRect;// Rect(0, 0, Width, Height);
+    UpdateRect := ClientRect;
 
   BufferedThis := not BufferedChildrens;
 
@@ -679,11 +681,13 @@ begin
       begin
         BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC,
           UpdateRect.Left, UpdateRect.Top, SRCCOPY);
-        DeleteObject(Region);
       end;
-      DeleteDC(BufferDC);
     end;
 
+    if (BufferDC <> DC) then
+      DeleteObject(BufferDC);
+    if Region <> 0 then
+      DeleteObject(Region);
     // delete buufer, if need
     if not FCachedBuffer and (BufferBitMap <> 0) then
       DeleteObject(BufferBitMap);
@@ -784,7 +788,6 @@ end;
 
 procedure TEsCustomControl.WMEraseBkgnd(var Message: TWMEraseBkgnd);
 begin
-  // Inherited; exit;
   if DoubleBuffered {and not(csOpaque in ControlStyle)} then
   begin
     Inherited;
