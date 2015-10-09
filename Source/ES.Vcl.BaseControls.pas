@@ -106,7 +106,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, TypInfo;
 
 type
   THackCtrl = class(TWinControl)
@@ -252,13 +252,28 @@ procedure TEsCustomControl.DrawBackgroundForOpaqueControls(DC: HDC);
 var
   i: integer;
   Control: TControl;
+  Prop: Pointer;
 begin
   for i := 0 to ControlCount - 1 do
   begin
     Control := Controls[i];
-    if (Control is TGraphicControl) and (csOpaque in Control.ControlStyle) and Control.Visible and (not (csDesigning in ComponentState) or
-      not (csDesignerHide in Control.ControlState) and not (csNoDesignVisible in ControlStyle)) then
-      FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
+    if (Control is TGraphicControl) and (csOpaque in Control.ControlStyle) and Control.Visible and
+       (not (csDesigning in ComponentState) or not (csDesignerHide in Control.ControlState) and not (csNoDesignVisible in ControlStyle))
+    then
+    begin
+      // Necessary to draw a background if the component has a Property 'Transparent' and also has a Property 'Color'
+      Prop := GetPropInfo(Control.ClassInfo, 'Transparent');
+      if Prop <> nil then
+      begin
+        Prop := GetPropInfo(Control.ClassInfo, 'Color');
+        if Prop = nil then
+          FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
+      end;
+    end;
+//    if (Control is TGraphicControl) and (Control is TSpeedButton) and (csOpaque in Control.ControlStyle) and
+//      Control.Visible and (not (csDesigning in ComponentState) or not (csDesignerHide in Control.ControlState) and
+//      not (csNoDesignVisible in ControlStyle)) then
+//        FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
   end;
 end;
 
