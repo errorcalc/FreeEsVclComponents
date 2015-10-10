@@ -32,6 +32,7 @@ object MainForm: TMainForm
       Top = 11
       Width = 621
       Height = 342
+      ParentBackground = False
       ParentBufferedChildrens = False
       BufferedChildrens = True
       IsDrawHelper = True
@@ -72,7 +73,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         TabOrder = 0
         TextLayout = tlTop
-        TextDistance = 0
         Caption = 'Main'
         DesignSize = (
           201
@@ -224,7 +224,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         TabOrder = 1
         TextLayout = tlTop
-        TextDistance = 0
         Caption = 'Visual'
         DesignSize = (
           201
@@ -377,7 +376,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         TabOrder = 2
         TextLayout = tlTop
-        TextDistance = 0
         Caption = 'Animation'
         DesignSize = (
           201
