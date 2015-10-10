@@ -43,7 +43,7 @@ type
     FOverlayMargins: TImageMargins;
     FContentSpace: Boolean;
     FControl: TControl;
-    FOnMarginsChange: TNotifyEvent;
+    // FOnMarginsChange: TNotifyEvent;
     procedure BoundsChange(Sender: TObject);
     procedure SetMargins(const Value: TImageMargins);
     procedure SetBitMap(const Value: TBitmap);
@@ -66,7 +66,7 @@ type
     property OverlaySpace: Boolean read FOverlaySpace write SetOverlaySpace;
     property Margins: TImageMargins read FMargins write SetMargins;
     property OnNeedRepaint: TNotifyEvent read FOnNeedRepaint write FOnNeedRepaint;
-    property OnMarginsChange: TNotifyEvent read FOnMarginsChange write FOnMarginsChange;
+    // property OnMarginsChange: TNotifyEvent read FOnMarginsChange write FOnMarginsChange;
     procedure Draw(Canvas: TCanvas; Rect: TRect; Alpha: byte); virtual;
     procedure AssignImage(G: TGraphic);
     procedure AssignOverlay(G: TGraphic);
@@ -135,8 +135,8 @@ procedure TNinePathObject.BoundsChange(Sender: TObject);
 begin
   if Assigned(OnNeedRepaint) then
     OnNeedRepaint(Self);
-  if Assigned(OnMarginsChange) then
-    OnMarginsChange(Self);
+//  if Assigned(OnMarginsChange) then
+//    OnMarginsChange(Self);
 end;
 
 constructor TNinePathObject.Create;
@@ -332,7 +332,7 @@ begin
   inherited;
   FTextAlignment := taCenter;
   FTextLayout := tlCenter;
-  FTextDistance := 2;
+  FTextDistance := 0;
   OverlaySpace := True;
   ContentSpace := True;
   OverlayAlign := iaLeft;

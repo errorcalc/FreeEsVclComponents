@@ -24,11 +24,8 @@ object Form2: TForm2
     Height = 448
     IsDrawHelper = True
     Anchors = [akLeft, akTop, akRight, akBottom]
-    Caption = 'EsLayout'
     TabOrder = 0
     OnPaint = EsLayoutPaint
-    ExplicitWidth = 753
-    ExplicitHeight = 498
     DesignSize = (
       700
       448)

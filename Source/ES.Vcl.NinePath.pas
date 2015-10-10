@@ -147,8 +147,8 @@ type
     FImage: TPngImage;
     FAlpha: byte;
     FOverlay: TPngImage;
-    FPaddigWithImageMargins: Boolean;
-    // OldPaddingOnChange: TNotifyEvent;
+    FPaddingWithImage: Boolean;
+    FPadding: TPadding;
     procedure SetImageMargins(const Value: TImageMargins);
     function GetImageMargins: TImageMargins;
     procedure SetImage(const Value: TPngImage);
@@ -174,10 +174,11 @@ type
     procedure SetTextLayout(const Value: TTextLayout);
     procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     // Padding
-    procedure SetPaddigWithImageMargins(const Value: Boolean);
+    procedure SetPaddingWithImage(const Value: Boolean);
     procedure SetPadding(const Value: TPadding);
     function IsPaddingStored: Boolean;
     function GetPadding: TPadding;
+    procedure PaddingChange(Sender: TObject);
   protected
     procedure Paint; override;
     procedure Loaded; override;
@@ -191,7 +192,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   protected
-    property PaddigWithImageMargins: Boolean read FPaddigWithImageMargins write SetPaddigWithImageMargins default False;
+    property PaddingWithImage: Boolean read FPaddingWithImage write SetPaddingWithImage default False;
     property ImageMargins: TImageMargins read GetImageMargins write SetImageMargins;
     property Image: TPngImage read FImage write SetImage;
     property Overlay: TPngImage read FOverlay write SetOverlay;
@@ -203,7 +204,7 @@ type
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
     property TextLayout: TTextLayout read GetTextLayout write SetTextLayout default tlCenter;
-    property TextDistance: Integer read GetTextDistance write SetTextDistance default 2;
+    property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
   end;
@@ -217,7 +218,7 @@ type
     property OverlayMargins;
     property Alpha;
     // property AlignWithImageBounds;
-    property PaddigWithImageMargins;
+    property PaddingWithImage;
     property Align;
     property Anchors;
     property AutoSize;
@@ -292,25 +293,17 @@ type
     property ShowCaption default True;
     property Caption;
   end;
-  
-//procedure Register;
 
 implementation
 
 uses
   Vcl.Themes;
 
-//procedure Register;
-//begin
-//  RegisterComponents('ErrorSoft', [TEsNinePathImage, TEsImageLabel, TEsImageLayout, TEsLabelLayout]);
-//end;
-
 { TEsNinePathImage }
 
 procedure TEsNinePathImage.CMControlChange(var Message: TMessage);
 begin
   Inherited;
-  //NinePath.Control := TControl(Message.WParam);
 end;
 
 procedure TEsNinePathImage.CMEnabledChanged(var Message: TMessage);
@@ -500,7 +493,7 @@ end;
 procedure TEsCustomImageLayout.AdjustClientRect(var Rect: TRect);
 begin
   inherited AdjustClientRect(Rect);
-  if FPaddigWithImageMargins then
+  if FPaddingWithImage then
   begin
     Rect.Left := Rect.Left + ImageMargins.Left;
     Rect.Right := Rect.Right - ImageMargins.Right;
@@ -526,10 +519,8 @@ begin
 
   ParentBackground := True;
   ParentColor := True;
-  //DoubleBuffered:= true;
   NinePath := TTextNinePathObject.Create;
   NinePath.OnNeedRepaint := NeedRepaint;
-  NinePath.OnMarginsChange := ImageMarginsChange;
   FImage := TPngImage.Create;
   FImage.OnChange := PictureChange;
   FOverlay := TPngImage.Create;
@@ -549,6 +540,7 @@ begin
   FImage.Free;
   FOverlay.Free;
   NinePath.Free;
+  FPadding.Free;
   inherited;
 end;
 
@@ -574,8 +566,10 @@ end;
 
 function TEsCustomImageLayout.GetPadding: TPadding;
 begin
-  if FPaddigWithImageMargins then
-    Result := TPadding(ImageMargins)
+  if FPaddingWithImage then
+  begin
+    Result := FPadding;
+  end
   else
     Result := Inherited Padding;
 end;
@@ -616,18 +610,29 @@ end;
 
 procedure TEsCustomImageLayout.NeedRepaint(Sender: TObject);
 begin
+  if FPaddingWithImage then
+    if (Padding.Left <> NinePath.Margins.Left)or(Padding.Right <> NinePath.Margins.Right)or
+      (Padding.Top <> NinePath.Margins.Top)or(Padding.Bottom <> NinePath.Margins.Bottom) then
+      Padding := TPadding(NinePath.Margins);
   Invalidate;
 end;
 
 procedure TEsCustomImageLayout.ImageMarginsChange(Sender: TObject);
 begin
-  if FPaddigWithImageMargins then
+  if FPaddingWithImage then
     Inherited Padding := TPadding(ImageMargins);
 end;
 
 function TEsCustomImageLayout.IsPaddingStored: Boolean;
 begin
-  Result := not FPaddigWithImageMargins;
+  Result := not FPaddingWithImage;
+end;
+
+procedure TEsCustomImageLayout.PaddingChange(Sender: TObject);
+begin
+  Inherited Padding.Assign(TPadding(Sender));
+  NinePath.Margins.SetBounds(TPadding(Sender).Left, TPadding(Sender).Top,
+    TPadding(Sender).Right, TPadding(Sender).Bottom);
 end;
 
 procedure TEsCustomImageLayout.Paint;
@@ -680,17 +685,24 @@ end;
 procedure TEsCustomImageLayout.SetImageMargins(const Value: TImageMargins);
 begin
   NinePath.Margins := Value;
-  if FPaddigWithImageMargins then
+  if FPaddingWithImage then
     Inherited Padding := TPadding(Value);
 end;
 
-procedure TEsCustomImageLayout.SetPaddigWithImageMargins(const Value: Boolean);
+procedure TEsCustomImageLayout.SetPaddingWithImage(const Value: Boolean);
 begin
-  if FPaddigWithImageMargins <> Value then
+  if FPaddingWithImage <> Value then
   begin
-    FPaddigWithImageMargins := Value;
+    FPaddingWithImage := Value;
+
+    // internal padding
     if Value then
-      Inherited Padding.SetBounds(ImageMargins.Left, ImageMargins.Top, ImageMargins.Right, ImageMargins.Bottom);
+    begin
+      FPadding := TPadding.Create(nil);
+      FPadding.OnChange := PaddingChange;
+      FPadding.SetBounds(ImageMargins.Left, ImageMargins.Top, ImageMargins.Right, ImageMargins.Bottom);
+    end else
+      FreeAndNil(FPadding);
   end;
 end;
 
@@ -725,7 +737,11 @@ end;
 
 procedure TEsCustomImageLayout.SetPadding(const Value: TPadding);
 begin
-  if IsPaddingStored then
+  if FPaddingWithImage then
+  begin
+    FPadding.Assign(Value);
+  end
+  else
     Inherited Padding := Value;
 end;
 
