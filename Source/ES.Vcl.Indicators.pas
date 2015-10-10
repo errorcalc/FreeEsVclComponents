@@ -155,6 +155,8 @@ type
     property OnEnter;
     property OnExit;
     property OnGesture;
+    property OnPaint;
+    property OnPainting;
     property OnMouseActivate;
     property OnMouseDown;
     property OnMouseEnter;

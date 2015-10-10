@@ -57,7 +57,7 @@ type
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
     property TextLayout: TTextLayout read GetTextLayout write SetTextLayout default tlCenter;
-    property TextDistance: Integer read GetTextDistance write SetTextDistance default 2;
+    property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
   public
@@ -275,6 +275,8 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnResize;
+    property OnPaint;
+    property OnPainting;
     property OnStartDock;
     property OnStartDrag;
     property OnUnDock;
