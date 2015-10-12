@@ -195,7 +195,7 @@ begin
     end;
 
     R.TopLeft.Offset(OverlayMargins.Rect.TopLeft);
-    R.BottomRight.Offset(TPoint.Zero - OverlayMargins.Rect.BottomRight);
+    R.BottomRight.Offset(-OverlayMargins.Rect.Right, -OverlayMargins.Rect.Bottom);
 
     case FOverlayAlign of
       iaTopLeft:
@@ -348,7 +348,7 @@ var
   var
     T: TTextFormat;
   begin
-    Rect.Offset(TPoint.Zero - Rect.TopLeft);
+    Rect.Offset(-Rect.Top, -Rect.Left);
     T := Format;
     T := T + [tfCalcRect, tfWordEllipsis];
     if IsStyledTextControl(Control) then
