@@ -15,7 +15,10 @@ unit ES.Vcl.BaseControls;
 
 {$IF CompilerVersion >= 21}
 {$DEFINE VER210UP}
-{$ENDIF}
+{$IFEND}
+{$IF CompilerVersion >= 24}
+{$DEFINE VER240UP}
+{$IFEND}
 
 interface
 
@@ -124,7 +127,8 @@ begin
 
   if StyleServices.Enabled then
   begin
-    Result := (seClient in Control.StyleElements) and TStyleManager.IsCustomStyleActive;
+    Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
+      TStyleManager.IsCustomStyleActive;
   end;
   {$ENDIF}
 end;

@@ -10,6 +10,11 @@
 unit ES.Vcl.CfxClasses;
 
 interface
+
+{$IF CompilerVersion >= 24}
+{$DEFINE VER240UP}
+{$IFEND}
+
 uses
   Winapi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
   ES.Vcl.ExGraphics;
@@ -113,7 +118,8 @@ begin
 
   if StyleServices.Enabled then
   begin
-    Result := (seFont in Control.StyleElements) and TStyleManager.IsCustomStyleActive;
+    Result := {$if CompilerVersion > 23}(seFont in Control.StyleElements) and{$ifend}
+      TStyleManager.IsCustomStyleActive;
   end;
 end;
 

@@ -13,7 +13,10 @@ interface
 
 {$IF CompilerVersion >= 21}
 {$DEFINE VER210UP}
-{$ENDIF}
+{$IFEND}
+{$IF CompilerVersion >= 24}
+{$DEFINE VER240UP}
+{$IFEND}
 
 uses
   ComCtrls, Messages, CommCtrl;
@@ -40,8 +43,8 @@ uses
 
 procedure TCustomListView.LVMSetExtendedListViewStyle(var Message: TMessage);
 begin
-  if StyleServices.Enabled and (GetComCtlVersion >= ComCtlVersionIE6) and
-     (StyleServices.IsSystemStyle or not(seClient in Self.StyleElements)) then
+  if StyleServices.Enabled and (GetComCtlVersion >= ComCtlVersionIE6) {$ifdef VER210UP}and
+     (StyleServices.IsSystemStyle{$ifdef VER240UP} or not(seClient in Self.StyleElements){$endif}){$endif} then
   begin
     Message.LParam := Message.LParam or LVS_EX_DOUBLEBUFFER;
     DefaultHandler(Message);
@@ -58,8 +61,8 @@ end;
 
 procedure TListView.LVMSetExtendedListViewStyle(var Message: TMessage);
 begin
-  if StyleServices.Enabled and (GetComCtlVersion >= ComCtlVersionIE6) and
-     (StyleServices.IsSystemStyle or not(seClient in Self.StyleElements)) then
+  if StyleServices.Enabled and (GetComCtlVersion >= ComCtlVersionIE6) {$ifdef VER210UP}and
+     (StyleServices.IsSystemStyle{$ifdef VER240UP} or not(seClient in Self.StyleElements){$endif}){$endif} then
   begin
     Message.LParam := Message.LParam or LVS_EX_DOUBLEBUFFER;
     DefaultHandler(Message);

@@ -9,6 +9,10 @@
 {******************************************************************************}
 unit ES.Vcl.NinePath;
 
+{$IF CompilerVersion >= 24}
+{$DEFINE VER240UP}
+{$IFEND}
+
 interface
 
 uses
@@ -53,7 +57,9 @@ type
   protected
     procedure Paint; override;
     procedure Loaded; override;
+    {$ifdef VER240UP}
     procedure UpdateStyleElements; override;
+    {$endif}
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
     property TextLayout: TTextLayout read GetTextLayout write SetTextLayout default tlCenter;
@@ -122,7 +128,9 @@ type
     property Font;
     property ParentBiDiMode;
     property ParentFont;
+    {$ifdef VER240UP}
     property StyleElements;
+    {$endif}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -186,7 +194,9 @@ type
     procedure ImageMarginsChange(Sender: TObject);
     procedure AdjustClientRect(var Rect: TRect); override;
     procedure UpdateText; override;
+    {$ifdef VER240UP}
     procedure UpdateStyleElements; override;
+    {$endif}
     procedure CreateParams(var Params: TCreateParams); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -250,7 +260,9 @@ type
     property TabStop;
     property Touch;
     property Visible;
+    {$ifdef VER240UP}
     property StyleElements;
+    {$endif}
     property OnAlignInsertBefore;
     property OnAlignPosition;
     property OnCanResize;
@@ -484,11 +496,13 @@ begin
   NinePath.TextMultiline := Value;
 end;
 
+{$ifdef VER240UP}
 procedure TEsNinePathImage.UpdateStyleElements;
 begin
   inherited;
   Invalidate;
 end;
+{$endif}
 
 { TEsCustomNinePathLayout }
 
@@ -747,11 +761,13 @@ begin
     Inherited Padding := Value;
 end;
 
+{$ifdef VER240UP}
 procedure TEsCustomImageLayout.UpdateStyleElements;
 begin
   inherited;
   Invalidate;
 end;
+{$endif}
 
 procedure TEsCustomImageLayout.UpdateText;
 begin

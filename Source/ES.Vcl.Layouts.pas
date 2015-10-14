@@ -68,7 +68,9 @@ type
     property TabStop;
     property Touch;
     property Visible;
+    {$if CompilerVersion > 23}
     property StyleElements;
+    {$ifend}
     property OnAlignInsertBefore;
     property OnAlignPosition;
     property OnCanResize;

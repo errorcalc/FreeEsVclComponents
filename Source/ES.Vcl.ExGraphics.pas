@@ -13,7 +13,7 @@ interface
 
 {$if CompilerVersion >= 21}
 {$define VER210UP}
-{$endif}
+{$ifend}
 
 uses
   Windows, Graphics, Themes;

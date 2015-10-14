@@ -9,6 +9,10 @@
 {******************************************************************************}
 unit ES.Vcl.Indicators;
 
+{$IF CompilerVersion >= 24}
+{$DEFINE VER240UP}
+{$IFEND}
+
 interface
 
 uses
@@ -96,7 +100,9 @@ type
     function GetPointPos(RealX: Double; Lenght: Integer): Integer; virtual;
     function GetScreenPos(X: Double; Number: Integer): Integer; virtual;
     procedure Paint; override;
+    {$ifdef VER240UP}
     procedure UpdateStyleElements; override;
+    {$endif}
     procedure DoPlacement; dynamic;
     procedure Loaded; override;
     procedure SetParent(AParent: TWinControl); override;
@@ -144,7 +150,9 @@ type
     property TabOrder;
     property TabStop;
     property Touch;
+    {$ifdef VER240UP}
     property StyleElements;
+    {$endif}
     property OnClick;
     property OnCanResize;
     property OnContextPopup;
@@ -188,7 +196,8 @@ begin
 
   if StyleServices.Enabled then
   begin
-    Result := (seClient in Control.StyleElements) and TStyleManager.IsCustomStyleActive;
+    Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
+      TStyleManager.IsCustomStyleActive;
   end;
 end;
 
@@ -792,11 +801,13 @@ begin
   end;
 end;
 
+{$ifdef VER240UP}
 procedure TEsActivityBar.UpdateStyleElements;
 begin
   inherited;
   Invalidate;
 end;
+{$endif}
 
 procedure TEsActivityBar.WMSize(var Message: TWMSize);
 begin
