@@ -805,7 +805,7 @@ end;
 
 procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
 begin
-  if (not FIsTransparentMouse) and not(csDesigning in ComponentState) then
+  if (FIsTransparentMouse) and not(csDesigning in ComponentState) then
     Message.Result := HTTRANSPARENT
   else
     inherited;
