@@ -1,0 +1,39 @@
+unit ES.Vcl.ExGdiPlus;
+
+interface
+
+uses
+  Windows, GDIPApi, GDIPObj, Graphics;
+
+function RectToGPRect(Rect: TRect): TGPRectF;
+procedure InflateGPRect(var Rect: TGPRectF; DX, DY: Single);
+function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+
+implementation
+
+function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+var
+  BRG: DWORD;
+begin
+  BRG := ColorToRGB(Color);
+
+  Result := ((BRG shl 16) and $00FF0000) or ((BRG shr 16) and $000000FF) or (BRG and $0000FF00) or (Alpha shl 24);
+end;
+
+function RectToGPRect(Rect: TRect): TGPRectF;
+begin
+  Result.X := Rect.Left;
+  Result.Y := Rect.Top;
+  Result.Width := Rect.Width;
+  Result.Height := Rect.Height;
+end;
+
+procedure InflateGPRect(var Rect: TGPRectF; DX, DY: Single);
+begin
+  Rect.X := Rect.X - DX;
+  Rect.Y := Rect.Y - DY;
+  Rect.Width := Rect.Width + DX * 2;
+  Rect.Height := Rect.Height + DY * 2;
+end;
+
+end.

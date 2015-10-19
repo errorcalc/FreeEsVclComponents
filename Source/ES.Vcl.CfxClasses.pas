@@ -17,7 +17,7 @@ interface
 
 uses
   Winapi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
-  ES.Vcl.ExGraphics;
+  ES.Vcl.ExGraphics, Winapi.Messages;
 
 type
   TImageAlign = (iaTopLeft, iaTopRight, iaBottomRight, iaBottomLeft, iaCenter, iaLeft, iaRight, iaTop, iaBottom);
@@ -37,6 +37,7 @@ type
     property Bottom default 0;
   end;
 
+  // Internal use only
   TNinePathObject = class
   private
     FBitmap: TBitmap;
@@ -79,6 +80,7 @@ type
     destructor Destroy; override;
   end;
 
+  // Internal use only
   TTextNinePathObject = class(TNinePathObject)
   private
     FShowCaption: Boolean;
@@ -102,26 +104,85 @@ type
     procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte); reintroduce; overload;
   end;
 
-function IsStyledTextControl(Control: TControl): Boolean;
+  // Internal use only
+  // TODO: need rewrite for use CreateTimerQueueTimer...
+  TEsTimer = class
+  private
+    HidenWindow: HWND;
+    FOnTimer: TNotifyEvent;
+    FInterval: Cardinal;
+    FEnabled: Boolean;
+    procedure SetInterval(const Value: Cardinal);
+    procedure SetOnTimer(const Value: TNotifyEvent);
+    procedure UpdateTimer;
+    procedure WndProc(var Message: TMessage);
+    procedure SetEnabled(const Value: Boolean);
+  protected
+    procedure DoTimer; dynamic;
+  public
+    procedure Start;
+    procedure Stop;
+    procedure Reset;
+    constructor Create(Interval: Cardinal = 1000; OnTimer: TNotifyEvent = nil; Enabled: Boolean = False);
+    destructor Destroy; override;
+    property Interval: Cardinal read FInterval write SetInterval default 1000;
+    property Enabled: Boolean read FEnabled write SetEnabled default False;
+    property OnTimer: TNotifyEvent read FOnTimer write SetOnTimer;
+  end;
+
+  // Internal use only
+  TAnimationMode = (amLinear, amCubic);
+
+  // Internal use only
+  TCustomAnimation = class
+  private
+    FMode: TAnimationMode;
+    FDuration: Cardinal;
+    FOnProcess: TNotifyEvent;
+    FOnFinish: TNotifyEvent;
+    Timer: TEsTimer;
+    StartTime: Cardinal;
+    FNormalizedTime: Single;
+    FReverseMode: Boolean;// 0..1
+    procedure SetDuration(const Value: Cardinal);
+    procedure SetMode(const Value: TAnimationMode);
+    procedure SetReverseMode(const Value: Boolean);
+  protected
+    function GetCurrentTime: Single; virtual;
+    procedure TimerProc(Sender: TObject); virtual;
+    procedure Process; virtual;
+  public
+    procedure Start; dynamic;
+    procedure Stop; dynamic;
+    constructor Create; dynamic;
+    destructor Destroy; override;
+    property Duration: Cardinal read FDuration write SetDuration;
+    property Mode: TAnimationMode read FMode write SetMode;
+    property ReverseMode: Boolean read FReverseMode write SetReverseMode;
+    property CurrentTime: Single read GetCurrentTime;// 0..1
+    property OnProcess: TNotifyEvent read FOnProcess write FOnProcess;
+    property OnFinish: TNotifyEvent read FOnFinish write FOnFinish;
+  end;
+
+  // Internal use only
+  TIntegerAnimation = class(TCustomAnimation)
+  private
+    FStartValue: Integer;
+    FEndValue: Integer;
+    function GetValue: Integer;
+    procedure SetEndValue(const Value: Integer);
+    procedure SetStartValue(const Value: Integer);
+  public
+    constructor Create; override;
+    property StartValue: Integer read FStartValue write SetStartValue;
+    property EndValue: Integer read FEndValue write SetEndValue;
+    property Value: Integer read GetValue;
+  end;
 
 implementation
 
 uses
-  Vcl.Themes, ES.Vcl.BaseControls;
-
-function IsStyledTextControl(Control: TControl): Boolean;
-begin
-  Result := False;
-
-  if Control = nil then
-    Exit;
-
-  if StyleServices.Enabled then
-  begin
-    Result := {$if CompilerVersion > 23}(seFont in Control.StyleElements) and{$ifend}
-      TStyleManager.IsCustomStyleActive;
-  end;
-end;
+  Vcl.Themes, ES.Vcl.BaseControls, ES.Vcl.Utils;
 
 { TImageMargins }
 
@@ -357,7 +418,7 @@ var
     Rect.Offset(-Rect.Top, -Rect.Left);
     T := Format;
     T := T + [tfCalcRect, tfWordEllipsis];
-    if IsStyledTextControl(Control) then
+    if IsStyledFontControl(Control) then
       Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
         Rect, Text, T)
     else
@@ -466,7 +527,7 @@ begin
   end;
 
   Canvas.Brush.Style := bsClear;
-  if IsStyledTextControl(Control) then
+  if IsStyledFontControl(Control) then
     Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
       R, Text, Format)
   else
@@ -530,6 +591,231 @@ begin
     FTextMultiline := Value;
     if FShowCaption then
        NeedRepaint;
+  end;
+end;
+
+{ TEsTimer }
+
+constructor TEsTimer.Create(Interval: Cardinal = 1000; OnTimer: TNotifyEvent = nil; Enabled: Boolean = False);
+begin
+  FInterval := Interval;
+  FEnabled := Enabled;
+  FOnTimer := OnTimer;
+  UpdateTimer;
+end;
+
+destructor TEsTimer.Destroy;
+begin
+  FEnabled := False;
+  UpdateTimer;
+  inherited;
+end;
+
+procedure TEsTimer.DoTimer;
+begin
+  if Assigned(OnTimer) then
+    OnTimer(Self);
+end;
+
+procedure TEsTimer.Reset;
+begin
+  if FEnabled then
+    UpdateTimer;
+end;
+
+procedure TEsTimer.SetEnabled(const Value: Boolean);
+begin
+  if Value <> FEnabled then
+  begin
+    FEnabled := Value;
+    UpdateTimer;
+  end;
+end;
+
+procedure TEsTimer.SetInterval(const Value: Cardinal);
+begin
+  if Value <> FInterval then
+  begin
+    FInterval := Value;
+    UpdateTimer;
+  end;
+end;
+
+procedure TEsTimer.SetOnTimer(const Value: TNotifyEvent);
+begin
+  FOnTimer := Value;
+  UpdateTimer;
+end;
+
+procedure TEsTimer.Start;
+begin
+  if not FEnabled then
+  begin
+    FEnabled := True;
+    UpdateTimer;
+  end;
+end;
+
+procedure TEsTimer.Stop;
+begin
+  if FEnabled then
+  begin
+    FEnabled := False;
+    UpdateTimer;
+  end;
+end;
+
+procedure TEsTimer.UpdateTimer;
+begin
+  if FEnabled then
+  begin
+    if HidenWindow = 0 then
+    begin
+      HidenWindow := AllocateHWnd(WndProc);
+    end;
+    KillTimer(HidenWindow, 1);
+    if SetTimer(HidenWindow, 1, FInterval, nil) = 0 then
+      raise EOutOfResources.Create('Error: No timers!');
+  end
+  else
+    if HidenWindow <> 0 then
+    begin
+      KillTimer(HidenWindow, 1);
+      DeallocateHWnd(HidenWindow);
+      HidenWindow := 0;
+    end;
+end;
+
+procedure TEsTimer.WndProc(var Message: TMessage);
+begin
+  if Message.Msg = WM_TIMER then
+    try
+      DoTimer
+   except
+   end
+  else
+    Message.Result := DefWindowProc(HidenWindow, Message.Msg, Message.WParam, Message.LParam);
+end;
+
+{ TCustomAnimation }
+
+constructor TCustomAnimation.Create;
+begin
+  Timer := TEsTimer.Create(10, TimerProc, False);
+  //FOnProcess := OnProcess;
+  FNormalizedTime := 0;
+  FMode := amLinear;
+  //Timer.Enabled := Enabled;
+end;
+
+destructor TCustomAnimation.Destroy;
+begin
+  Timer.Free;
+  inherited;
+end;
+
+function TCustomAnimation.GetCurrentTime: Single;
+var
+  t: Single;
+begin
+  if ReverseMode then
+    t := 1 - FNormalizedTime
+  else
+    t := FNormalizedTime;
+
+  case FMode of
+    amLinear: Result := t;
+    amCubic: Result := t * t * t; //( 1 - Sqrt(t * t * t * t * t));
+  end;
+
+  if ReverseMode then
+    Result := 1 - Result;
+end;
+
+procedure TCustomAnimation.Process;
+begin
+  if Assigned(OnProcess) then
+    OnProcess(Self);
+end;
+
+procedure TCustomAnimation.SetDuration(const Value: Cardinal);
+begin
+  if Value = 0 then
+    FDuration := 1
+  else
+    FDuration := Value;
+end;
+
+procedure TCustomAnimation.SetMode(const Value: TAnimationMode);
+begin
+  FMode := Value;
+end;
+
+procedure TCustomAnimation.SetReverseMode(const Value: Boolean);
+begin
+  FReverseMode := Value;
+end;
+
+procedure TCustomAnimation.Start;
+begin
+  StartTime := GetTickCount;
+  FNormalizedTime := 0;
+  Timer.Start;
+  Process;
+end;
+
+procedure TCustomAnimation.Stop;
+begin
+  Timer.Stop;
+  FNormalizedTime := 1;
+  Process;
+  if Assigned(OnFinish) then
+    OnFinish(Self);
+end;
+
+procedure TCustomAnimation.TimerProc(Sender: TObject);
+var
+  t: Cardinal;
+begin
+  t := GetTickCount;
+  if t < StartTime + FDuration then
+  begin
+    FNormalizedTime := (t - StartTime) / FDuration;
+    Process;
+  end else
+  begin
+    Stop;
+  end;
+end;
+
+{ TIntegerAnimation }
+
+constructor TIntegerAnimation.Create;
+begin
+  inherited;
+
+end;
+
+function TIntegerAnimation.GetValue: Integer;
+begin
+  Result := Trunc(StartValue * (1 - CurrentTime) + EndValue * CurrentTime);
+end;
+
+procedure TIntegerAnimation.SetEndValue(const Value: Integer);
+begin
+  if FEndValue <> Value then
+  begin
+    FEndValue := Value;
+//    Process;
+  end;
+end;
+
+procedure TIntegerAnimation.SetStartValue(const Value: Integer);
+begin
+  if FStartValue <> Value then
+  begin
+    FStartValue := Value;
+//    Process;
   end;
 end;
 

@@ -51,7 +51,8 @@ type
     procedure LoadFromResourceName(Instance: THandle; const ResName: String; ResType: PChar); overload;
   end;
 
-function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+  function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD; inline;
+  function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; inline;
 
 implementation
 
@@ -62,7 +63,12 @@ type
   TRGBAArray = array[Word] of TRGBQuad;
   PRGBAArray = ^TRGBAArray;
 
-function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
+function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD;
+begin
+  Result := ColorToAlphaColor(Color, Alpha);
+end;
+
+function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD;
 var
   BRG: DWORD;
 begin

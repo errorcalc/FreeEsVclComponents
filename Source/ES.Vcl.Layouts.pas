@@ -42,6 +42,7 @@ type
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
+    property BufferedChildrens;// TEsCustomControl
     property Color;
     property Constraints;
     property Ctl3D;
@@ -53,10 +54,17 @@ type
     property DragMode;
     property Enabled;
     property Font;
+    property IsCachedBuffer;// TEsCustomControl
+    property IsCachedBackground;// TEsCustomControl
+    property IsDrawHelper;// TEsCustomControl
+    property IsOpaque;// TEsCustomControl
+    property IsTransparentMouse;// TEsCustomControl
+    property IsFullSizeBuffer;// TEsCustomControl
     property Locked;
     property Padding;
     property ParentBiDiMode;
     property ParentBackground;
+    property ParentBufferedChildrens;// TEsCustomControl
     property ParentColor;
     property ParentCtl3D;
     property ParentDoubleBuffered;
@@ -95,8 +103,8 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnResize;
-    property OnPaint;
-    property OnPainting;
+    property OnPaint;// TEsCustomControl
+    property OnPainting;// TEsCustomControl
     property OnStartDock;
     property OnStartDrag;
     property OnUnDock;

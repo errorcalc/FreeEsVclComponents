@@ -39,8 +39,8 @@ type
     FCanvas: TCanvas;
     CacheBitmap: HBITMAP;// Cache for buffer BitMap
     CacheBackground: HBITMAP;// Cache for background BitMap
-    FCachedBuffer: Boolean;
-    FCachedBackground: Boolean;
+    FIsCachedBuffer: Boolean;
+    FIsCachedBackground: Boolean;
     StoredCachedBuffer: Boolean;
     StoredCachedBackground: Boolean;
     FIsDrawHelper: Boolean;
@@ -50,9 +50,10 @@ type
     FIsTransparentMouse: Boolean;
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
+    FIsFullSizeBuffer: Boolean;
     // paint
-    procedure SetCachedBuffer(Value: Boolean);
-    procedure SetCachedBackground(Value: Boolean);
+    procedure SetIsCachedBuffer(Value: Boolean);
+    procedure SetIsCachedBackground(Value: Boolean);
     procedure SetIsDrawHelper(const Value: Boolean);
     procedure SetIsOpaque(const Value: Boolean);
     procedure SetBufferedChildrens(const Value: Boolean);
@@ -82,6 +83,8 @@ type
     procedure PaintHandler(var Message: TWMPaint);
     // other
     procedure UpdateText; dynamic;
+    //
+    property ParentBackground default True;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -90,20 +93,20 @@ type
     procedure UpdateBackground; overload;
     property DoubleBuffered default False;
     property ParentDoubleBuffered default False;
+    // ------------------ Properties for published -------------------------------------------------
     // Painting for chidrens classes
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
-  published
-    property ParentBackground default True;
     // !!
     property ParentBufferedChildrens: Boolean read FParentBufferedChildrens write SetParentBufferedChildrens default True;
     property BufferedChildrens: Boolean read FBufferedChildrens write SetBufferedChildrens stored IsBufferedChildrensStored;
     // !!
-    property CachedBuffer: Boolean read FCachedBuffer write SetCachedBuffer default False;
-    property CachedBackground: Boolean read FCachedBackground write SetCachedBackground default False;
+    property IsCachedBuffer: Boolean read FIsCachedBuffer write SetIsCachedBuffer default False;
+    property IsCachedBackground: Boolean read FIsCachedBackground write SetIsCachedBackground default False;
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
     property IsOpaque: Boolean read FIsOpaque write SetIsOpaque default False;
     property IsTransparentMouse: Boolean read FIsTransparentMouse write FIsTransparentMouse default False;
+    property IsFullSizeBuffer: Boolean read FIsFullSizeBuffer write FIsFullSizeBuffer default False;
   end;
 
 implementation
@@ -183,15 +186,15 @@ end;
 procedure TEsCustomControl.BeginCachedBackground;
 begin
   if CacheBackground <> 0 then BitMapDeleteAndNil(CacheBackground);
-  StoredCachedBackground := FCachedBackground;
-  FCachedBackground := True;
+  StoredCachedBackground := FIsCachedBackground;
+  FIsCachedBackground := True;
 end;
 
 procedure TEsCustomControl.BeginCachedBuffer;
 begin
   if CacheBitmap <> 0 then BitMapDeleteAndNil(CacheBitmap);
-  StoredCachedBuffer := FCachedBuffer;
-  FCachedBuffer := True;
+  StoredCachedBuffer := FIsCachedBuffer;
+  FIsCachedBuffer := True;
 end;
 
 procedure TEsCustomControl.CMParentBufferedChildrensChanged(var Message: TMessage);
@@ -234,8 +237,8 @@ begin
   FParentBufferedChildrens := True;// !!
   CacheBitmap := 0;
   CacheBackground := 0;
-  FCachedBuffer := False;
-  FCachedBackground := False;
+  FIsCachedBuffer := False;
+  FIsCachedBackground := False;
 end;
 
 procedure TEsCustomControl.DeleteCache;
@@ -283,12 +286,12 @@ end;
 
 procedure TEsCustomControl.EndCachedBackground;
 begin
-  FCachedBackground := StoredCachedBackground;
+  FIsCachedBackground := StoredCachedBackground;
 end;
 
 procedure TEsCustomControl.EndCachedBuffer;
 begin
-  FCachedBuffer := StoredCachedBuffer;
+  FIsCachedBuffer := StoredCachedBuffer;
 end;
 
 procedure TEsCustomControl.Paint;
@@ -327,7 +330,7 @@ begin
   begin
     DC := BeginPaint(Handle, PS);
     {$IFDEF VER210UP}
-    if TStyleManager.IsCustomStyleActive and not FCachedBuffer then
+    if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
       UpdateRect := ClientRect
       // I had to use a crutch to ClientRect, due to the fact that
       // VCL.Styles.TCustomStyle.DoDrawParentBackground NOT use relative coordinates,
@@ -341,7 +344,7 @@ begin
   begin
     DC := Message.DC;
     {$IFDEF VER210UP}
-    if TStyleManager.IsCustomStyleActive and not FCachedBuffer then
+    if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
       UpdateRect := ClientRect
     else
     {$endif}
@@ -361,13 +364,19 @@ begin
     if BufferDC <> 0 then
     begin
       // Using the cache if possible
-      if FCachedBuffer then
+      if FIsCachedBuffer or FIsFullSizeBuffer then
       begin
         // Create cache if need
         if CacheBitmap = 0 then
-          CacheBitmap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
-        // Assign cache
-        BufferBitMap := CacheBitmap;
+        begin
+          BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
+          // Assign to cache if need
+          if FIsCachedBuffer then
+            CacheBitmap := BufferBitMap;
+        end
+        else
+          BufferBitMap := CacheBitmap;
+
         // Assign region for minimal overdraw
         Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
         SelectClipRgn(BufferDC, Region);
@@ -379,7 +388,7 @@ begin
       SelectObject(BufferDC, BufferBitMap);
       // [change coord], if need
       // Moving update region to the (0,0) point
-      if not FCachedBuffer then
+      if not(FIsCachedBuffer or FIsFullSizeBuffer) then
       begin
         GetViewportOrgEx(BufferDC, SaveViewport);
         SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
@@ -402,7 +411,7 @@ begin
   // draw to window
   if not DoubleBuffered then
   begin
-    if not FCachedBuffer then
+    if not(FIsCachedBuffer or FIsFullSizeBuffer) then
     begin
       // [restore coord], if need
       SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
@@ -420,7 +429,7 @@ begin
   if Region <> 0 then
     DeleteObject(Region);
   // delete buufer, if need
-  if not FCachedBuffer and (BufferBitMap <> 0) then
+  if not FIsCachedBuffer and (BufferBitMap <> 0) then
     DeleteObject(BufferBitMap);
   //------------------------------------------------------------------------------------------------
 
@@ -583,13 +592,19 @@ begin
       if BufferDC <> 0 then
       begin
         // Using the cache if possible
-        if FCachedBuffer then
+        if FIsCachedBuffer or FIsFullSizeBuffer then
         begin
           // Create cache if need
           if CacheBitmap = 0 then
-            CacheBitmap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
-          // Assign cache
-          BufferBitMap := CacheBitmap;
+          begin
+            BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
+            // Assign to cache if need
+            if FIsCachedBuffer then
+              CacheBitmap := BufferBitMap;
+          end
+          else
+            BufferBitMap := CacheBitmap;
+
           // Assign region for minimal overdraw
           Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
           SelectClipRgn(BufferDC, Region);
@@ -601,7 +616,7 @@ begin
         SelectObject(BufferDC, BufferBitMap);
         // [change coord], if need
         // Moving update region to the (0,0) point
-        if not FCachedBuffer then
+        if not(FIsCachedBuffer or FIsFullSizeBuffer) then
         begin
           GetViewportOrgEx(BufferDC, SaveViewport);
           SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
@@ -619,7 +634,7 @@ begin
   if not(csOpaque in ControlStyle) then
     if ParentBackground then
     begin
-      if FCachedBackground then
+      if FIsCachedBackground then
       begin
         if CacheBackground = 0 then
         begin
@@ -631,7 +646,7 @@ begin
         end;
         TempDC := CreateCompatibleDC(BufferDC);
         SelectObject(TempDC, CacheBackground);
-        if not FCachedBuffer then
+        if not FIsCachedBuffer then
           BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, TempDC, 0, 0, SRCCOPY)
         else
           BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, TempDC,
@@ -675,7 +690,7 @@ begin
     // draw to window
     if not DoubleBuffered then
     begin
-      if not FCachedBuffer then
+      if not(FIsCachedBuffer or FIsFullSizeBuffer) then
       begin
         // [restore coord], if need
         SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
@@ -693,7 +708,7 @@ begin
     if Region <> 0 then
       DeleteObject(Region);
     // delete buufer, if need
-    if not FCachedBuffer and (BufferBitMap <> 0) then
+    if not FIsCachedBuffer and (BufferBitMap <> 0) then
       DeleteObject(BufferBitMap);
   //------------------------------------------------------------------------------------------------
   end;
@@ -714,21 +729,21 @@ begin
   end;
 end;
 
-procedure TEsCustomControl.SetCachedBackground(Value: Boolean);
+procedure TEsCustomControl.SetIsCachedBackground(Value: Boolean);
 begin
-  if Value <> FCachedBackground then
+  if Value <> FIsCachedBackground then
   begin
-    FCachedBackground := Value;
-    if not FCachedBackground then BitMapDeleteAndNil(CacheBackground);
+    FIsCachedBackground := Value;
+    if not FIsCachedBackground then BitMapDeleteAndNil(CacheBackground);
   end;
 end;
 
-procedure TEsCustomControl.SetCachedBuffer(Value: Boolean);
+procedure TEsCustomControl.SetIsCachedBuffer(Value: Boolean);
 begin
-  if Value <> FCachedBuffer then
+  if Value <> FIsCachedBuffer then
   begin
-    FCachedBuffer := Value;
-    if not FCachedBuffer then BitMapDeleteAndNil(CacheBitmap);
+    FIsCachedBuffer := Value;
+    if not FIsCachedBuffer then BitMapDeleteAndNil(CacheBitmap);
   end;
 end;
 

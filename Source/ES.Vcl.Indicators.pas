@@ -135,6 +135,12 @@ type
     property DisplayMode: TActivityDisplayMode read FDisplayMode write SetDisplayMode default admOverlay;
     property Color;
     //
+    property IsCachedBuffer;// TEsCustomControl
+    property IsCachedBackground;// TEsCustomControl
+    property IsDrawHelper;// TEsCustomControl
+    property IsOpaque;// TEsCustomControl
+    property IsTransparentMouse;// TEsCustomControl
+    property IsFullSizeBuffer;// TEsCustomControl
     property BorderWidth;
     property DragCursor;
     property DragKind;
@@ -142,6 +148,7 @@ type
     property Enabled;
     property Hint;
     property Constraints;
+    property ParentBackground;
     property ParentDoubleBuffered;
     property ParentShowHint;
     property ParentColor;
@@ -163,8 +170,8 @@ type
     property OnEnter;
     property OnExit;
     property OnGesture;
-    property OnPaint;
-    property OnPainting;
+    property OnPaint;// TEsCustomControl
+    property OnPainting;// TEsCustomControl
     property OnMouseActivate;
     property OnMouseDown;
     property OnMouseEnter;
@@ -180,26 +187,12 @@ type
 implementation
 
 uses
-  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes;
+  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.Vcl.ExGdiPlus, ES.Vcl.Utils;
 
 //procedure Register;
 //begin
 //  RegisterComponents('ErrorSoft', [TEsActivityBar]);
 //end;
-
-function IsStyledClientControl(Control: TControl): Boolean;
-begin
-  Result := False;
-
-  if Control = nil then
-    Exit;
-
-  if StyleServices.Enabled then
-  begin
-    Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
-      TStyleManager.IsCustomStyleActive;
-  end;
-end;
 
 { TEsActivityBar }
 

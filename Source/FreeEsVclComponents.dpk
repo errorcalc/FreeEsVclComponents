@@ -41,7 +41,10 @@ contains
   ES.Vcl.Indicators in 'ES.Vcl.Indicators.pas',
   ES.Vcl.ControlsReg in 'ES.Vcl.ControlsReg.pas',
   EsVclFix in 'EsVclFix.pas',
-  ES.Vcl.StyleHooks in 'ES.Vcl.StyleHooks.pas';
+  ES.Vcl.StyleHooks in 'ES.Vcl.StyleHooks.pas',
+  ES.Vcl.Switch in 'ES.Vcl.Switch.pas',
+  ES.Vcl.ExGdiPlus in 'ES.Vcl.ExGdiPlus.pas',
+  ES.Vcl.Utils in 'ES.Vcl.Utils.pas';
 
 end.
 
