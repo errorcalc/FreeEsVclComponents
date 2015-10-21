@@ -157,7 +157,7 @@ begin
   IntersectClipRect(DC, 0, 0, Control.Parent.ClientWidth, Control.Parent.ClientHeight);
 
   Control.Parent.Perform(WM_ERASEBKGND, DC, 0);
-  //Control.Parent.Perform(WM_PAINT, DC, 0);
+  // Control.Parent.Perform(WM_PAINT, DC, 0);
   Control.Parent.Perform(WM_PRINTCLIENT, DC, prf_Client);
 
   RestoreDC(DC, SaveIndex);
@@ -440,8 +440,8 @@ end;
 
 procedure TEsCustomControl.PaintTo(DC: HDC; X, Y: Integer);
 begin
-  if DoubleBuffered then
-    FillRect(DC, Rect(0, 0, Width, Height), Brush.Handle);
+//  if DoubleBuffered then
+//    FillRect(DC, Rect(X, Y, X + Width, Y + Height), Brush.Handle);
   inherited PaintTo(DC, X, Y);
 end;
 
@@ -656,7 +656,7 @@ begin
       else
         DrawParentImage(Self, BufferDC, False);
     end else
-      if (not DoubleBuffered) then
+      if (not DoubleBuffered or (DC <> 0)) then
         if not IsStyledClientControl(Self) then
           FillRect(BufferDC, ClientRect, Brush.Handle)
         else
