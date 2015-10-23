@@ -88,9 +88,9 @@ type
     procedure PaintTo(DC: HDC; X, Y: Integer);
     procedure UpdateBackground(Repaint: Boolean); overload;
     procedure UpdateBackground; overload;
+    // ------------------ Properties for published -------------------------------------------------
     property DoubleBuffered default False;
     property ParentDoubleBuffered default False;
-    // ------------------ Properties for published -------------------------------------------------
     // Painting for chidrens classes
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
