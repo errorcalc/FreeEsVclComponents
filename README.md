@@ -10,6 +10,7 @@ Attribution-ShareAlike 3.0
 * TEsNinePathImage
 * TEsImageLabel
 * TEsActivityBar (looks like Windows 10 XAML control!)
+* TEsSwitch (looks like Windows 10 XAML control!)
 
 # XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle) - compatibility
 
@@ -48,6 +49,16 @@ Attribution-ShareAlike 3.0
 * Поддержка VCL тем
 * Отсутствие мерцания
 * Полная кастомизация
+
+**TEsSwitch** - Компонент имитирует одноименный XAML контрол Windows 10.
+Имеет множество настроек.
+* Полная имитация XAML контрола
+* Анимация
+* Поддержка VCL тем
+* Отсутствие мерцания
+* Полная кастомизация цветов
+* Несколько режимов AvtoSize-а
+* Поддержка ActionList
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 
