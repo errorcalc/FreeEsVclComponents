@@ -277,7 +277,9 @@ type
     property ParentBackground;
     property PopupMenu;
     property ShowHint;
+    {$if CompilerVersion > 23}
     property StyleElements;
+    {$ifend}
     property TabOrder;
     property TabStop;
     property Visible;
