@@ -98,22 +98,22 @@ end;
 
 procedure TForm2.TimerRepaintTimer(Sender: TObject);
 begin
-  Label1.Caption := 'Label' + Random(100000).toString;
-  Label2.Caption := 'Label' + Random(100000).toString;
-  Label3.Caption := 'Label' + Random(100000).toString;
-  Label4.Caption := 'Label' + Random(100000).toString;
-  Label5.Caption := 'Label' + Random(100000).toString;
-  Label6.Caption := 'Label' + Random(100000).toString;
-  Label7.Caption := 'Label' + Random(100000).toString;
-  Label8.Caption := 'Label' + Random(100000).toString;
-  Label9.Caption := 'Label' + Random(100000).toString;
-  Label10.Caption := 'Label' + Random(100000).toString;
+  Label1.Caption := 'Label' + IntToStr(Random(100000));
+  Label2.Caption := 'Label' + IntToStr(Random(100000));
+  Label3.Caption := 'Label' + IntToStr(Random(100000));
+  Label4.Caption := 'Label' + IntToStr(Random(100000));
+  Label5.Caption := 'Label' + IntToStr(Random(100000));
+  Label6.Caption := 'Label' + IntToStr(Random(100000));
+  Label7.Caption := 'Label' + IntToStr(Random(100000));
+  Label8.Caption := 'Label' + IntToStr(Random(100000));
+  Label9.Caption := 'Label' + IntToStr(Random(100000));
+  Label10.Caption := 'Label' + IntToStr(Random(100000));
   //
-  SpeedButton1.Caption := 'SpeedButton' + Random(100000).toString;
-  SpeedButton2.Caption := 'SpeedButton' + Random(100000).toString;
-  SpeedButton3.Caption := 'SpeedButton' + Random(100000).toString;
-  SpeedButton4.Caption := 'SpeedButton' + Random(100000).toString;
-  SpeedButton5.Caption := 'SpeedButton' + Random(100000).toString;
+  SpeedButton1.Caption := 'SpeedButton' + IntToStr(Random(100000));
+  SpeedButton2.Caption := 'SpeedButton' + IntToStr(Random(100000));
+  SpeedButton3.Caption := 'SpeedButton' + IntToStr(Random(100000));
+  SpeedButton4.Caption := 'SpeedButton' + IntToStr(Random(100000));
+  SpeedButton5.Caption := 'SpeedButton' + IntToStr(Random(100000));
   //
   Shape1.Brush.Color := RGB(Random(256), Random(256), Random(256));
 end;

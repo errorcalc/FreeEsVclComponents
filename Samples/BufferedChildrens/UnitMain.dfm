@@ -11,7 +11,6 @@ object Form2: TForm2
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  StyleElements = [seFont, seClient]
   DesignSize = (
     716
     487)
@@ -22,8 +21,8 @@ object Form2: TForm2
     Top = 31
     Width = 700
     Height = 448
-    IsDrawHelper = True
     Anchors = [akLeft, akTop, akRight, akBottom]
+    IsDrawHelper = True
     TabOrder = 0
     OnPaint = EsLayoutPaint
     DesignSize = (
@@ -48299,7 +48298,6 @@ object Form2: TForm2
       ParentColor = False
       ParentFont = False
       Transparent = False
-      StyleElements = [seFont, seBorder]
     end
     object Label9: TLabel
       Left = 3
@@ -48316,7 +48314,6 @@ object Form2: TForm2
       ParentColor = False
       ParentFont = False
       Transparent = False
-      StyleElements = [seFont, seBorder]
     end
     object Label10: TLabel
       Left = 3
@@ -48333,7 +48330,6 @@ object Form2: TForm2
       ParentColor = False
       ParentFont = False
       Transparent = False
-      StyleElements = [seFont, seBorder]
     end
     object SpeedButton1: TSpeedButton
       Left = 216

@@ -167,7 +167,6 @@ object MainForm: TMainForm
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      StyleElements = [seClient, seBorder]
       TabOrder = 5
     end
     object EsSwitch6: TEsSwitch
