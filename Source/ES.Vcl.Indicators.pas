@@ -140,7 +140,7 @@ type
     property IsDrawHelper;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
     property IsTransparentMouse;// TEsCustomControl
-    property IsFullSizeBuffer;// TEsCustomControl
+    // property IsFullSizeBuffer;// TEsCustomControl
     property BorderWidth;
     property DragCursor;
     property DragKind;
@@ -264,8 +264,9 @@ end;
 constructor TEsActivityBar.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Width := 400;
+  Width := 300;
   Height := 7;
+  IsFullSizeBuffer := True;
   FPointColor := clHighlight;
   FAutoHide := False;
   FActive := False;

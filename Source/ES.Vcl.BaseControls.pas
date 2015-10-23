@@ -8,9 +8,6 @@
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
 {******************************************************************************}
 
-// This is crap code xD
-// You perform risk when use this code
-
 unit ES.Vcl.BaseControls;
 
 {$IF CompilerVersion >= 21}
@@ -97,10 +94,10 @@ type
     // Painting for chidrens classes
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
-    // !!
+    // BufferedChildrens
     property ParentBufferedChildrens: Boolean read FParentBufferedChildrens write SetParentBufferedChildrens default True;
     property BufferedChildrens: Boolean read FBufferedChildrens write SetBufferedChildrens stored IsBufferedChildrensStored;
-    // !!
+    // External prop
     property IsCachedBuffer: Boolean read FIsCachedBuffer write SetIsCachedBuffer default False;
     property IsCachedBackground: Boolean read FIsCachedBackground write SetIsCachedBackground default False;
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;

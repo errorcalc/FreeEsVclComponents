@@ -690,9 +690,9 @@ procedure TEsTimer.WndProc(var Message: TMessage);
 begin
   if Message.Msg = WM_TIMER then
     try
-      DoTimer
-   except
-   end
+      DoTimer;
+    except
+    end
   else
     Message.Result := DefWindowProc(HidenWindow, Message.Msg, Message.WParam, Message.LParam);
 end;
@@ -718,6 +718,8 @@ function TCustomAnimation.GetCurrentTime: Single;
 var
   t: Single;
 begin
+  Result := 0;// for compiler paranoia
+
   if ReverseMode then
     t := 1 - FNormalizedTime
   else
@@ -798,7 +800,7 @@ end;
 
 function TIntegerAnimation.GetValue: Integer;
 begin
-  Result := Trunc(StartValue * (1 - CurrentTime) + EndValue * CurrentTime);
+  Result := Trunc(StartValue * (1 - CurrentTime) + EndValue * CurrentTime + 0.5);
 end;
 
 procedure TIntegerAnimation.SetEndValue(const Value: Integer);
