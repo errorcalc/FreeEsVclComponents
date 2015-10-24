@@ -2,8 +2,8 @@
 {                             ESComponents for VCL                             }
 {                            ErrorSoft(c) 2012-2015                            }
 {                                                                              }
-{            errorsoft@mail.ch | errorsoft-demoscene.narod.ru                  }
-{ errorsoft@protonmail.ch | github.com/errorcalc | habrahabr.ru/user/error1024 }
+{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
 {******************************************************************************}

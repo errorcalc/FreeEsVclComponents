@@ -1,3 +1,12 @@
+{******************************************************************************}
+{                             ESComponents for VCL                             }
+{                              ErrorSoft(c) 2015                               }
+{                                                                              }
+{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{                                                                              }
+{ Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{******************************************************************************}
 unit ES.Vcl.StyleHooks;
 
 interface
