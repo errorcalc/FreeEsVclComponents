@@ -113,6 +113,7 @@ type
 
   TThumbBorder = 1..100;
   TSwitchBorder = 1..100;
+  TSwitchAlignment = (saLeft, saRight);
   TSwitchLayout = (slFixed, slAutoSize, slClient);
 
   // now: only interal use, this class can be too refactored!
@@ -147,6 +148,7 @@ type
     FAutoSize: Boolean;
     FSwitchLayout: TSwitchLayout;
     FVerticalSpace: Cardinal;
+    FAlignment: TSwitchAlignment;
     FSwitchBorder: TSwitchBorder;
     // Internal
     function GetSwitchRect: TRect;
@@ -178,6 +180,7 @@ type
     procedure SetVerticalSpace(const Value: Cardinal);
     procedure SetSwitchBorder(const Value: TSwitchBorder);
     procedure SetAutoSize(const Value: Boolean); reintroduce;
+    procedure SetAlignment(const Value: TSwitchAlignment);
   protected
     State: TSwitchState;
     IsTracking: Boolean;
@@ -194,6 +197,7 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure Click; override;
+    procedure CreateWnd; override;
     // for external styles
     function CreateColors: TSwitchColors; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -212,6 +216,7 @@ type
     property ThumbSize: TSize read GetThumbSize;
     property ThumbPos: Integer read GetThumbPos;
     // to published...
+    property Alignment: TSwitchAlignment read FAlignment write SetAlignment default saRight;
     property Colors: TSwitchColors read FColors write SetColors;
     property Checked: Boolean read FChecked write SetChecked default False;
     property ThumbBorder: TThumbBorder read FThumbBorder write SetThumbBorder default 3;
@@ -235,6 +240,7 @@ type
   // for public use
   TEsSwitch = class(TEsCustomSwitch)
   published
+    property Alignment;
     property Colors;
     property Checked;
     property ThumbBorder;
@@ -472,13 +478,18 @@ begin
   FTextOn := sDefaultSwitchOn;
   FTextOff := sDefaultSwitchOff;
   FAnimated := True;
-
-  AdjustBounds;
+  FAlignment := saRight;
 end;
 
 function TEsCustomSwitch.CreateColors: TSwitchColors;
 begin
   Result := TSwitchColors.Create;
+end;
+
+procedure TEsCustomSwitch.CreateWnd;
+begin
+  inherited;
+  AdjustBounds;
 end;
 
 destructor TEsCustomSwitch.Destroy;
@@ -530,33 +541,49 @@ end;
 
 function TEsCustomSwitch.GetSwitchRect: TRect;
 var
-  H: Integer;
+  H, W: Integer;
 begin
   case FSwitchLayout of
     slFixed:
     begin
-      Result.Left := 0;
-      Result.Top := Height div 2 - FSwitchHeight div 2;
+      if FAlignment = saRight then
+        Result.Left := 0
+      else
+        Result.Left := ClientWidth - FSwitchWidth;
+      Result.Top := ClientHeight div 2 - FSwitchHeight div 2;
+
       Result.Width := FSwitchWidth;
       Result.Height := FSwitchHeight;
     end;
     slAutoSize:
     begin
       H := TextSize.Height + 6;
-      Result.Left := 0;
-      Result.Top := Height div 2 - H div 2;
-      Result.Width := Trunc(H * 2.2 + 0.5);
+      W := Trunc(H * 2.2 + 0.5);
+
+      if FAlignment = saRight then
+        Result.Left := 0
+      else
+        Result.Left := ClientWidth - W;
+      Result.Top := ClientHeight div 2 - H div 2;
+
+      Result.Width := W;
       Result.Height := H;
     end;
     slClient:
     begin
-      Result.Top := 0;
-      Result.Left := 0;
-      Result.Height := Height;
       if ShowCaption then
-        Result.Width := Width - TextSize.Width - TextSpace
+        W := ClientWidth - TextSize.Width - TextSpace
       else
-        Result.Width := Width;
+        W := ClientWidth;
+
+      if FAlignment = saRight then
+        Result.Left := 0
+      else
+        Result.Left := ClientWidth - W;
+      Result.Top := 0;
+
+      Result.Height := ClientHeight;
+      Result.Width := W;
     end;
   end;
 end;
@@ -749,7 +776,7 @@ begin
 
     Brush.SetColor(ThumbColorForState(State));
     Graphics.FillEllipse(Brush,
-        MakeRect(ThumbPos + SwitchRect.Left + FSwitchBorder + FThumbBorder, SwitchRect.Top + FSwitchBorder + FThumbBorder,
+        MakeRect(ThumbPos + FSwitchBorder + FThumbBorder, SwitchRect.Top + FSwitchBorder + FThumbBorder,
           ThumbSize.Width - FSwitchBorder * 2 - FThumbBorder * 2, ThumbSize.Height - FSwitchBorder * 2 - FThumbBorder * 2));
 
     if ShowCaption then
@@ -770,7 +797,10 @@ begin
         if not Enabled then
           Canvas.Font.Color := clGrayText;
 
-      TextRect := Rect(ClientWidth - TextSize.Width + TextSpace, 0, ClientWidth, ClientHeight);
+      if Alignment = saRight then
+        TextRect := Rect(SwitchRect.Right + TextSpace, 0, ClientWidth, ClientHeight)
+      else
+        TextRect := Rect(SwitchRect.Left - TextSize.Width, 0, SwitchRect.Left, ClientHeight);
       Canvas.TextRect(TextRect, Text, [tfSingleLine, tfVerticalCenter]);
       Canvas.Brush.Style := bsSolid;
     end;
@@ -829,6 +859,16 @@ begin
   if FShowCaption <> Value then
   begin
     FShowCaption := Value;
+    AdjustBounds;
+    Invalidate;
+  end;
+end;
+
+procedure TEsCustomSwitch.SetAlignment(const Value: TSwitchAlignment);
+begin
+  if FAlignment <> Value then
+  begin
+    FAlignment := Value;
     AdjustBounds;
     Invalidate;
   end;
