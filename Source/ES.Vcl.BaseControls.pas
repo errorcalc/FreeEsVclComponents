@@ -662,7 +662,7 @@ begin
         else
         begin
           SetDCBrushColor(BufferDC,
-            {$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}ColorToRGB(Color){$endif});
+            ColorToRGB({$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}Color{$endif}));
           FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
         end;
 
