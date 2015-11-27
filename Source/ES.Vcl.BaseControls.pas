@@ -383,7 +383,8 @@ begin
       end
       else
         // Create buffer
-        BufferBitMap := CreateCompatibleBitmap(DC, UpdateRect.Width, UpdateRect.Height);
+        BufferBitMap := CreateCompatibleBitmap(DC,
+          UpdateRect.Right - UpdateRect.Left, UpdateRect.Bottom - UpdateRect.Top);
       // Select buffer bitmap
       SelectObject(BufferDC, BufferBitMap);
       // [change coord], if need
@@ -415,11 +416,11 @@ begin
     begin
       // [restore coord], if need
       SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC, 0, 0, SRCCOPY);
+      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
     end
     else
     begin
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC,
+      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
         UpdateRect.Left, UpdateRect.Top, SRCCOPY);
     end;
   end;
@@ -611,7 +612,7 @@ begin
         end
         else
           // Create buffer
-          BufferBitMap := CreateCompatibleBitmap(DC, UpdateRect.Width, UpdateRect.Height);
+          BufferBitMap := CreateCompatibleBitmap(DC, RectWidth(UpdateRect), RectHeight(UpdateRect));
         // Select buffer bitmap
         SelectObject(BufferDC, BufferBitMap);
         // [change coord], if need
@@ -647,9 +648,9 @@ begin
         TempDC := CreateCompatibleDC(BufferDC);
         SelectObject(TempDC, CacheBackground);
         if not FIsCachedBuffer then
-          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, TempDC, 0, 0, SRCCOPY)
+          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC, 0, 0, SRCCOPY)
         else
-          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, TempDC,
+          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
             UpdateRect.Left, UpdateRect.Top, SRCCOPY);
         DeleteDC(TempDC);
       end
@@ -695,11 +696,11 @@ begin
       begin
         // [restore coord], if need
         SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
-        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC, 0, 0, SRCCOPY);
+        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
       end
       else
       begin
-        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC,
+        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
           UpdateRect.Left, UpdateRect.Top, SRCCOPY);
       end;
     end;
