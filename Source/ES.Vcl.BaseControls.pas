@@ -13,6 +13,9 @@ unit ES.Vcl.BaseControls;
 {$IF CompilerVersion >= 21}
 {$DEFINE VER210UP}
 {$IFEND}
+{$IF CompilerVersion >= 23}
+{$DEFINE VER230UP}
+{$IFEND}
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
 {$IFEND}
@@ -21,7 +24,7 @@ interface
 
 uses
   Windows, Types, Classes, Controls,
-  Graphics, {$IFDEF VER210UP}Themes,{$ENDIF} Messages, Uxtheme, Forms;
+  Graphics, {$IFDEF VER230UP}Themes,{$ENDIF} Messages, Uxtheme, Forms;
 
 const
   CM_ESBASE = CM_BASE + $0800;
@@ -121,7 +124,7 @@ function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$IFDEF VER210UP}
+  {$IFDEF VER230UP}
   if Control = nil then
     Exit;
 
@@ -326,7 +329,7 @@ begin
   if IsBeginPaint then
   begin
     DC := BeginPaint(Handle, PS);
-    {$IFDEF VER210UP}
+    {$IFDEF VER230UP}
     if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
       UpdateRect := ClientRect
       // I had to use a crutch to ClientRect, due to the fact that
@@ -340,7 +343,7 @@ begin
   else
   begin
     DC := Message.DC;
-    {$IFDEF VER210UP}
+    {$IFDEF VER230UP}
     if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
       UpdateRect := ClientRect
     else
@@ -658,7 +661,8 @@ begin
           FillRect(BufferDC, ClientRect, Brush.Handle)
         else
         begin
-          SetDCBrushColor(BufferDC, ColorToRGB(StyleServices.GetSystemColor(Color)));
+          SetDCBrushColor(BufferDC,
+            {$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}ColorToRGB(Color){$endif});
           FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
         end;
 
