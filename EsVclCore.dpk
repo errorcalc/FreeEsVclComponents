@@ -1,0 +1,46 @@
+package EsVclCore;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'ErrorSoft Vcl Library Core'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vclimg;
+
+contains
+  ES.Vcl.BaseControls in 'Source\ES.Vcl.BaseControls.pas',
+  ES.Vcl.CfxClasses in 'Source\ES.Vcl.CfxClasses.pas',
+  ES.Vcl.ExGdiPlus in 'Source\ES.Vcl.ExGdiPlus.pas',
+  ES.Vcl.ExGraphics in 'Source\ES.Vcl.ExGraphics.pas',
+  ES.Vcl.StyleHooks in 'Source\ES.Vcl.StyleHooks.pas',
+  ES.Vcl.Utils in 'Source\ES.Vcl.Utils.pas',
+  EsVclFix in 'Source\EsVclFix.pas';
+
+end.

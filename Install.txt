@@ -1,0 +1,5 @@
+1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
+2. Open "EsComponents" project group
+3. Build "EsVclCore.bpl"
+4. Install "EsFreeVclComponents.bpl"
+5. Enjoy!

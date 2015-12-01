@@ -11,6 +11,7 @@ unit ES.Vcl.StyleHooks;
 
 interface
 
+{$if CompilerVersion >= 23}
 uses
   Forms, Messages, Styles, Themes, Controls;
 
@@ -21,9 +22,11 @@ type
     // perhaps it is improves performance, but create graphical artifacts!
     procedure WMEraseBkgnd(var Msg: TMessage); message WM_ERASEBKGND;
   end;
+{$ifend}
 
 implementation
 
+{$if CompilerVersion >= 23}
 uses
   Graphics, Windows;
 
@@ -64,5 +67,6 @@ initialization
 
 finalization
   TCustomStyleEngine.UnRegisterStyleHook(TScrollBox, TFixScrollBoxStyleHook);
+{$ifend}
 
 end.

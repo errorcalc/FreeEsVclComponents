@@ -11,13 +11,16 @@ unit ES.Vcl.CfxClasses;
 
 interface
 
+{$IF CompilerVersion >= 23}
+{$DEFINE VER230UP}
+{$IFEND}
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
 {$IFEND}
 
 uses
-  Winapi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
-  ES.Vcl.ExGraphics, Winapi.Messages;
+  Windows, Classes, Controls, Graphics, PngImage,
+  ES.Vcl.ExGraphics, Messages;
 
 type
   TImageAlign = (iaTopLeft, iaTopRight, iaBottomRight, iaBottomLeft, iaCenter, iaLeft, iaRight, iaTop, iaBottom);
@@ -182,13 +185,101 @@ type
 implementation
 
 uses
-  Vcl.Themes, ES.Vcl.BaseControls, ES.Vcl.Utils;
+  Themes, ES.Vcl.BaseControls, ES.Vcl.Utils;
+
+{$REGION 'Delphi 2010/XE support'}
+{$ifndef VER230UP}
+
+type
+  TRectHelper = record helper for TRect
+  private
+    function GetHeight: Integer;
+    function GetWidth: Integer;
+    procedure SetHeight(const Value: Integer);
+    procedure SetWidth(const Value: Integer);
+  public
+    procedure Offset(const DX, DY: Integer); overload;
+    procedure Offset(const Point: TPoint); overload;
+    procedure Inflate(const DX, DY: Integer); overload;
+  published
+    property Width: Integer read GetWidth write SetWidth;
+    property Height: Integer read GetHeight write SetHeight;
+  end;
+
+  TPointHelper = record helper for TPoint
+  public
+    procedure Offset(const DX, DY : Integer); overload;
+    procedure Offset(const Point: TPoint); overload;
+  end;
+
+{ TPointHelper }
+
+procedure TPointHelper.Offset(const DX, DY: Integer);
+begin
+  Inc(Self.X, DX);
+  Inc(Self.Y, DY);
+end;
+
+procedure TPointHelper.Offset(const Point: TPoint);
+begin
+  Inc(Self.X, Point.X);
+  Inc(Self.Y, Point.Y);
+end;
+
+{ TRectHelper }
+
+function TRectHelper.GetHeight: Integer;
+begin
+  Result := Self.Bottom - Self.Top;
+end;
+
+function TRectHelper.GetWidth: Integer;
+begin
+  Result := Self.Right - Self.Left;
+end;
+
+procedure TRectHelper.Inflate(const DX, DY: Integer);
+begin
+  Self.Left := Self.Left - DX;
+  Self.Top := Self.Top - DY;
+  Self.Right := Self.Right + DX;
+  Self.Bottom := Self.Bottom + DY;
+end;
+
+procedure TRectHelper.Offset(const DX, DY: Integer);
+begin
+  Self.Left := Self.Left + DX;
+  Self.Top := Self.Top + DY;
+  Self.Right := Self.Right + DX;
+  Self.Bottom := Self.Bottom + DY;
+end;
+
+procedure TRectHelper.Offset(const Point: TPoint);
+begin
+  Self.Left := Self.Left + Point.X;
+  Self.Top := Self.Top + Point.Y;
+  Self.Right := Self.Right + Point.X;
+  Self.Bottom := Self.Bottom + Point.Y;
+end;
+
+procedure TRectHelper.SetHeight(const Value: Integer);
+begin
+  Self.Bottom := Self.Top + Value;
+end;
+
+procedure TRectHelper.SetWidth(const Value: Integer);
+begin
+  Self.Right := Self.Left + Value;
+end;
+
+{$endif}
+{$ENDREGION}
 
 { TImageMargins }
 
 function TImageMargins.GetRect: TRect;
 begin
-  Result := System.Classes.Rect(Left, Top, Right, Bottom);
+  Result := Classes.Rect(Left, Top, Right, Bottom);
 end;
 
 class procedure TImageMargins.InitDefaults(Margins: TMargins);
@@ -406,8 +497,10 @@ begin
 end;
 
 procedure TTextNinePathObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte);
+{$ifdef VER230UP}
 const
   D: array[Boolean] of TThemedTextLabel = (ttlTextLabelDisabled, ttlTextLabelNormal);//TStyleFont = (sfPanelTextDisabled, sfPanelTextNormal);
+{$endif}
 var
   R, Temp: TRect;
   Format: TTextFormat;
@@ -417,11 +510,13 @@ var
   begin
     Rect.Offset(-Rect.Top, -Rect.Left);
     T := Format;
-    T := T + [tfCalcRect, tfWordEllipsis];
+    T := T + [tfCalcRect{$ifdef VER230UP}, tfWordEllipsis{$endif}];
+    {$ifdef VER230UP}
     if IsStyledFontControl(Control) then
       Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
         Rect, Text, T)
     else
+    {$endif}
       Canvas.TextRect(Rect, Text, T);
   end;
 begin
@@ -527,10 +622,12 @@ begin
   end;
 
   Canvas.Brush.Style := bsClear;
+  {$ifdef VER230UP}
   if IsStyledFontControl(Control) then
     Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
       R, Text, Format)
   else
+  {$endif}
     if Control.Enabled then
       Canvas.TextRect(R, Text, Format)
     else

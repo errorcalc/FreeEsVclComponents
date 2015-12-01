@@ -12,12 +12,15 @@ unit ES.Vcl.Utils;
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
 {$IFEND}
+{$IF CompilerVersion >= 23}
+{$DEFINE VER230UP}
+{$IFEND}
 
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls,
-  WinApi.Messages, Vcl.Graphics, Vcl.Themes;
+  Windows, SysUtils, Classes, Controls,
+  Messages, Graphics, Themes;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -39,6 +42,7 @@ function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
 
+  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
@@ -47,12 +51,14 @@ begin
     Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
+  {$endif}
 end;
 
 function IsStyledFontControl(Control: TControl): Boolean;
 begin
   Result := False;
 
+  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
@@ -61,12 +67,14 @@ begin
     Result := {$ifdef VER240UP}(seFont in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
+  {$endif}
 end;
 
 function IsStyledBorderControl(Control: TControl): Boolean;
 begin
   Result := False;
 
+  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
@@ -75,29 +83,36 @@ begin
     Result := {$ifdef VER240UP}(seBorder in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
+  {$endif}
 end;
 
 function ClientColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
+  {$ifdef VER230UP}
   if IsStyledClientControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
     Result := ColorToRGB(Color);
 end;
 
 function BorderColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
+  {$ifdef VER230UP}
   if IsStyledBorderControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
     Result := ColorToRGB(Color);
 end;
 
 function FontColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
+  {$ifdef VER230UP}
   if IsStyledFontControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
     Result := ColorToRGB(Color);
 end;
 

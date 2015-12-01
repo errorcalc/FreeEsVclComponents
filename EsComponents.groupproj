@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5B9287A3-1F89-4FEE-A2E4-39EB910041C0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="EsVclCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="EsFreeVclComponents.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EsVclCore">
+        <MSBuild Projects="EsVclCore.dproj"/>
+    </Target>
+    <Target Name="EsVclCore:Clean">
+        <MSBuild Projects="EsVclCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclCore:Make">
+        <MSBuild Projects="EsVclCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsFreeVclComponents">
+        <MSBuild Projects="EsFreeVclComponents.dproj"/>
+    </Target>
+    <Target Name="EsFreeVclComponents:Clean">
+        <MSBuild Projects="EsFreeVclComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsFreeVclComponents:Make">
+        <MSBuild Projects="EsFreeVclComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EsVclCore;EsFreeVclComponents"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EsVclCore:Clean;EsFreeVclComponents:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EsVclCore:Make;EsFreeVclComponents:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

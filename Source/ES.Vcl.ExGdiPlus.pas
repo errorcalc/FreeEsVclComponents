@@ -12,7 +12,7 @@ unit ES.Vcl.ExGdiPlus;
 interface
 
 uses
-  Windows, GDIPApi, GDIPObj, Graphics;
+  Windows, GDIPApi, GDIPObj, Graphics, Types;
 
 function RectToGPRect(Rect: TRect): TGPRectF;
 procedure InflateGPRect(var Rect: TGPRectF; DX, DY: Single);
@@ -33,8 +33,8 @@ function RectToGPRect(Rect: TRect): TGPRectF;
 begin
   Result.X := Rect.Left;
   Result.Y := Rect.Top;
-  Result.Width := Rect.Width;
-  Result.Height := Rect.Height;
+  Result.Width := RectWidth(Rect);
+  Result.Height := RectHeight(Rect);
 end;
 
 procedure InflateGPRect(var Rect: TGPRectF; DX, DY: Single);

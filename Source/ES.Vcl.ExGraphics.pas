@@ -14,6 +14,9 @@ interface
 {$if CompilerVersion >= 21}
 {$define VER210UP}
 {$ifend}
+{$IF CompilerVersion >= 23}
+{$DEFINE VER230UP}
+{$IFEND}
 
 uses
   Windows, Graphics, Themes;
@@ -30,7 +33,9 @@ type
 //    procedure StretchDraw(DestRect, ClipRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte); overload;
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte); overload;
+    {$ifdef VER230UP}
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
+    {$endif}
     procedure DrawChessFrame(R: TRect; Color1, Color2: TColor);
   end;
 
@@ -51,8 +56,8 @@ type
     procedure LoadFromResourceName(Instance: THandle; const ResName: String; ResType: PChar); overload;
   end;
 
-  function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD; inline;
-  function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; inline;
+  function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD; Inline;
+  function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; Inline;
 
 implementation
 
@@ -298,6 +303,7 @@ begin
   StretchDraw(D, S, Bitmap, Alpha);
 end;
 
+{$ifdef VER230UP}
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
   .DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string;
   Format: TTextFormat);
@@ -310,6 +316,7 @@ begin
     StyleServices.DrawText(Handle, Details, Text, Rect, Format, Opt);
   end;
 end;
+{$endif}
 
 //procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
 //  .StretchDraw(DestRect, ClipRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte);
