@@ -20,11 +20,14 @@ interface
 
 uses
   Windows, Classes, Controls, Graphics, PngImage,
-  ES.Vcl.ExGraphics, Messages;
+  ES.Vcl.ExGraphics, Messages, Generics.Collections, Dialogs, StdCtrls;
 
 type
+//  {$scopedenums on}
+  TVertLayout = (vlTop, vlCenter, vlBottom);
+  THorzLayout = (hlLeft, hlCenter, hlRight);
   TImageAlign = (iaTopLeft, iaTopRight, iaBottomRight, iaBottomLeft, iaCenter, iaLeft, iaRight, iaTop, iaBottom);
-  TTextLayout = (tlTop, tlCenter, tlBottom);
+//  {$scopedenums off}
 
   TImageMargins = class(TMargins)
   private
@@ -90,21 +93,93 @@ type
     FTextAlignment: TAlignment;
     FTextDistance: Integer;
     FTextMultiline: Boolean;
-    FTextLayout: TTextLayout;
+    FTextLayout: TVertLayout;
     procedure SetShowCaption(const Value: Boolean);
     procedure SetTextAlignment(const Value: TAlignment);
     procedure SetTextDistance(const Value: Integer);
     procedure SetTextMultiline(const Value: Boolean);
-    procedure SetTextLayout(const Value: TTextLayout);
+    procedure SetTextLayout(const Value: TVertLayout);
   public
     constructor Create; override;
     property ContentSpace;
     property ShowCaption: Boolean read FShowCaption write SetShowCaption;
     property TextAlignment: TAlignment read FTextAlignment write SetTextAlignment;
-    property TextLayout: TTextLayout read FTextLayout write SetTextLayout;
+    property TextLayout: TVertLayout read FTextLayout write SetTextLayout;
     property TextDistance: Integer read FTextDistance write SetTextDistance;
     property TextMultiline: Boolean read FTextMultiline write SetTextMultiline;
     procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte); reintroduce; overload;
+  end;
+
+  // Internal use only
+  TStyleNinePath = class(TPersistent)
+  private
+    ImageList: TList<TPngImage>;
+    BitmapList: TList<TBitmap>;
+    FImageMargins: TImageMargins;
+    FOverlayAlign: TImageAlign;
+    FOverlayMargins: TImageMargins;
+    FOnChange: TNotifyEvent;
+    FControl: TControl;
+    FStateCount: Integer;
+    FIsDefaultStyle: Boolean;
+    FUpdateCount: Integer;
+    FImageMode: TStretchMode;
+    procedure SetImageMargins(const Value: TImageMargins);
+    procedure SetOverlayAlign(const Value: TImageAlign);
+    procedure SetOverlayMargins(const Value: TImageMargins);
+    function RequestImage(Index: Integer): TPngImage;
+    procedure ImageChange(Sender: TObject);
+    function GetBitmap(Index: Integer): TBitmap;
+    function GetOverlayBitmap(Index: Integer): TBitmap;
+    procedure SetDefaultStyle(const Value: Boolean);
+    procedure SetImageMode(const Value: TStretchMode);
+  protected
+    function IsStyleStored: Boolean;
+    function RequestBitmap(Index: Integer): TBitmap;
+    function RequestOverlayBitmap(Index: Integer): TBitmap;
+    procedure ChangeMargins(Sender: TObject);// use for XXXMargins.OnChange
+    procedure Change;
+    procedure InternalDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); virtual;
+    property StateCount: Integer read FStateCount;
+    //
+    function GetSuitedBitmap(Index: Integer): TBitmap;
+    function GetSuitedOverlayBitmap(Index: Integer): TBitmap;
+    //
+    procedure AssignTo(Dest: TPersistent); override;
+    //----------------------------------------------------------------------------------------------
+    // Indexed properties:
+    function GetImage(const Index: Integer): TPngImage;
+    procedure SetImage(const Index: Integer; const Image: TPngImage);
+    function GetOverlay(const Index: Integer): TPngImage;
+    procedure SetOverlay(const Index: Integer; const Image: TPngImage);
+    // PLEASE REALIZE THIS:
+    function GetStateCount: Integer; dynamic; abstract;
+    procedure AssignDefaultStyle; dynamic; // if use IsDefaultStyle or LoadDefaultStyle
+    function GetStylePrefix: string; dynamic;// if use IsDefaultStyle or LoadDefaultStyle
+    // to published
+    property ImageMargins: TImageMargins read FImageMargins write SetImageMargins stored IsStyleStored;
+    property ImageMode: TStretchMode read FImageMode write SetImageMode stored IsStyleStored default TStretchMode.smNormal;
+    property OverlayAlign: TImageAlign read FOverlayAlign write SetOverlayAlign stored IsStyleStored;
+    property OverlayMargins: TImageMargins read FOverlayMargins write SetOverlayMargins stored IsStyleStored;
+    //
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    // default res style
+    property IsDefaultStyle: Boolean read FIsDefaultStyle write SetDefaultStyle default True;
+    //----------------------------------------------------------------------------------------------
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255); virtual;
+    procedure Clear; dynamic;
+    procedure UpdateImages; dynamic;
+    procedure LoadDefaultStyle; dynamic;
+    procedure BeginUpdate;
+    procedure EndUpdate;
+    //
+    property Control: TControl read FControl write FControl;
+    property Bitmap[Index: Integer]: TBitmap read GetBitmap;
+    property OverlayBitmap[Index: Integer]: TBitmap read GetOverlayBitmap;
   end;
 
   // Internal use only
@@ -185,7 +260,7 @@ type
 implementation
 
 uses
-  Themes, ES.Vcl.BaseControls, ES.Vcl.Utils;
+  Themes, ES.Vcl.BaseControls, ES.Vcl.Utils, SysUtils, TypInfo;
 
 {$REGION 'Delphi 2010/XE support'}
 {$ifndef VER230UP}
@@ -310,7 +385,7 @@ begin
   FOverlay := TBitMap.Create;
   FOverlay.PixelFormat := pf32bit;
   FOverlay.AlphaFormat := afPremultiplied;
-  FOverlayAlign := iaTopLeft;
+  FOverlayAlign := TImageAlign.iaTopLeft;
   // FContentSpace := True;
 end;
 
@@ -356,39 +431,39 @@ begin
     R.BottomRight.Offset(-OverlayMargins.Rect.Right, -OverlayMargins.Rect.Bottom);
 
     case FOverlayAlign of
-      iaTopLeft:
+      TImageAlign.iaTopLeft:
         Canvas.Draw(R.Left, R.Top, FOverlay, Alpha);
 
-      iaTopRight:
+      TImageAlign.iaTopRight:
         Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, Alpha);
 
-      iaBottomRight:
+      TImageAlign.iaBottomRight:
         Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, Alpha);
 
-      iaBottomLeft:
+      TImageAlign.iaBottomLeft:
         Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, Alpha);
 
-      iaCenter:
+      TImageAlign.iaCenter:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
 
-      iaLeft:
+      TImageAlign.iaLeft:
         Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
 
-      iaRight:
+      TImageAlign.iaRight:
         Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
 
-      iaTop:
+      TImageAlign.iaTop:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, Alpha);
 
-      iaBottom:
+      TImageAlign.iaBottom:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, Alpha);
     end;
 
     case FOverlayAlign of
-      iaLeft: ContentRect.Left := R.Left + FOverlay.Width + OverlayMargins.Right;
-      iaRight: ContentRect.Right := R.Right - FOverlay.Width - OverlayMargins.Left;
-      iaTop: ContentRect.Top := R.Top + FOverlay.Height - OverlayMargins.Bottom;
-      iaBottom: ContentRect.Bottom := R.Bottom - FOverlay.Height - OverlayMargins.Top;
+      TImageAlign.iaLeft: ContentRect.Left := R.Left + FOverlay.Width + OverlayMargins.Right;
+      TImageAlign.iaRight: ContentRect.Right := R.Right - FOverlay.Width - OverlayMargins.Left;
+      TImageAlign.iaTop: ContentRect.Top := R.Top + FOverlay.Height - OverlayMargins.Bottom;
+      TImageAlign.iaBottom: ContentRect.Bottom := R.Bottom - FOverlay.Height - OverlayMargins.Top;
     end;
   end
 
@@ -489,11 +564,11 @@ constructor TTextNinePathObject.Create;
 begin
   inherited;
   FTextAlignment := taCenter;
-  FTextLayout := tlCenter;
+  FTextLayout := TVertLayout.vlCenter;
   FTextDistance := 0;
   OverlaySpace := True;
   ContentSpace := True;
-  OverlayAlign := iaLeft;
+  OverlayAlign := TImageAlign.iaLeft;
 end;
 
 procedure TTextNinePathObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte);
@@ -580,7 +655,7 @@ begin
   end;
 
   case TextLayout of
-    tlCenter:
+    TVertLayout.vlCenter:
       if not TextMultiline then
         Format := Format + [tfVerticalCenter]
       else
@@ -590,7 +665,7 @@ begin
         R.Top := R.Top + (R.Height div 2) - (Temp.Height div 2);
         R.Height := Temp.Height;
       end;
-    tlBottom:
+    TVertLayout.vlBottom:
       if not TextMultiline then
       begin
         Format := Format + [tfBottom];
@@ -601,7 +676,7 @@ begin
         CalcRect(Temp);
         R.Top := R.Top + (R.Height - Temp.Height) - FTextDistance;
       end;
-    tlTop:
+    TVertLayout.vlTop:
       if not TextMultiline then
       begin
         R.Top := R.Top + FTextDistance;
@@ -671,7 +746,7 @@ begin
   end;
 end;
 
-procedure TTextNinePathObject.SetTextLayout(const Value: TTextLayout);
+procedure TTextNinePathObject.SetTextLayout(const Value: TVertLayout);
 begin
   if FTextLayout <> Value then
   begin
@@ -688,6 +763,450 @@ begin
     FTextMultiline := Value;
     if FShowCaption then
        NeedRepaint;
+  end;
+end;
+
+{ TStateNinePath }
+
+procedure TStyleNinePath.AssignDefaultStyle;
+begin
+  //StylePrefix := ClassName;
+end;
+
+procedure TStyleNinePath.AssignTo(Dest: TPersistent);
+begin
+  if Dest is TStyleNinePath then
+  begin
+    AssignPersistent(Dest, Self);
+    //TStyleNinePath(Dest).Change;
+  end
+  else
+    inherited;
+end;
+
+procedure TStyleNinePath.BeginUpdate;
+begin
+  Inc(FUpdateCount);
+end;
+
+procedure TStyleNinePath.Change;
+begin
+  if FUpdateCount <> 0 then
+    Exit;
+
+  FIsDefaultStyle := False;
+  if Assigned(FOnChange) and not((Control <> nil) and (csLoading in Control.ComponentState)) then
+    FOnChange(Self);
+end;
+
+procedure TStyleNinePath.ChangeMargins(Sender: TObject);
+begin
+  Change;
+end;
+
+procedure TStyleNinePath.Clear;
+var
+  I: Integer;
+begin
+  for I := 0 to ImageList.Count - 1 do
+    if ImageList[I] <> nil then
+    begin
+      ImageList[I].Free;
+      ImageList[I] := nil;
+    end;
+
+  for I := 0 to BitmapList.Count - 1 do
+    if BitmapList[I] <> nil then
+    begin
+      BitmapList[I].Free;
+      BitmapList[I] := nil;
+    end;
+end;
+
+constructor TStyleNinePath.Create;
+begin
+  inherited;
+  ImageList := TList<TPngImage>.Create;
+  BitmapList := TList<TBitmap>.Create;
+
+  FStateCount := GetStateCount;
+
+  ImageList.Count := FStateCount * 2;
+  BitmapList.Count := FStateCount * 2;
+
+  FImageMargins := TImageMargins.Create(nil);
+  FImageMargins.OnChange := ChangeMargins;
+  FOverlayMargins := TImageMargins.Create(nil);
+  FOverlayMargins.OnChange := ChangeMargins;
+
+  FIsDefaultStyle := True;
+
+  BeginUpdate;
+  try
+    AssignDefaultStyle;
+  finally
+    EndUpdate;
+  end;
+end;
+
+destructor TStyleNinePath.Destroy;
+begin
+  Clear;
+  ImageList.Free;
+  BitmapList.Free;
+  FImageMargins.Free;
+  FOverlayMargins.Free;
+  inherited;
+end;
+
+procedure TStyleNinePath.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255);
+begin
+  InternalDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Alpha);
+end;
+
+procedure TStyleNinePath.EndUpdate;
+begin
+  Dec(FUpdateCount);
+  if FUpdateCount <= 0 then
+  begin
+    FUpdateCount := 0;
+  end;
+end;
+
+function TStyleNinePath.GetBitmap(Index: Integer): TBitmap;
+begin
+  if (Index < 0) or (Index >= StateCount) then
+    raise Exception.CreateFmt('GetBitmap(%d) - Index of bounds!', [Index]);
+  Result := RequestBitmap(Index);
+end;
+
+function TStyleNinePath.GetImage(const Index: Integer): TPngImage;
+begin
+  Result := RequestImage(Index);
+end;
+
+function TStyleNinePath.GetOverlayBitmap(Index: Integer): TBitmap;
+begin
+  if (Index < StateCount) or (Index >= StateCount * 2) then
+    raise Exception.CreateFmt('GetOverlayBitmap(%d) - Index of bounds!', [Index]);
+  Result := RequestBitmap(Index + StateCount);
+end;
+
+function TStyleNinePath.GetOverlay(const Index: Integer): TPngImage;
+begin
+  Result := RequestImage(Index + StateCount);
+end;
+
+function TStyleNinePath.GetStylePrefix: string;
+begin
+  Result := Self.ClassName;
+end;
+
+function TStyleNinePath.GetSuitedBitmap(Index: Integer): TBitmap;
+var
+  I: Integer;
+begin
+  if (Index < 0) or (Index >= StateCount) then
+    raise Exception.CreateFmt('GetSuitedBitmap(%d) - Index of bounds!', [Index]);
+  for I := Index downto 0 do
+  begin
+    if (ImageList[I] <> nil) or (BitmapList[I] <> nil) then
+    begin
+      //if not BitmapList[I].Empty then
+      begin
+        Result := RequestBitmap(I);
+        exit;
+      end;
+    end;
+  end;
+
+  Result := BitmapList[Index];
+end;
+
+function TStyleNinePath.GetSuitedOverlayBitmap(Index: Integer): TBitmap;
+var
+  I: Integer;
+begin
+  Index := Index + StateCount;
+  if (Index < StateCount) or (Index >= StateCount * 2) then
+    raise Exception.CreateFmt('GetSuitedOverlayBitmap(%d) - Index of bounds!', [Index]);
+  for I := Index downto StateCount do
+  begin
+    if (ImageList[I] <> nil) or (BitmapList[I] <> nil) then
+    begin
+      //if not BitmapList[I].Empty then
+      begin
+        Result := RequestBitmap(I);
+        exit;
+      end;
+    end;
+  end;
+
+  Result := BitmapList[Index];
+end;
+
+procedure TStyleNinePath.ImageChange(Sender: TObject);
+var
+  Index: Integer;
+begin
+  Index := ImageList.IndexOf(TPngImage(Sender));
+  if BitmapList[Index] = nil then
+  begin
+    if not TPngImage(Sender).Empty then
+      RequestBitmap(Index).Assign(TPngImage(Sender));
+  end else
+  begin
+    if not TPngImage(Sender).Empty then
+      BitmapList[Index].Assign(TPngImage(Sender))
+    else
+    begin
+      BitmapList[Index].Free;
+      BitmapList[Index] := nil;
+    end;
+  end;
+
+  Change;
+end;
+
+procedure TStyleNinePath.InternalDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255);
+var
+  R: TRect;
+  ContentRect: TRect;
+begin
+  if Assigned(Bitmap) then
+    Canvas.DrawNinePath(Rect, FImageMargins.Rect, Bitmap, Mode, Alpha);
+
+//  // for painting child class
+//  if (Self.ClassType <> TNinePathObject) and ContentSpace then
+//  begin
+//    ContentRect.Left := Rect.Left + FMargins.Left;
+//    ContentRect.Top := Rect.Top + FMargins.Top;
+//    ContentRect.Right := Rect.Right - FMargins.Right;
+//    ContentRect.Bottom := Rect.Bottom - FMargins.Bottom;
+//  end
+//  else
+  ContentRect := Rect;
+
+  if Assigned(OverlayBitmap) then
+  begin
+    R := Rect;
+
+//    if FOverlaySpace then
+//    begin
+//      R.Left := R.Left + FMargins.Left;
+//      R.Top := R.Top + FMargins.Top;
+//      R.Right := R.Right - FMargins.Right;
+//      R.Bottom := R.Bottom - FMargins.Bottom;
+//    end;
+
+    R.TopLeft.Offset(OverlayMargins.Rect.TopLeft);
+    R.BottomRight.Offset(-OverlayMargins.Rect.Right, -OverlayMargins.Rect.Bottom);
+
+    case FOverlayAlign of
+      TImageAlign.iaTopLeft:
+        Canvas.Draw(R.Left, R.Top, OverlayBitmap, Alpha);
+
+      TImageAlign.iaTopRight:
+        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Top, OverlayBitmap, Alpha);
+
+      TImageAlign.iaBottomRight:
+        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Alpha);
+
+      TImageAlign.iaBottomLeft:
+        Canvas.Draw(R.Left, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Alpha);
+
+      TImageAlign.iaCenter:
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+
+      TImageAlign.iaLeft:
+        Canvas.Draw(R.Left, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+
+      TImageAlign.iaRight:
+        Canvas.Draw(R.Left + R.Width - OverlayBitmap.Width, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+
+      TImageAlign.iaTop:
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top, OverlayBitmap, Alpha);
+
+      TImageAlign.iaBottom:
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height - OverlayBitmap.Height, OverlayBitmap, Alpha);
+    end;
+
+//    case FOverlayAlign of
+//      iaLeft: ContentRect.Left := R.Left + OverlayBitmap.Width + OverlayMargins.Right;
+//      iaRight: ContentRect.Right := R.Right - OverlayBitmap.Width - OverlayMargins.Left;
+//      iaTop: ContentRect.Top := R.Top + OverlayBitmap.Height - OverlayMargins.Bottom;
+//      iaBottom: ContentRect.Bottom := R.Bottom - OverlayBitmap.Height - OverlayMargins.Top;
+//    end;
+  end;
+end;
+
+function TStyleNinePath.IsStyleStored: Boolean;
+begin
+  Result := not FIsDefaultStyle;
+end;
+
+procedure TStyleNinePath.LoadDefaultStyle;
+var
+  StylePrefix: string;
+  Name: string;
+  I: Integer;
+  Data: PTypeData;
+  Info: PTypeInfo;
+  PropList: PPropList;
+  Png: TPngImage;
+  hInstance: HINST;
+begin
+  if not FIsDefaultStyle then
+    Exit;
+
+//  BeginUpdate;
+//  try
+//    AssignDefaultStyle;
+//  finally
+//    EndUpdate;
+//  end;
+
+  StylePrefix := GetStylePrefix;
+
+  hInstance := FindClassHInstance(Self.ClassType);
+  Data := GetTypeData(Self.ClassType.ClassInfo);
+  GetMem(PropList, Data.PropCount * SizeOf(Pointer));
+  BeginUpdate;
+  try
+    GetPropInfos(ClassType.ClassInfo, PropList);
+    for I := 0 to Data.PropCount - 1 do
+    begin
+      if IsStoredProp(Self, PropList[i]) then
+      begin
+        Info := PropList[i]^.PropType^;
+        if (Info^.Kind = tkClass) and (string(Info^.Name) = TPngImage.ClassName) then
+        begin
+          Name := UpperCase(StylePrefix + '_' + string(PropList[i]^.Name));
+          if FindResource(hInstance, PChar(Name), RT_RCDATA) <> 0 then
+          begin
+            Png := TPngImage(GetObjectProp(Self, string(PropList[i]^.Name)));
+            Png.LoadFromResourceName(hInstance, PChar(Name));
+          end;
+        end;
+      end;
+    end;
+  finally
+    FreeMem(PropList, Data.PropCount * SizeOf(Pointer));
+    EndUpdate;
+  end;
+  UpdateImages;
+  for I := 0 to ImageList.Count - 1 do
+      if ImageList[I] <> nil then
+      begin
+        ImageList[I].Free;
+        ImageList[I] := nil;
+      end;
+end;
+
+function TStyleNinePath.RequestBitmap(Index: Integer): TBitmap;
+begin
+  if BitmapList[Index] = nil then
+  begin
+    BitmapList[Index] := TBitmap.Create;
+    BitmapList[Index].PixelFormat := pf32bit;
+    BitmapList[Index].AlphaFormat := afDefined;
+
+    if (ImageList[Index] <> nil) and not ImageList[Index].Empty then
+      BitmapList[Index].Assign(ImageList[Index]);
+  end;
+
+  Result := BitmapList[Index];
+end;
+
+function TStyleNinePath.RequestImage(Index: Integer): TPngImage;
+begin
+  if ImageList[Index] = nil then
+  begin
+    ImageList[Index] := TPngImage.Create;
+    ImageList[Index].OnChange := ImageChange;
+  end;
+
+  Result := ImageList[Index];
+end;
+
+function TStyleNinePath.RequestOverlayBitmap(Index: Integer): TBitmap;
+begin
+  result := RequestBitmap(Index + StateCount);
+end;
+
+procedure TStyleNinePath.SetDefaultStyle(const Value: Boolean);
+begin
+  if Value <> FIsDefaultStyle then
+  begin
+    FIsDefaultStyle := Value;
+    if Value then
+    begin
+      Clear;
+      BeginUpdate;
+      try
+        AssignDefaultStyle;
+      finally
+        EndUpdate;
+      end;
+      LoadDefaultStyle;
+    end;
+  end;
+end;
+
+procedure TStyleNinePath.SetImage(const Index: Integer; const Image: TPngImage);
+begin
+  RequestImage(Index).Assign(Image);
+  ImageChange(RequestImage(Index));
+  // Change;
+end;
+
+procedure TStyleNinePath.SetImageMargins(const Value: TImageMargins);
+begin
+  FImageMargins.Assign(Value);
+end;
+
+
+procedure TStyleNinePath.SetImageMode(const Value: TStretchMode);
+begin
+  if FImageMode <> Value then
+  begin
+    FImageMode := Value;
+    Change;
+  end;
+end;
+
+procedure TStyleNinePath.SetOverlayAlign(const Value: TImageAlign);
+begin
+  if FOverlayAlign <> Value then
+  begin
+    FOverlayAlign := Value;
+    Change;
+  end;
+end;
+
+procedure TStyleNinePath.SetOverlay(const Index: Integer; const Image: TPngImage);
+begin
+  RequestImage(Index + StateCount).Assign(Image);
+  ImageChange(RequestImage(Index));
+  // Change;
+end;
+
+procedure TStyleNinePath.SetOverlayMargins(const Value: TImageMargins);
+begin
+  FOverlayMargins.Assign(Value);
+end;
+
+procedure TStyleNinePath.UpdateImages;
+var
+  I: Integer;
+begin
+  for I := 0 to ImageList.Count - 1 do
+  begin
+    if (ImageList[I] <> nil)and not ImageList[I].Empty then
+    begin
+      RequestBitmap(I).Assign(ImageList[I]);
+    end;
   end;
 end;
 

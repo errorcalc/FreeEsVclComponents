@@ -32,10 +32,10 @@ object MainForm: TMainForm
       Top = 11
       Width = 621
       Height = 342
-      ParentBackground = False
-      ParentBufferedChildrens = False
       BufferedChildrens = True
       IsDrawHelper = True
+      ParentBackground = False
+      ParentBufferedChildrens = False
       ParentDoubleBuffered = True
       TabOrder = 0
       object EsLabelLayout1: TEsLabelLayout
@@ -43,7 +43,6 @@ object MainForm: TMainForm
         Top = 3
         Width = 201
         Height = 336
-        IsDrawHelper = True
         ImageMargins.Left = 4
         ImageMargins.Top = 4
         ImageMargins.Right = 4
@@ -71,8 +70,9 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
+        IsDrawHelper = True
         TabOrder = 0
-        TextLayout = tlTop
+        TextLayout = vlTop
         Caption = 'Main'
         DesignSize = (
           201
@@ -194,7 +194,6 @@ object MainForm: TMainForm
         Top = 3
         Width = 201
         Height = 336
-        IsDrawHelper = True
         ImageMargins.Left = 4
         ImageMargins.Top = 4
         ImageMargins.Right = 4
@@ -222,8 +221,9 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
+        IsDrawHelper = True
         TabOrder = 1
-        TextLayout = tlTop
+        TextLayout = vlTop
         Caption = 'Visual'
         DesignSize = (
           201
@@ -346,7 +346,6 @@ object MainForm: TMainForm
         Top = 3
         Width = 201
         Height = 336
-        IsDrawHelper = True
         ImageMargins.Left = 4
         ImageMargins.Top = 4
         ImageMargins.Right = 4
@@ -374,8 +373,9 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
+        IsDrawHelper = True
         TabOrder = 2
-        TextLayout = tlTop
+        TextLayout = vlTop
         Caption = 'Animation'
         DesignSize = (
           201

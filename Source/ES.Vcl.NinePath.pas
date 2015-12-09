@@ -42,8 +42,8 @@ type
     // text
     function GetTextAlignment: TAlignment;
     procedure SetTextAlignment(const Value: TAlignment);
-    function GetTextLayout: TTextLayout;
-    procedure SetTextLayout(const Value: TTextLayout);
+    function GetTextLayout: TVertLayout;
+    procedure SetTextLayout(const Value: TVertLayout);
     function GetTextDistance: Integer;
     procedure SetTextDistance(const Value: Integer);
     function GetTextMultiline: Boolean;
@@ -62,7 +62,7 @@ type
     {$endif}
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
-    property TextLayout: TTextLayout read GetTextLayout write SetTextLayout default tlCenter;
+    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default vlCenter;
     property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
@@ -178,8 +178,8 @@ type
     procedure SetTextAlignment(const Value: TAlignment);
     procedure SetTextMultiline(const Value: Boolean);
     function GetTextMultiline: Boolean;
-    function GetTextLayout: TTextLayout;
-    procedure SetTextLayout(const Value: TTextLayout);
+    function GetTextLayout: TVertLayout;
+    procedure SetTextLayout(const Value: TVertLayout);
     procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     // Padding
     procedure SetPaddingWithImage(const Value: Boolean);
@@ -213,7 +213,7 @@ type
     property Padding: TPadding read GetPadding write SetPadding stored IsPaddingStored;
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
-    property TextLayout: TTextLayout read GetTextLayout write SetTextLayout default tlCenter;
+    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default vlCenter;
     property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
@@ -398,7 +398,7 @@ begin
   Result := NinePath.TextDistance;
 end;
 
-function TEsNinePathImage.GetTextLayout: TTextLayout;
+function TEsNinePathImage.GetTextLayout: TVertLayout;
 begin
   Result := NinePath.TextLayout;
 end;
@@ -494,7 +494,7 @@ begin
   NinePath.TextDistance := Value;
 end;
 
-procedure TEsNinePathImage.SetTextLayout(const Value: TTextLayout);
+procedure TEsNinePathImage.SetTextLayout(const Value: TVertLayout);
 begin
   NinePath.TextLayout := Value;
 end;
@@ -613,7 +613,7 @@ begin
   Result := NinePath.TextDistance;
 end;
 
-function TEsCustomImageLayout.GetTextLayout: TTextLayout;
+function TEsCustomImageLayout.GetTextLayout: TVertLayout;
 begin
   Result := NinePath.TextLayout;
 end;
@@ -681,7 +681,7 @@ begin
   NinePath.TextDistance := Value;
 end;
 
-procedure TEsCustomImageLayout.SetTextLayout(const Value: TTextLayout);
+procedure TEsCustomImageLayout.SetTextLayout(const Value: TVertLayout);
 begin
   NinePath.TextLayout := Value;
 end;

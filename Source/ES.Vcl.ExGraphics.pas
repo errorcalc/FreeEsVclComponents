@@ -22,6 +22,14 @@ uses
   Windows, Graphics, Themes;
 
 type
+//  {$ifdef VER210UP}
+//  {$scopedenums on}
+//  {$endif}
+  TStretchMode = (smNormal, smTile, smHorzFit, smVertFit, smHorzTile, smVertTile, smHorzTileFit, smVertTileFit);
+//  {$ifdef VER210UP}
+//  {$scopedenums off}
+//  {$endif}
+
   {$ifdef VER210UP}
   TEsCanvasHelper = class helper for TCanvas
   {$else}
@@ -33,6 +41,7 @@ type
 //    procedure StretchDraw(DestRect, ClipRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte); overload;
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
     procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte); overload;
+    procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); overload;
     {$ifdef VER230UP}
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
     {$endif}
@@ -354,5 +363,216 @@ end;
 //  AlphaBlend(Handle, DestRect.Left, DestRect.Top, DestRect.Right - DestRect.Left, DestRect.Bottom - DestRect.Top,
 //    Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, SrcRect.Right - SrcRect.Left, SrcRect.Bottom - SrcRect.Top, BF);
 //end;
+
+function ValidRect(Rect: TRect): Boolean;
+begin
+  Result := (RectWidth(Rect) <> 0)and(RectHeight(Rect) <> 0);
+end;
+
+// REFACTOR ME PLEASE !!!
+// TOOOOOOOOOO LONG PROCEDURE
+// FFFFUUUUU!!!!1111
+procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
+  .DrawNinePath(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
+  Alpha: Byte);
+var
+  D, S: TRect;
+  IntD, IntS: TRect;
+  W, H, X, Y: Integer;
+begin
+  if (Dest.Left >= Dest.Right)or(Dest.Top >= Dest.Bottom) then
+    exit;
+
+  if (Mode = TStretchMode.smHorzTileFit) or (Mode = TStretchMode.smHorzFit) then
+  begin
+    H := Bitmap.Height;
+    Y := (Dest.Top + Dest.Bottom) div 2;
+    Dest := Rect(Dest.Left, Y - H div 2, Dest.Right, Y + H - (H div 2));
+  end else
+  if (Mode = TStretchMode.smVertTileFit) or (Mode = TStretchMode.smVertFit) then
+  begin
+    W := Bitmap.Width;
+    X := (Dest.Left + Dest.Right) div 2;
+    Dest := Rect(X - W div 2, Dest.Top, X + W - (W div 2), Dest.Bottom);
+  end;
+
+  if (Mode = TStretchMode.smNormal) or (Mode = TStretchMode.smHorzFit) or (Mode = TStretchMode.smVertFit) then
+  begin
+    DrawNinePath(Dest, Bounds, Bitmap, Alpha);
+    Exit;
+  end;
+
+  IntD := Rect(Dest.Left + Bounds.Left, Dest.Top + Bounds.Top,
+    Dest.Right - Bounds.Right, Dest.Bottom - Bounds.Bottom);
+  IntS := Rect(Bounds.Left, Bounds.Top, Bitmap.Width - Bounds.Right, Bitmap.Height - Bounds.Bottom);
+  // correct!
+  if IntD.Left > Dest.Right then
+    IntD.Left := Dest.Right;
+  if IntD.Top > Dest.Bottom then
+    IntD.Top := Dest.Bottom;
+  if IntD.Right < Dest.Left then
+    IntD.Right := Dest.Left;
+  if IntD.Bottom < Dest.Top then
+    IntD.Bottom := Dest.Top;
+
+  if (Mode = TStretchMode.smHorzTile) or (Mode = TStretchMode.smHorzTileFit) then
+  begin
+    // Left Top
+    D := Rect(Dest.Left, Dest.Top, IntD.Left, IntD.Top);
+    S := Rect(0, 0, IntS.Left, IntS.Top);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Left Center
+    D := Rect(Dest.Left, IntD.Top, IntD.Left, IntD.Bottom);
+    S := Rect(0, IntS.Top, IntS.Left, IntS.Bottom);
+    StretchDraw(D, S, Bitmap, Alpha);
+    // Left Bottom
+    D := Rect(Dest.Left, IntD.Bottom, IntD.Left, Dest.Bottom);
+    S := Rect(0, IntS.Bottom, IntS.Left, Bitmap.Height);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Right Bottom
+    D := Rect(IntD.Right, IntD.Bottom, Dest.Right, Dest.Bottom);
+    S := Rect(IntS.Right, IntS.Bottom, Bitmap.Width, Bitmap.Height);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Right Center
+    D := Rect(IntD.Right, IntD.Top, Dest.Right, IntD.Bottom);
+    S := Rect(IntS.Right, IntS.Top, Bitmap.Width, IntS.Bottom);
+    StretchDraw(D, S, Bitmap, Alpha);
+    // Right Top
+    D := Rect(IntD.Right, Dest.Top, Dest.Right, IntD.Top);
+    S := Rect(IntS.Right, 0, Bitmap.Width, IntS.Top);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // [ I I I ]
+    X := IntD.Left;
+    W := RectWidth(IntS);
+    if W > 0 then
+      while X + W <= IntD.Right do
+      begin
+        // up
+        D := Rect(X, Dest.Top, X + W, IntD.Top);
+        S := Rect(IntS.Left, 0, IntS.Right, IntS.Top);
+        if ValidRect(D) then
+          StretchDraw(D, S, Bitmap, Alpha);
+        // center
+        D := Rect(X, IntD.Top, X + W, IntD.Bottom);
+        S := Rect(IntS.Left, IntS.Top, IntS.Right, IntS.Bottom);
+        StretchDraw(D, S, Bitmap, Alpha);
+        // down
+        D := Rect(X, IntD.Bottom, X + W, Dest.Bottom);
+        S := Rect(IntS.Left, IntS.Bottom, IntS.Right, Bitmap.Height);
+        if ValidRect(D) then
+          StretchDraw(D, S, Bitmap, Alpha);
+        X := X + W;
+      end;
+    // cut up
+    D := Rect(X, Dest.Top, IntD.Right, IntD.Top);
+    S := Rect(IntS.Left, 0, IntS.Left + (IntD.Right - X), IntS.Top);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // cut center
+    D := Rect(X, IntD.Top, IntD.Right, IntD.Bottom);
+    S := Rect(IntS.Left, IntS.Top, IntS.Left + (IntD.Right - X), IntS.Bottom);
+    StretchDraw(D, S, Bitmap, Alpha);
+    // cut down
+    D := Rect(X, IntD.Bottom, IntD.Right, Dest.Bottom);
+    S := Rect(IntS.Left, IntS.Bottom, IntS.Left + (IntD.Right - X), Bitmap.Height);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+  end else
+  if (Mode = TStretchMode.smVertTile) or (Mode = TStretchMode.smVertTileFit) then
+  begin
+    // Top Left
+    D := Rect(Dest.Left, Dest.Top, IntD.Left, IntD.Top);
+    S := Rect(0, 0, IntS.Left, IntS.Top);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Top Right
+    D := Rect(IntD.Right, Dest.Top, Dest.Right, IntD.Top);
+    S := Rect(IntS.Right, 0, Bitmap.Width, IntS.Top);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Top Center
+    D := Rect(IntD.Left, Dest.Top, IntD.Right, IntD.Top);
+    S := Rect(IntS.Left, 0, IntS.Right, IntS.Top);
+    StretchDraw(D, S, Bitmap, Alpha);
+    // Bottom Left
+    D := Rect(Dest.Left, IntD.Bottom, IntD.Left, Dest.Bottom);
+    S := Rect(0, IntS.Bottom, IntS.Left, Bitmap.Height);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // Bottom Center
+    D := Rect(IntD.Left, IntD.Bottom, IntD.Right, Dest.Bottom);
+    S := Rect(IntS.Left, IntS.Bottom, IntS.Right, Bitmap.Height);
+    StretchDraw(D, S, Bitmap, Alpha);
+    // Bottom Right
+    D := Rect(IntD.Right, IntD.Bottom, Dest.Right, Dest.Bottom);
+    S := Rect(IntS.Right, IntS.Bottom, Bitmap.Width, Bitmap.Height);
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // [ I I I ]
+    Y := IntD.Top;
+    H := RectHeight(IntS);
+    if H > 0 then
+      while Y + H <= IntD.Bottom do
+      begin
+        // left
+        D := Rect(Dest.Left, Y, IntD.Left, Y + H);
+        S := Rect(0, IntS.Top, IntS.Left, IntS.Bottom);
+        if ValidRect(D) then
+          StretchDraw(D, S, Bitmap, Alpha);
+        // center
+        D := Rect(IntD.Left, Y, IntD.Right, Y + H);
+        S := Rect(IntS.Left, IntS.Top, IntS.Right, IntS.Bottom);
+        StretchDraw(D, S, Bitmap, Alpha);
+        // right
+        D := Rect(IntD.Right, Y, Dest.Right, Y + H);
+        S := Rect(IntS.Right, IntS.Top, Bitmap.Width, IntS.Bottom);
+        if ValidRect(D) then
+          StretchDraw(D, S, Bitmap, Alpha);
+        Y := Y + H;
+      end;
+    // cut left
+    D := Rect(Dest.Left, Y, IntD.Left, IntD.Bottom);
+    S := Rect(0, IntS.Top, IntS.Left, IntS.Top + (IntD.Bottom - Y));
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+    // cut center
+    D := Rect(IntD.Left, Y, IntD.Right, IntD.Bottom);
+    S := Rect(IntS.Left, IntS.Top, IntS.Right, IntS.Top + (IntD.Bottom - Y));
+    StretchDraw(D, S, Bitmap, Alpha);
+    // cut right
+    D := Rect(IntD.Right, Y, Dest.Right, IntD.Bottom);
+    S := Rect(IntS.Right, IntS.Top, Bitmap.Width, IntS.Top + (IntD.Bottom - Y));
+    if ValidRect(D) then
+      StretchDraw(D, S, Bitmap, Alpha);
+  end else
+  if (Mode = TStretchMode.smTile) then
+  begin
+    if (Bitmap.Width <> 0)and(Bitmap.Height <> 0) then
+    begin
+      Y := Dest.Top;
+      repeat
+        if Y + Bitmap.Height <= Dest.Bottom then
+          H := Bitmap.Height
+        else
+          H := Dest.Bottom - Y;
+        X := Dest.Left;
+        repeat
+          if X + Bitmap.Width <= Dest.Right  then
+            W := Bitmap.Width
+          else
+            W := Dest.Right - X;
+
+          StretchDraw(Rect(X, Y, X + W, Y + H), Rect(0, 0, W, H), Bitmap, Alpha);
+          X := X + Bitmap.Width;
+        until X >= Dest.Right;
+        Y := Y + Bitmap.Height;
+      until Y >= Dest.Bottom;
+    end;
+  end;
+end;
 
 end.

@@ -19,8 +19,7 @@ unit ES.Vcl.Utils;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls,
-  Messages, Graphics, Themes;
+  Windows, SysUtils, Classes, Controls, Messages, Graphics, Themes;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -30,6 +29,9 @@ function IsStyledBorderControl(Control: TControl): Boolean;
 function ClientColorToRgb(Color: TColor; Control: TControl = nil): TColor;
 function BorderColorToRgb(Color: TColor; Control: TControl = nil): TColor;
 function FontColorToRgb(Color: TColor; Control: TControl = nil): TColor;
+
+// Auto assigning for TPersistent
+function AssignPersistent(Dest, Src: TPersistent): Boolean;
 
 implementation
 
@@ -114,6 +116,45 @@ begin
   else
   {$endif}
     Result := ColorToRGB(Color);
+end;
+
+type
+  TReaderHack = class(TReader);
+function AssignPersistent(Dest, Src: TPersistent): Boolean;
+var
+  Writer: TWriter;
+  Reader: TReaderHack;
+  MemStream: TMemoryStream;
+begin
+  Result := False;
+
+  if Dest.ClassType = Src.ClassType then
+  begin
+    MemStream := nil;
+    Writer := nil;
+    Reader := nil;
+    try
+      MemStream := TMemoryStream.Create;
+
+      Writer := TWriter.Create(MemStream, 512);
+      try
+        Writer.WriteProperties(Src);
+        Writer.WriteListEnd;
+      finally
+        FreeAndNil(Writer);
+      end;
+
+      MemStream.Position := 0;
+      Reader := TReaderHack.Create(MemStream, 512);
+      while not Reader.EndOfList do
+        Reader.ReadProperty(Dest);
+      Reader.ReadListEnd;
+    finally
+      MemStream.Free;
+      Reader.Free;
+    end;
+    Result := True;// ok
+  end;
 end;
 
 end.
