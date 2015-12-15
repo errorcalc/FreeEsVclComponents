@@ -214,9 +214,15 @@ begin
   end;
 end;
 
+function ValidRect(Rect: TRect): Boolean;
+begin
+  Result := (RectWidth(Rect) > 0)and(RectHeight(Rect) > 0);
+end;
+
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
   .DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte);
 var
+  o: Integer;
   D, S: TRect;
   IntD, IntS: TRect;
 begin
@@ -228,6 +234,21 @@ begin
 
   IntS := Rect(Bounds.Left, Bounds.Top, Bitmap.Width - Bounds.Right, Bitmap.Height - Bounds.Bottom);
 
+  // cut right
+  if IntD.Right < IntD.Left then
+  begin
+    o := IntD.Left - IntD.Right;
+    IntD.Right := IntD.Right + o;
+    IntS.Right := IntS.Right + o;
+  end;
+  // cut bottom
+  if IntD.Bottom < IntD.Top then
+  begin
+    o := IntD.Top - IntD.Bottom;
+    IntD.Bottom := IntD.Bottom + o;
+    IntS.Bottom := IntS.Bottom + o;
+  end;
+
   // correct!
   if IntD.Left > Dest.Right then
     IntD.Left := Dest.Right;
@@ -237,6 +258,7 @@ begin
     IntD.Right := Dest.Left;
   if IntD.Bottom < Dest.Top then
     IntD.Bottom := Dest.Top;
+
 
   //   ---
   //  |*  |
@@ -253,7 +275,8 @@ begin
   //   ---
   D := Rect(Dest.Left, IntD.Top, IntD.Left, IntD.Bottom);
   S := Rect(0, IntS.Top, IntS.Left, IntS.Bottom);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |   |
   //  |   |
@@ -261,7 +284,8 @@ begin
   //   ---
   D := Rect(Dest.Left, IntD.Bottom, IntD.Left, Dest.Bottom);
   S := Rect(0, IntS.Bottom, IntS.Left, Bitmap.Height);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |   |
   //  |   |
@@ -269,7 +293,8 @@ begin
   //   ---
   D := Rect(IntD.Left, IntD.Bottom, IntD.Right, Dest.Bottom);
   S := Rect(IntS.Left, IntS.Bottom, IntS.Right, Bitmap.Height);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |   |
   //  |   |
@@ -277,7 +302,8 @@ begin
   //   ---
   D := Rect(IntD.Right, IntD.Bottom, Dest.Right, Dest.Bottom);
   S := Rect(IntS.Right, IntS.Bottom, Bitmap.Width, Bitmap.Height);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |   |
   //  |  *|
@@ -285,7 +311,8 @@ begin
   //   ---
   D := Rect(IntD.Right, IntD.Top, Dest.Right, IntD.Bottom);
   S := Rect(IntS.Right, IntS.Top, Bitmap.Width, IntS.Bottom);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |  *|
   //  |   |
@@ -293,7 +320,8 @@ begin
   //   ---
   D := Rect(IntD.Right, Dest.Top, Dest.Right, IntD.Top);
   S := Rect(IntS.Right, 0, Bitmap.Width, IntS.Top);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  | * |
   //  |   |
@@ -301,7 +329,8 @@ begin
   //   ---
   D := Rect(IntD.Left, Dest.Top, IntD.Right, IntD.Top);
   S := Rect(IntS.Left, 0, IntS.Right, IntS.Top);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
   //   ---
   //  |   |
   //  | * |
@@ -309,7 +338,8 @@ begin
   //   ---
   D := Rect(IntD.Left, IntD.Top, IntD.Right, IntD.Bottom);
   S := Rect(IntS.Left, IntS.Top, IntS.Right, IntS.Bottom);
-  StretchDraw(D, S, Bitmap, Alpha);
+  if ValidRect(D) then
+    StretchDraw(D, S, Bitmap, Alpha);
 end;
 
 {$ifdef VER230UP}
@@ -364,11 +394,6 @@ end;
 //    Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, SrcRect.Right - SrcRect.Left, SrcRect.Bottom - SrcRect.Top, BF);
 //end;
 
-function ValidRect(Rect: TRect): Boolean;
-begin
-  Result := (RectWidth(Rect) <> 0)and(RectHeight(Rect) <> 0);
-end;
-
 // REFACTOR ME PLEASE !!!
 // TOOOOOOOOOO LONG PROCEDURE
 // FFFFUUUUU!!!!1111
@@ -376,6 +401,7 @@ procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
   .DrawNinePath(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
   Alpha: Byte);
 var
+  o: Integer;
   D, S: TRect;
   IntD, IntS: TRect;
   W, H, X, Y: Integer;
@@ -405,6 +431,22 @@ begin
   IntD := Rect(Dest.Left + Bounds.Left, Dest.Top + Bounds.Top,
     Dest.Right - Bounds.Right, Dest.Bottom - Bounds.Bottom);
   IntS := Rect(Bounds.Left, Bounds.Top, Bitmap.Width - Bounds.Right, Bitmap.Height - Bounds.Bottom);
+
+  // cut right
+  if IntD.Right < IntD.Left then
+  begin
+    o := IntD.Left - IntD.Right;
+    IntD.Right := IntD.Right + o;
+    IntS.Right := IntS.Right + o;
+  end;
+  // cut bottom
+  if IntD.Bottom < IntD.Top then
+  begin
+    o := IntD.Top - IntD.Bottom;
+    IntD.Bottom := IntD.Bottom + o;
+    IntS.Bottom := IntS.Bottom + o;
+  end;
+
   // correct!
   if IntD.Left > Dest.Right then
     IntD.Left := Dest.Right;

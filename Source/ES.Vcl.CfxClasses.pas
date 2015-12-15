@@ -110,6 +110,16 @@ type
     procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte); reintroduce; overload;
   end;
 
+  TFixPngImage = class(TPngImage)
+  protected
+    procedure SetWidth(Value: Integer); override;
+    procedure SetHeight(Value: Integer); override;
+  public
+    procedure LoadFromFile(const Filename: String); override;
+    procedure LoadFromStream(Stream: TStream); override;
+    procedure LoadFromClipboardFormat(AFormat: Word; AData: THandle; APalette: HPalette); override;
+    procedure Assign(Source: TPersistent); override;
+  end;
   // Internal use only
   TStyleNinePath = class(TPersistent)
   private
@@ -883,6 +893,12 @@ end;
 function TStyleNinePath.GetImage(const Index: Integer): TPngImage;
 begin
   Result := RequestImage(Index);
+  // TPngImage not support OnChange event, because we need delete cache in Getter :(
+//  if (BitmapList[Index] <> nil) then
+//  begin
+//    BitmapList[Index].Free;
+//    BitmapList[Index] := nil;
+//  end;
 end;
 
 function TStyleNinePath.GetOverlayBitmap(Index: Integer): TBitmap;
@@ -895,6 +911,12 @@ end;
 function TStyleNinePath.GetOverlay(const Index: Integer): TPngImage;
 begin
   Result := RequestImage(Index + StateCount);
+  // TPngImage not support OnChange event, because we need delete cache in Getter :(
+//  if (BitmapList[Index + StateCount] <> nil) then
+//  begin
+//    BitmapList[Index + StateCount].Free;
+//    BitmapList[Index + StateCount] := nil;
+//  end;
 end;
 
 function TStyleNinePath.GetStylePrefix: string;
@@ -1123,7 +1145,7 @@ function TStyleNinePath.RequestImage(Index: Integer): TPngImage;
 begin
   if ImageList[Index] = nil then
   begin
-    ImageList[Index] := TPngImage.Create;
+    ImageList[Index] := TFixPngImage.Create;
     ImageList[Index].OnChange := ImageChange;
   end;
 
@@ -1157,7 +1179,7 @@ end;
 procedure TStyleNinePath.SetImage(const Index: Integer; const Image: TPngImage);
 begin
   RequestImage(Index).Assign(Image);
-  ImageChange(RequestImage(Index));
+  // ImageChange(RequestImage(Index));
   // Change;
 end;
 
@@ -1188,7 +1210,7 @@ end;
 procedure TStyleNinePath.SetOverlay(const Index: Integer; const Image: TPngImage);
 begin
   RequestImage(Index + StateCount).Assign(Image);
-  ImageChange(RequestImage(Index));
+  // ImageChange(RequestImage(Index));
   // Change;
 end;
 
@@ -1435,6 +1457,44 @@ begin
     FStartValue := Value;
 //    Process;
   end;
+end;
+
+{ TTHackPngImage }
+
+procedure TFixPngImage.Assign(Source: TPersistent);
+begin
+  inherited;
+  Changed(Self);
+end;
+
+procedure TFixPngImage.LoadFromClipboardFormat(AFormat: Word; AData: THandle; APalette: HPalette);
+begin
+  inherited;
+  Changed(Self);
+end;
+
+procedure TFixPngImage.LoadFromFile(const Filename: String);
+begin
+  inherited;
+  Changed(Self);
+end;
+
+procedure TFixPngImage.LoadFromStream(Stream: TStream);
+begin
+  inherited;
+  Changed(Self);
+end;
+
+procedure TFixPngImage.SetHeight(Value: Integer);
+begin
+  inherited;
+  Changed(Self);
+end;
+
+procedure TFixPngImage.SetWidth(Value: Integer);
+begin
+  inherited;
+  Changed(Self);
 end;
 
 end.

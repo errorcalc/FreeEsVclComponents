@@ -33,6 +33,11 @@ function FontColorToRgb(Color: TColor; Control: TControl = nil): TColor;
 // Auto assigning for TPersistent
 function AssignPersistent(Dest, Src: TPersistent): Boolean;
 
+procedure SerializeToStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+procedure SerializeToFile(Obj: TPersistent; FileName: string; Name: string = '');
+procedure DeserializeFromStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+procedure DeserializeFromFile(Obj: TPersistent; FileName: string; Name: string = '');
+
 implementation
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
@@ -156,5 +161,89 @@ begin
     Result := True;// ok
   end;
 end;
+
+type
+  TEsSerializer = class(TComponent)
+  private
+    FObj: TPersistent;
+  published
+    property Obj: TPersistent read FObj write FObj;
+  end;
+
+procedure SerializeToStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+var
+  Component: TEsSerializer;
+begin
+  Component := TEsSerializer.Create(nil);
+  try
+    Component.Obj := Obj;
+    if Name <> '' then
+      Component.Name := Name
+    else
+      Component.Name := Obj.ClassName;
+    Stream.WriteComponent(Component);
+  finally
+    Component.Free;
+  end;
+end;
+
+procedure SerializeToFile(Obj: TPersistent; FileName: string; Name: string = '');
+var
+  FileStream: TFileStream;
+  Stream: TMemoryStream;
+begin
+  Stream := TMemoryStream.Create;
+  try
+    SerializeToStream(Obj, Stream, Name);
+    FileStream := TFileStream.Create(FileName, fmCreate);
+    try
+      Stream.Seek(0, soFromBeginning);
+      ObjectBinaryToText(Stream, FileStream);
+    finally
+      FileStream.Free;
+    end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure DeserializeFromStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+var
+  Component: TEsSerializer;
+begin
+  Component := TEsSerializer.Create(nil);
+  try
+    Component.Obj := Obj;
+    if Name <> '' then
+      Component.Name := Name
+    else
+      Component.Name := Obj.ClassName;
+    Stream.ReadComponent(Component);
+  finally
+    Component.Free;
+  end;
+end;
+
+procedure DeserializeFromFile(Obj: TPersistent; FileName: string; Name: string = '');
+var
+  FileStream: TFileStream;
+  Stream: TMemoryStream;
+begin
+  FileStream := TFileStream.Create(FileName, fmOpenRead);
+  try
+    Stream := TMemoryStream.Create;
+    try
+      ObjectTextToBinary(FileStream, Stream);
+      Stream.Seek(0, soFromBeginning);
+      DeserializeFromStream(Obj, Stream, Name);
+    finally
+      Stream.Free;
+    end;
+  finally
+    FileStream.Free;
+  end;
+end;
+
+//--------------------------------------------------------------------------------------------------
 
 end.
