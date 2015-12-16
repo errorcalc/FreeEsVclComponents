@@ -124,10 +124,12 @@ begin
 end;
 
 type
-  TReaderHack = class(TReader);
+  TReaderHack = class(TReader) end;
+  TWriterHack = class(TWriter) end;
+
 function AssignPersistent(Dest, Src: TPersistent): Boolean;
 var
-  Writer: TWriter;
+  Writer: TWriterHack;
   Reader: TReaderHack;
   MemStream: TMemoryStream;
 begin
@@ -141,7 +143,7 @@ begin
     try
       MemStream := TMemoryStream.Create;
 
-      Writer := TWriter.Create(MemStream, 512);
+      Writer := TWriterHack.Create(MemStream, 512);
       try
         Writer.WriteProperties(Src);
         Writer.WriteListEnd;
