@@ -222,7 +222,7 @@ end;
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
   .DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte);
 var
-  o: Integer;
+  dx, dy: Integer;
   D, S: TRect;
   IntD, IntS: TRect;
 begin
@@ -231,33 +231,51 @@ begin
 
   IntD := Rect(Dest.Left + Bounds.Left, Dest.Top + Bounds.Top,
     Dest.Right - Bounds.Right, Dest.Bottom - Bounds.Bottom);
-
   IntS := Rect(Bounds.Left, Bounds.Top, Bitmap.Width - Bounds.Right, Bitmap.Height - Bounds.Bottom);
 
+  // needs to adjust to get rid of overdraw and painting was correct
+  // cut left
+  if Dest.Right - Dest.Left < Bounds.Left then
+  begin
+    dx := Bounds.Left - (Dest.Right - Dest.Left);
+    IntD.Left := IntD.Left - dx;
+    IntS.Left := IntS.Left - dx;
+    //
+    IntD.Right := Dest.Right;
+  end else
   // cut right
-  if IntD.Right < IntD.Left then
+  if Dest.Right - Dest.Left < Bounds.Left + Bounds.Right then
   begin
-    o := IntD.Left - IntD.Right;
-    IntD.Right := IntD.Right + o;
-    IntS.Right := IntS.Right + o;
+    dx := (Bounds.Left + Bounds.Right) - (Dest.Right - Dest.Left);
+    IntD.Right := IntD.Right + dx;
+    IntS.Right := IntS.Right + dx;
   end;
-  // cut bottom
-  if IntD.Bottom < IntD.Top then
+  // cut top
+  if Dest.Bottom - Dest.Top < Bounds.Top then
   begin
-    o := IntD.Top - IntD.Bottom;
-    IntD.Bottom := IntD.Bottom + o;
-    IntS.Bottom := IntS.Bottom + o;
+    dy := Bounds.Top - (Dest.Bottom - Dest.Top);
+    IntD.Top := IntD.Top - dy;
+    IntS.Top := IntS.Top - dy;
+    //
+    IntD.Bottom := Dest.Bottom;
+  end else
+  // cut bottom
+  if Dest.Bottom - Dest.Top < Bounds.Top + Bounds.Bottom then
+  begin
+    dy := (Bounds.Top + Bounds.Bottom) - (Dest.Bottom - Dest.Top);
+    IntD.Bottom := IntD.Bottom + dy;
+    IntS.Bottom := IntS.Bottom + dy;
   end;
 
-  // correct!
-  if IntD.Left > Dest.Right then
-    IntD.Left := Dest.Right;
-  if IntD.Top > Dest.Bottom then
-    IntD.Top := Dest.Bottom;
-  if IntD.Right < Dest.Left then
-    IntD.Right := Dest.Left;
-  if IntD.Bottom < Dest.Top then
-    IntD.Bottom := Dest.Top;
+//  // correct!
+//  if IntD.Left > Dest.Right then
+//    IntD.Left := Dest.Right;
+//  if IntD.Top > Dest.Bottom then
+//    IntD.Top := Dest.Bottom;
+//  if IntD.Right < Dest.Left then
+//    IntD.Right := Dest.Left;
+//  if IntD.Bottom < Dest.Top then
+//    IntD.Bottom := Dest.Top;
 
 
   //   ---
@@ -401,7 +419,7 @@ procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
   .DrawNinePath(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
   Alpha: Byte);
 var
-  o: Integer;
+  dx, dy: Integer;
   D, S: TRect;
   IntD, IntS: TRect;
   W, H, X, Y: Integer;
@@ -432,30 +450,49 @@ begin
     Dest.Right - Bounds.Right, Dest.Bottom - Bounds.Bottom);
   IntS := Rect(Bounds.Left, Bounds.Top, Bitmap.Width - Bounds.Right, Bitmap.Height - Bounds.Bottom);
 
+  // needs to adjust to get rid of overdraw and painting was correct
+  // cut left
+  if Dest.Right - Dest.Left < Bounds.Left then
+  begin
+    dx := Bounds.Left - (Dest.Right - Dest.Left);
+    IntD.Left := IntD.Left - dx;
+    IntS.Left := IntS.Left - dx;
+    //
+    IntD.Right := Dest.Right;
+  end else
   // cut right
-  if IntD.Right < IntD.Left then
+  if Dest.Right - Dest.Left < Bounds.Left + Bounds.Right then
   begin
-    o := IntD.Left - IntD.Right;
-    IntD.Right := IntD.Right + o;
-    IntS.Right := IntS.Right + o;
+    dx := (Bounds.Left + Bounds.Right) - (Dest.Right - Dest.Left);
+    IntD.Right := IntD.Right + dx;
+    IntS.Right := IntS.Right + dx;
   end;
-  // cut bottom
-  if IntD.Bottom < IntD.Top then
+  // cut top
+  if Dest.Bottom - Dest.Top < Bounds.Top then
   begin
-    o := IntD.Top - IntD.Bottom;
-    IntD.Bottom := IntD.Bottom + o;
-    IntS.Bottom := IntS.Bottom + o;
+    dy := Bounds.Top - (Dest.Bottom - Dest.Top);
+    IntD.Top := IntD.Top - dy;
+    IntS.Top := IntS.Top - dy;
+    //
+    IntD.Bottom := Dest.Bottom;
+  end else
+  // cut bottom
+  if Dest.Bottom - Dest.Top < Bounds.Top + Bounds.Bottom then
+  begin
+    dy := (Bounds.Top + Bounds.Bottom) - (Dest.Bottom - Dest.Top);
+    IntD.Bottom := IntD.Bottom + dy;
+    IntS.Bottom := IntS.Bottom + dy;
   end;
 
-  // correct!
-  if IntD.Left > Dest.Right then
-    IntD.Left := Dest.Right;
-  if IntD.Top > Dest.Bottom then
-    IntD.Top := Dest.Bottom;
-  if IntD.Right < Dest.Left then
-    IntD.Right := Dest.Left;
-  if IntD.Bottom < Dest.Top then
-    IntD.Bottom := Dest.Top;
+//  // correct!
+//  if IntD.Left > Dest.Right then
+//    IntD.Left := Dest.Right;
+//  if IntD.Top > Dest.Bottom then
+//    IntD.Top := Dest.Bottom;
+//  if IntD.Right < Dest.Left then
+//    IntD.Right := Dest.Left;
+//  if IntD.Bottom < Dest.Top then
+//    IntD.Bottom := Dest.Top;
 
   if (Mode = TStretchMode.smHorzTile) or (Mode = TStretchMode.smHorzTileFit) then
   begin
