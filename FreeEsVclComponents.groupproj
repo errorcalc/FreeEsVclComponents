@@ -6,7 +6,10 @@
         <Projects Include="EsVclCore.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="EsFreeVclComponents.dproj">
+        <Projects Include="FreeEsVclComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="FreeEsVclComponentsDesign.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -26,23 +29,32 @@
     <Target Name="EsVclCore:Make">
         <MSBuild Projects="EsVclCore.dproj" Targets="Make"/>
     </Target>
-    <Target Name="EsFreeVclComponents">
-        <MSBuild Projects="EsFreeVclComponents.dproj"/>
+    <Target Name="FreeEsVclComponents">
+        <MSBuild Projects="FreeEsVclComponents.dproj"/>
     </Target>
-    <Target Name="EsFreeVclComponents:Clean">
-        <MSBuild Projects="EsFreeVclComponents.dproj" Targets="Clean"/>
+    <Target Name="FreeEsVclComponents:Clean">
+        <MSBuild Projects="FreeEsVclComponents.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="EsFreeVclComponents:Make">
-        <MSBuild Projects="EsFreeVclComponents.dproj" Targets="Make"/>
+    <Target Name="FreeEsVclComponents:Make">
+        <MSBuild Projects="FreeEsVclComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FreeEsVclComponentsDesign">
+        <MSBuild Projects="FreeEsVclComponentsDesign.dproj"/>
+    </Target>
+    <Target Name="FreeEsVclComponentsDesign:Clean">
+        <MSBuild Projects="FreeEsVclComponentsDesign.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FreeEsVclComponentsDesign:Make">
+        <MSBuild Projects="FreeEsVclComponentsDesign.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="EsVclCore;EsFreeVclComponents"/>
+        <CallTarget Targets="EsVclCore;FreeEsVclComponents;FreeEsVclComponentsDesign"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="EsVclCore:Clean;EsFreeVclComponents:Clean"/>
+        <CallTarget Targets="EsVclCore:Clean;FreeEsVclComponents:Clean;FreeEsVclComponentsDesign:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="EsVclCore:Make;EsFreeVclComponents:Make"/>
+        <CallTarget Targets="EsVclCore:Make;FreeEsVclComponents:Make;FreeEsVclComponentsDesign:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

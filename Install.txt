@@ -1,5 +1,22 @@
+[ENG]
 1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
-2. Open "EsComponents" project group
+2. Open "FreeEsVclComponents.groupproj" project group
 3. Build "EsVclCore.bpl"
-4. Install "EsFreeVclComponents.bpl"
-5. Enjoy!
+4. Build "FreeEsVclComponents.bpl"
+5. Install "FreeEsVclComponentsDesign.bpl"
+6. Enjoy!
+
+WARNING:
+Activate FixLoadPng in "Source/FreeEsVclComponents.inc" if you are having problems downloading PNG images in the Design time, 
+because of some installed packages (ex: AlphaSkins)
+
+[RUS]
+1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path)
+2. Откройте группу проектов "FreeEsVclComponents.groupproj"
+3. Сделайте билд(Build) "EsVclCore.bpl"
+3. Сделайте билд(Build) "FreeEsVclComponents.bpl"
+5. Проинсталлируйте(Install) "FreeEsVclComponentsDesign.bpl"
+6. Пользуйтесь :) и пишите отзывы.
+
+ВНИМАНИЕ:
+Активируйте FixLoadPng в "Source/FreeEsVclComponents.inc", если у вас возникли проблемы с загрузкой изображений в формате PNG в Design Time, из-за некоторых установленных пакетов (к примеру AlphaSkins)

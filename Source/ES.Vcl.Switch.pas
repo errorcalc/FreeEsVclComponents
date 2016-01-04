@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                             ESComponents for VCL                             }
-{                              ErrorSoft(c) 2015                               }
+{                             FreeEsVclComponents                              }
+{                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
@@ -13,7 +13,7 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls,
-  WinApi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls, System.UITypes, ES.Vcl.CfxClasses;
+  Winapi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls, System.UITypes, ES.Vcl.CfxClasses;
 
 type
   // Only internal use
@@ -318,7 +318,7 @@ implementation
 
 uses
   System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.Vcl.ExGdiPlus, WinApi.DwmApi,
-  Vcl.Graphics, ES.Vcl.Utils, Vcl.ActnList, dialogs;
+  Vcl.Graphics, ES.Vcl.Utils, Vcl.ActnList;
 
 { TEsCustomSwitch }
 

@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                             ESComponents for VCL                             }
-{                            ErrorSoft(c) 2012-2015                            }
+{                             FreeEsVclComponents                              }
+{                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
@@ -12,7 +12,7 @@ unit ES.Vcl.Layouts;
 interface
 
 uses
-  WinApi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.Vcl.BaseControls;
+  Winapi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.Vcl.BaseControls;
 
 type
   TEsCustomLayout = class(TEsCustomControl)

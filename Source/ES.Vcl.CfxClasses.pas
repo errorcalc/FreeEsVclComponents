@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                             ESComponents for VCL                             }
-{                            ErrorSoft(c) 2012-2015                            }
+{                            ErrorSoft(c) 2012-2016                            }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }

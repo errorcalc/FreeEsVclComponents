@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                             ESComponents for VCL                             }
-{                              ErrorSoft(c) 2015                               }
+{                             FreeEsVclComponents                              }
+{                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
@@ -17,7 +17,7 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.ExtCtrls,
-  WinApi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls;
+  Winapi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls;
 
 type
   TPointType = (ptBox, ptCircle);

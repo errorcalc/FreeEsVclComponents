@@ -1,4 +1,4 @@
-package EsFreeVclComponents;
+package FreeEsVclComponents;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -26,6 +26,7 @@ package EsFreeVclComponents;
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'ErrorSoft Free Vcl Components'}
+{$RUNONLY}
 {$IMPLICITBUILD ON}
 
 requires
@@ -38,7 +39,6 @@ contains
   ES.Vcl.Switch in 'Source\ES.Vcl.Switch.pas',
   ES.Vcl.NinePath in 'Source\ES.Vcl.NinePath.pas',
   ES.Vcl.Layouts in 'Source\ES.Vcl.Layouts.pas',
-  ES.Vcl.Indicators in 'Source\ES.Vcl.Indicators.pas',
-  ES.Vcl.ControlsReg in 'Source\ES.Vcl.ControlsReg.pas';
+  ES.Vcl.Indicators in 'Source\ES.Vcl.Indicators.pas';
 
 end.
