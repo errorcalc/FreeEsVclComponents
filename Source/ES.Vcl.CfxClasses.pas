@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                             ESComponents for VCL                             }
-{                            ErrorSoft(c) 2012-2016                            }
+{                             FreeEsVclComponents                              }
+{                           ErrorSoft(c) 2012-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
@@ -186,6 +186,7 @@ type
     procedure LoadDefaultStyle; dynamic;
     procedure BeginUpdate;
     procedure EndUpdate;
+    function IsPresented(Index: Integer): Boolean;
     //
     property Control: TControl read FControl write FControl;
     property Bitmap[Index: Integer]: TBitmap read GetBitmap;
@@ -1063,6 +1064,26 @@ begin
   end;
 end;
 
+function TStyleNinePath.IsPresented(Index: Integer): Boolean;
+begin
+  Result := False;
+
+  if (Index < 0) or (Index >= StateCount) then
+    exit;
+
+  if (ImageList[Index] <> nil) and (not ImageList[Index].Empty) then
+    Result := True;
+
+  if (ImageList[Index + StateCount] <> nil) and (not ImageList[Index + StateCount].Empty) then
+    Result := True;
+
+  if (BitmapList[Index] <> nil) and (not BitmapList[Index].Empty) then
+    Result := True;
+
+  if (BitmapList[Index + StateCount] <> nil) and (not BitmapList[Index + StateCount].Empty) then
+    Result := True;
+end;
+
 function TStyleNinePath.IsStyleStored: Boolean;
 begin
   Result := not FIsDefaultStyle;
@@ -1459,7 +1480,7 @@ begin
   end;
 end;
 
-{ TTHackPngImage }
+{ TFixPngImage }
 
 procedure TFixPngImage.Assign(Source: TPersistent);
 begin
