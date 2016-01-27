@@ -43,6 +43,14 @@ type
     property Bottom default 0;
   end;
 
+  TStyleMargins = class(TImageMargins)
+  published
+    property Left nodefault;
+    property Top nodefault;
+    property Right nodefault;
+    property Bottom nodefault;
+  end;
+
   // Internal use only
   TNinePathObject = class
   private
@@ -110,6 +118,7 @@ type
     procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte); reintroduce; overload;
   end;
 
+  // Internal use only
   TFixPngImage = class(TPngImage)
   protected
     procedure SetWidth(Value: Integer); override;
@@ -120,43 +129,50 @@ type
     procedure LoadFromClipboardFormat(AFormat: Word; AData: THandle; APalette: HPalette); override;
     procedure Assign(Source: TPersistent); override;
   end;
+
   // Internal use only
   TStyleNinePath = class(TPersistent)
   private
     ImageList: TList<TPngImage>;
     BitmapList: TList<TBitmap>;
-    FImageMargins: TImageMargins;
+    FImageMargins: TStyleMargins;
     FOverlayAlign: TImageAlign;
-    FOverlayMargins: TImageMargins;
+    FOverlayMargins: TStyleMargins;
     FOnChange: TNotifyEvent;
     FControl: TControl;
     FStateCount: Integer;
-    FIsDefaultStyle: Boolean;
+    FIsDefaultValues: Boolean;
     FUpdateCount: Integer;
     FImageMode: TStretchMode;
-    procedure SetImageMargins(const Value: TImageMargins);
+    FIsDefaultImages: Boolean;
+    procedure SetImageMargins(const Value: TStyleMargins);
     procedure SetOverlayAlign(const Value: TImageAlign);
-    procedure SetOverlayMargins(const Value: TImageMargins);
+    procedure SetOverlayMargins(const Value: TStyleMargins);
     function RequestImage(Index: Integer): TPngImage;
     procedure ImageChange(Sender: TObject);
     function GetBitmap(Index: Integer): TBitmap;
     function GetOverlayBitmap(Index: Integer): TBitmap;
-    procedure SetDefaultStyle(const Value: Boolean);
     procedure SetImageMode(const Value: TStretchMode);
+    procedure SetIsDefaultValues(const Value: Boolean);
+    procedure SetIsDefaultImages(const Value: Boolean);
+    //
+    procedure ChangeNotify;
+    procedure SetIsDefaultStyle(const Value: Boolean);
+    function GetIsDefaultStyle: Boolean;
   protected
+    procedure Change;
+    procedure ChangeMargins(Sender: TObject);// use for XXXMargins.OnChange
     function IsStyleStored: Boolean;
+    // get/set
+    property StateCount: Integer read FStateCount;
     function RequestBitmap(Index: Integer): TBitmap;
     function RequestOverlayBitmap(Index: Integer): TBitmap;
-    procedure ChangeMargins(Sender: TObject);// use for XXXMargins.OnChange
-    procedure Change;
-    procedure InternalDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
-      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); virtual;
-    property StateCount: Integer read FStateCount;
-    //
     function GetSuitedBitmap(Index: Integer): TBitmap;
     function GetSuitedOverlayBitmap(Index: Integer): TBitmap;
-    //
     procedure AssignTo(Dest: TPersistent); override;
+    //
+    procedure DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); virtual;
     //----------------------------------------------------------------------------------------------
     // Indexed properties:
     function GetImage(const Index: Integer): TPngImage;
@@ -165,17 +181,12 @@ type
     procedure SetOverlay(const Index: Integer; const Image: TPngImage);
     // PLEASE REALIZE THIS:
     function GetStateCount: Integer; dynamic; abstract;
-    procedure AssignDefaultStyle; dynamic; // if use IsDefaultStyle or LoadDefaultStyle
     function GetStylePrefix: string; dynamic;// if use IsDefaultStyle or LoadDefaultStyle
     // to published
-    property ImageMargins: TImageMargins read FImageMargins write SetImageMargins stored IsStyleStored;
+    property ImageMargins: TStyleMargins read FImageMargins write SetImageMargins stored IsStyleStored;
     property ImageMode: TStretchMode read FImageMode write SetImageMode stored IsStyleStored default TStretchMode.smNormal;
     property OverlayAlign: TImageAlign read FOverlayAlign write SetOverlayAlign stored IsStyleStored;
-    property OverlayMargins: TImageMargins read FOverlayMargins write SetOverlayMargins stored IsStyleStored;
-    //
-    property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    // default res style
-    property IsDefaultStyle: Boolean read FIsDefaultStyle write SetDefaultStyle default True;
+    property OverlayMargins: TStyleMargins read FOverlayMargins write SetOverlayMargins stored IsStyleStored;
     //----------------------------------------------------------------------------------------------
   public
     constructor Create; virtual;
@@ -183,7 +194,11 @@ type
     procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255); virtual;
     procedure Clear; dynamic;
     procedure UpdateImages; dynamic;
-    procedure LoadDefaultStyle; dynamic;
+    //
+    procedure AssignDefaultValues; dynamic;
+    procedure AssignDefaultImages; dynamic;
+    procedure AssignDefaultStyle;
+    //
     procedure BeginUpdate;
     procedure EndUpdate;
     function IsPresented(Index: Integer): Boolean;
@@ -191,6 +206,15 @@ type
     property Control: TControl read FControl write FControl;
     property Bitmap[Index: Integer]: TBitmap read GetBitmap;
     property OverlayBitmap[Index: Integer]: TBitmap read GetOverlayBitmap;
+    //
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    //
+    /// <summary>  This property is deprecated, please use IsDefaultValues/IsDefaultImages </summary>
+    property IsDefaultStyle: Boolean read GetIsDefaultStyle write SetIsDefaultStyle stored False;
+  published
+    // default res style
+    property IsDefaultValues: Boolean read FIsDefaultValues write SetIsDefaultValues stored False default True;
+    property IsDefaultImages: Boolean read FIsDefaultImages write SetIsDefaultImages default True;
   end;
 
   // Internal use only
@@ -779,9 +803,9 @@ end;
 
 { TStateNinePath }
 
-procedure TStyleNinePath.AssignDefaultStyle;
+procedure TStyleNinePath.AssignDefaultValues;
 begin
-  //StylePrefix := ClassName;
+
 end;
 
 procedure TStyleNinePath.AssignTo(Dest: TPersistent);
@@ -805,14 +829,20 @@ begin
   if FUpdateCount <> 0 then
     Exit;
 
-  FIsDefaultStyle := False;
-  if Assigned(FOnChange) and not((Control <> nil) and (csLoading in Control.ComponentState)) then
-    FOnChange(Self);
+  FIsDefaultValues := False;
+
+  ChangeNotify;
 end;
 
 procedure TStyleNinePath.ChangeMargins(Sender: TObject);
 begin
   Change;
+end;
+
+procedure TStyleNinePath.ChangeNotify;
+begin
+  if Assigned(FOnChange) and not((Control <> nil) and (csLoading in Control.ComponentState)) then
+    FOnChange(Self);
 end;
 
 procedure TStyleNinePath.Clear;
@@ -845,16 +875,17 @@ begin
   ImageList.Count := FStateCount * 2;
   BitmapList.Count := FStateCount * 2;
 
-  FImageMargins := TImageMargins.Create(nil);
+  FImageMargins := TStyleMargins.Create(nil);
   FImageMargins.OnChange := ChangeMargins;
-  FOverlayMargins := TImageMargins.Create(nil);
+  FOverlayMargins := TStyleMargins.Create(nil);
   FOverlayMargins.OnChange := ChangeMargins;
 
-  FIsDefaultStyle := True;
+  FIsDefaultValues := True;
+  FIsDefaultImages := True;
 
   BeginUpdate;
   try
-    AssignDefaultStyle;
+    AssignDefaultValues;
   finally
     EndUpdate;
   end;
@@ -872,7 +903,7 @@ end;
 
 procedure TStyleNinePath.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255);
 begin
-  InternalDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Alpha);
+  DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Alpha);
 end;
 
 procedure TStyleNinePath.EndUpdate;
@@ -900,6 +931,11 @@ begin
 //    BitmapList[Index].Free;
 //    BitmapList[Index] := nil;
 //  end;
+end;
+
+function TStyleNinePath.GetIsDefaultStyle: Boolean;
+begin
+  Result := IsDefaultValues and IsDefaultImages;
 end;
 
 function TStyleNinePath.GetOverlayBitmap(Index: Integer): TBitmap;
@@ -972,7 +1008,15 @@ procedure TStyleNinePath.ImageChange(Sender: TObject);
 var
   Index: Integer;
 begin
+  if FIsDefaultImages and (FUpdateCount = 0) then
+  begin
+    FIsDefaultImages := False;
+    UpdateImages;
+  end;
+
   Index := ImageList.IndexOf(TPngImage(Sender));
+
+  //
   if BitmapList[Index] = nil then
   begin
     if not TPngImage(Sender).Empty then
@@ -991,7 +1035,7 @@ begin
   Change;
 end;
 
-procedure TStyleNinePath.InternalDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
+procedure TStyleNinePath.DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
       OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255);
 var
   R: TRect;
@@ -1086,10 +1130,10 @@ end;
 
 function TStyleNinePath.IsStyleStored: Boolean;
 begin
-  Result := not FIsDefaultStyle;
+  Result := not (FIsDefaultValues and FIsDefaultImages);
 end;
 
-procedure TStyleNinePath.LoadDefaultStyle;
+procedure TStyleNinePath.AssignDefaultImages;
 var
   StylePrefix: string;
   Name: string;
@@ -1100,15 +1144,9 @@ var
   Png: TPngImage;
   hInstance: HINST;
 begin
-  if not FIsDefaultStyle then
-    Exit;
+  Clear;
 
-//  BeginUpdate;
-//  try
-//    AssignDefaultStyle;
-//  finally
-//    EndUpdate;
-//  end;
+  FIsDefaultImages := True;
 
   StylePrefix := GetStylePrefix;
 
@@ -1138,13 +1176,15 @@ begin
     FreeMem(PropList, Data.PropCount * SizeOf(Pointer));
     EndUpdate;
   end;
+
   UpdateImages;
+
   for I := 0 to ImageList.Count - 1 do
-      if ImageList[I] <> nil then
-      begin
-        ImageList[I].Free;
-        ImageList[I] := nil;
-      end;
+    if ImageList[I] <> nil then
+    begin
+      ImageList[I].Free;
+      ImageList[I] := nil;
+    end;
 end;
 
 function TStyleNinePath.RequestBitmap(Index: Integer): TBitmap;
@@ -1178,21 +1218,30 @@ begin
   result := RequestBitmap(Index + StateCount);
 end;
 
-procedure TStyleNinePath.SetDefaultStyle(const Value: Boolean);
+procedure TStyleNinePath.AssignDefaultStyle;
 begin
-  if Value <> FIsDefaultStyle then
+  AssignDefaultImages;
+  AssignDefaultValues;
+  ChangeNotify;
+end;
+
+procedure TStyleNinePath.SetIsDefaultValues(const Value: Boolean);
+begin
+  if Value <> FIsDefaultValues then
   begin
-    FIsDefaultStyle := Value;
+    FIsDefaultValues := Value;
     if Value then
     begin
-      Clear;
+      //Clear;
       BeginUpdate;
       try
-        AssignDefaultStyle;
+        AssignDefaultValues;
       finally
         EndUpdate;
       end;
-      LoadDefaultStyle;
+      //LoadDefaultImages;
+      //Change;
+      ChangeNotify;
     end;
   end;
 end;
@@ -1204,7 +1253,7 @@ begin
   // Change;
 end;
 
-procedure TStyleNinePath.SetImageMargins(const Value: TImageMargins);
+procedure TStyleNinePath.SetImageMargins(const Value: TStyleMargins);
 begin
   FImageMargins.Assign(Value);
 end;
@@ -1217,6 +1266,27 @@ begin
     FImageMode := Value;
     Change;
   end;
+end;
+
+procedure TStyleNinePath.SetIsDefaultImages(const Value: Boolean);
+begin
+  if Value <> FIsDefaultImages then
+  begin
+    FIsDefaultImages := Value;
+    if Value then
+    begin
+      Clear;
+      AssignDefaultImages;
+    end else
+      Clear;
+    ChangeNotify;
+  end;
+end;
+
+procedure TStyleNinePath.SetIsDefaultStyle(const Value: Boolean);
+begin
+  IsDefaultImages := Value;
+  IsDefaultValues := Value;
 end;
 
 procedure TStyleNinePath.SetOverlayAlign(const Value: TImageAlign);
@@ -1235,7 +1305,7 @@ begin
   // Change;
 end;
 
-procedure TStyleNinePath.SetOverlayMargins(const Value: TImageMargins);
+procedure TStyleNinePath.SetOverlayMargins(const Value: TStyleMargins);
 begin
   FOverlayMargins.Assign(Value);
 end;
@@ -1249,6 +1319,10 @@ begin
     if (ImageList[I] <> nil)and not ImageList[I].Empty then
     begin
       RequestBitmap(I).Assign(ImageList[I]);
+    end else
+    begin
+      BitmapList[I].Free;
+      BitmapList[I] := nil;
     end;
   end;
 end;

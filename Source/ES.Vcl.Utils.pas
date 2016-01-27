@@ -34,8 +34,12 @@ function FontColorToRgb(Color: TColor; Control: TControl = nil): TColor;
 function AssignPersistent(Dest, Src: TPersistent): Boolean;
 
 procedure SerializeToStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+procedure SerializeToResource(Obj: TPersistent; Instance: HINST; const ResourceName: string;
+  ResourceType: PChar; Name: string = '');
 procedure SerializeToFile(Obj: TPersistent; FileName: string; Name: string = '');
 procedure DeserializeFromStream(Obj: TPersistent; Stream: TStream; Name: string = '');
+procedure DeserializeFromResource(Obj: TPersistent; Instance: HINST; const ResourceName: string;
+  ResourceType: PChar; Name: string = '');
 procedure DeserializeFromFile(Obj: TPersistent; FileName: string; Name: string = '');
 
 implementation
@@ -189,6 +193,27 @@ begin
   end;
 end;
 
+procedure SerializeToResource(Obj: TPersistent; Instance: HINST; const ResourceName: string;
+  ResourceType: PChar; Name: string = '');
+var
+  ResStream: TResourceStream;
+  Stream: TMemoryStream;
+begin
+  Stream := TMemoryStream.Create;
+  try
+    SerializeToStream(Obj, Stream, Name);
+    ResStream := TResourceStream.Create(Instance, ResourceName, ResourceType);
+    try
+      Stream.Seek(0, soFromBeginning);
+      ObjectBinaryToText(Stream, ResStream);
+    finally
+      ResStream.Free;
+    end;
+  finally
+    Stream.Free;
+  end;
+end;
+
 procedure SerializeToFile(Obj: TPersistent; FileName: string; Name: string = '');
 var
   FileStream: TFileStream;
@@ -223,6 +248,27 @@ begin
     Stream.ReadComponent(Component);
   finally
     Component.Free;
+  end;
+end;
+
+procedure DeserializeFromResource(Obj: TPersistent; Instance: HINST; const ResourceName: string;
+  ResourceType: PChar; Name: string = '');
+var
+  ResStream: TResourceStream;
+  Stream: TMemoryStream;
+begin
+  ResStream := TResourceStream.Create(Instance, ResourceName, ResourceType);
+  try
+    Stream := TMemoryStream.Create;
+    try
+      ObjectTextToBinary(ResStream, Stream);
+      Stream.Seek(0, soFromBeginning);
+      DeserializeFromStream(Obj, Stream, Name);
+    finally
+      Stream.Free;
+    end;
+  finally
+    ResStream.Free;
   end;
 end;
 
