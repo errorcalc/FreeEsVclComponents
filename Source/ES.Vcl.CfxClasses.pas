@@ -51,6 +51,14 @@ type
     property Bottom nodefault;
   end;
 
+  TStylePadding = class(TPadding)
+  published
+    property Left nodefault;
+    property Right nodefault;
+    property Top nodefault;
+    property Bottom nodefault;
+  end;
+
   // Internal use only
   TNinePathObject = class
   private
