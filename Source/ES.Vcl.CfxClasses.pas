@@ -813,7 +813,7 @@ end;
 
 procedure TStyleNinePath.AssignDefaultValues;
 begin
-
+  //FIsDefaultValues := True;
 end;
 
 procedure TStyleNinePath.AssignTo(Dest: TPersistent);
@@ -1229,7 +1229,13 @@ end;
 procedure TStyleNinePath.AssignDefaultStyle;
 begin
   AssignDefaultImages;
-  AssignDefaultValues;
+  BeginUpdate;
+  try
+    AssignDefaultValues;
+  finally
+    EndUpdate;
+  end;
+  FIsDefaultValues := True;
   ChangeNotify;
 end;
 
