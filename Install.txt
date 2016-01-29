@@ -1,3 +1,7 @@
+*** You can help, if you send me where you are using the component and attach a screenshot example of use ***
+
+*** ¬ы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использовани€ ***
+
 [ENG]
 1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
 2. Open "FreeEsVclComponents.groupproj" project group

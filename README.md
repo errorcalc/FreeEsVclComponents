@@ -3,6 +3,10 @@
 Free components for delphi (VCL)
 Attribution-ShareAlike 3.0
 
+*** You can help, if you send me where you are using the component and attach a screenshot example of use ***
+
+*** Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования ***
+
 # List of components:
 * TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
 * TEsImageLayout (Best for your application)
