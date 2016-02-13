@@ -11,7 +11,7 @@ Attribution-ShareAlike 3.0
 * TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
 * TEsImageLayout (Best for your application)
 * TEsLabelLayout
-* TEsNinePathImage
+* TEsNinePatchImage
 * TEsImageLabel
 * TEsActivityBar (looks like Windows 10 XAML control!)
 * TEsSwitch (looks like Windows 10 XAML control!)
@@ -35,16 +35,16 @@ Attribution-ShareAlike 3.0
 
 **TEsCustomControl** - Базовый класс, содержит в себе магию подавления мерцания и поддержки прозрачности.
 
-**TEsNinePathImage** - TImage для 9-Path изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overley-a
+**TEsNinePatchImage** - TImage для 9-Patch изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overley-a
 
-**TEsImageLabel** - Метка с возможностью установки фонового 9-Path изображения, а также изображения - Overley-a, расположение и выравнивание текста можно комбинировать по-разному
+**TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overley-a, расположение и выравнивание текста можно комбинировать по-разному
 
 **TEsLayout** - Базовый компонент - контейнер.
 Интересен возможностью двойной буферизации для наследников TGraphicControl (TLabel, TGlyphButton, TImage, TBevel...)
 
-**TEsImageLayot** - Layot с поддержкой фоновых 9-Path изображений, а также изображения - Overley-a
+**TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a
 
-**TEsLabelLayout** - Layot с поддержкой фоновых 9-Path изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно комбинировать по-разному
+**TEsLabelLayout** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно комбинировать по-разному
 
 **TEsActivityBar** - Компонент имитирует XAML контрол Windows 10, созданный для индикации занятости или отображения прогресса (что-то типа TProgressBar).
 Имеет множество настроек.

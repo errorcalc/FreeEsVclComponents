@@ -21,13 +21,10 @@ object Form2: TForm2
     Top = 8
     Width = 721
     Height = 457
-    ParentBufferedChildrens = False
-    BufferedChildrens = True
-    IsDrawHelper = True
     ImageMargins.Left = 6
     ImageMargins.Top = 6
     ImageMargins.Right = 11
-    ImageMargins.Bottom = 11
+    ImageMargins.Bottom = 12
     Image.Data = {
       89504E470D0A1A0A0000000D49484452000000F2000000E2080600000074BE9A
       3F0000075C4944415478DAEDDDD7735CD501C7F12BC9D818171C8C2DF7024948
@@ -662,10 +659,13 @@ object Form2: TForm2
       AE426082}
     OverlayAlign = iaCenter
     Anchors = [akLeft, akTop, akRight, akBottom]
+    BufferedChildrens = True
+    IsDrawHelper = True
     Padding.Left = 2
     Padding.Top = 2
     Padding.Right = 11
     Padding.Bottom = 12
+    ParentBufferedChildrens = False
     TabOrder = 0
     DesignSize = (
       721
@@ -695,7 +695,7 @@ object Form2: TForm2
         1C5BF803B4137BED2568B6FA0000000049454E44AE426082}
       Alpha = 90
       Align = alTop
-      Caption = 'EsNinePathControls'
+      Caption = 'EsNinePatchControls'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -32
@@ -839,13 +839,13 @@ object Form2: TForm2
       Top = 74
       Width = 137
       Height = 368
-      IsDrawHelper = True
       Anchors = [akLeft, akTop, akRight, akBottom]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
       Font.Height = 15
       Font.Name = 'Tahoma'
       Font.Style = []
+      IsDrawHelper = True
       ParentFont = False
       TabOrder = 0
       TextMultiline = True

@@ -7,7 +7,7 @@
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
 {******************************************************************************}
-unit ES.Vcl.NinePath;
+unit ES.Vcl.NinePatch;
 
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
@@ -20,9 +20,9 @@ uses
   WinApi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.CfxClasses;
 
 type
-  TEsNinePathImage = class(TGraphicControl)
+  TEsNinePatchImage = class(TGraphicControl)
   private
-    NinePath: TTextNinePathObject;
+    NinePatch: TTextNinePatchObject;
     FImage: TPngImage;
     FAlpha: byte;
     FOverlay: TPngImage;
@@ -108,7 +108,7 @@ type
     property OnStartDrag;
   end;
 
-  TEsImageLabel = class(TEsNinePathImage)
+  TEsImageLabel = class(TEsNinePatchImage)
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -151,7 +151,7 @@ type
 
   TEsCustomImageLayout = class(TEsCustomLayout)
   private
-    NinePath: TTextNinePathObject;
+    NinePatch: TTextNinePatchObject;
     FImage: TPngImage;
     FAlpha: byte;
     FOverlay: TPngImage;
@@ -321,33 +321,33 @@ implementation
 uses
   Vcl.Themes;
 
-{ TEsNinePathImage }
+{ TEsNinePatchImage }
 
-procedure TEsNinePathImage.CMControlChange(var Message: TMessage);
+procedure TEsNinePatchImage.CMControlChange(var Message: TMessage);
 begin
   Inherited;
 end;
 
-procedure TEsNinePathImage.CMEnabledChanged(var Message: TMessage);
-begin
-  Inherited;
-  Invalidate;
-end;
-
-procedure TEsNinePathImage.CMTextChanged(var Message: TMessage);
+procedure TEsNinePatchImage.CMEnabledChanged(var Message: TMessage);
 begin
   Inherited;
   Invalidate;
 end;
 
-constructor TEsNinePathImage.Create(AOwner: TComponent);
+procedure TEsNinePatchImage.CMTextChanged(var Message: TMessage);
+begin
+  Inherited;
+  Invalidate;
+end;
+
+constructor TEsNinePatchImage.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  NinePath := TTextNinePathObject.Create;
-  NinePath.OnNeedRepaint := NeedRepaint;
-  NinePath.OverlayAlign := iaTopLeft;
-  NinePath.OverlaySpace := False;
-  NinePath.Control := Self;
+  NinePatch := TTextNinePatchObject.Create;
+  NinePatch.OnNeedRepaint := NeedRepaint;
+  NinePatch.OverlayAlign := iaTopLeft;
+  NinePatch.OverlaySpace := False;
+  NinePatch.Control := Self;
   FImage := TPngImage.Create;
   FImage.OnChange := PictureChange;
   FOverlay := TPngImage.Create;
@@ -355,87 +355,87 @@ begin
   FAlpha := 255;
 end;
 
-destructor TEsNinePathImage.Destroy;
+destructor TEsNinePatchImage.Destroy;
 begin
   FImage.Free;
   FOverlay.Free;
-  NinePath.Free;
+  NinePatch.Free;
   inherited;
 end;
 
-function TEsNinePathImage.GetImageMargins: TImageMargins;
+function TEsNinePatchImage.GetImageMargins: TImageMargins;
 begin
-  Result := NinePath.Margins;
+  Result := NinePatch.Margins;
 end;
 
-function TEsNinePathImage.GetMargins: TImageMargins;
+function TEsNinePatchImage.GetMargins: TImageMargins;
 begin
-  Result := NinePath.OverlayMargins;
+  Result := NinePatch.OverlayMargins;
 end;
 
-function TEsNinePathImage.GetOverlayAlign: TImageAlign;
+function TEsNinePatchImage.GetOverlayAlign: TImageAlign;
 begin
-  Result := NinePath.OverlayAlign;
+  Result := NinePatch.OverlayAlign;
 end;
 
-function TEsNinePathImage.GetOverlaySpace: Boolean;
+function TEsNinePatchImage.GetOverlaySpace: Boolean;
 begin
-  Result := NinePath.OverlaySpace;
+  Result := NinePatch.OverlaySpace;
 end;
 
-function TEsNinePathImage.GetShowCaption: Boolean;
+function TEsNinePatchImage.GetShowCaption: Boolean;
 begin
-  Result := NinePath.ShowCaption;
+  Result := NinePatch.ShowCaption;
 end;
 
-function TEsNinePathImage.GetTextAlignment: TAlignment;
+function TEsNinePatchImage.GetTextAlignment: TAlignment;
 begin
-  Result := NinePath.TextAlignment;
+  Result := NinePatch.TextAlignment;
 end;
 
-function TEsNinePathImage.GetTextDistance: Integer;
+function TEsNinePatchImage.GetTextDistance: Integer;
 begin
-  Result := NinePath.TextDistance;
+  Result := NinePatch.TextDistance;
 end;
 
-function TEsNinePathImage.GetTextLayout: TVertLayout;
+function TEsNinePatchImage.GetTextLayout: TVertLayout;
 begin
-  Result := NinePath.TextLayout;
+  Result := NinePatch.TextLayout;
 end;
 
-function TEsNinePathImage.GetTextMultiline: Boolean;
+function TEsNinePatchImage.GetTextMultiline: Boolean;
 begin
-  Result := NinePath.TextMultiline;
+  Result := NinePatch.TextMultiline;
 end;
 
-procedure TEsNinePathImage.Loaded;
+procedure TEsNinePatchImage.Loaded;
 begin
   inherited;
   if FImage <> nil then
-    NinePath.AssignImage(FImage);
+    NinePatch.AssignImage(FImage);
   if FOverlay <> nil then
-    NinePath.AssignOverlay(FOverlay);
+    NinePatch.AssignOverlay(FOverlay);
 end;
 
-procedure TEsNinePathImage.NeedRepaint(Sender: TObject);
+procedure TEsNinePatchImage.NeedRepaint(Sender: TObject);
 begin
   Invalidate;
 end;
 
-procedure TEsNinePathImage.Paint;
+procedure TEsNinePatchImage.Paint;
 begin
   Canvas.Font := Font;
-  NinePath.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
   inherited;
   inherited;
 end;
 
-procedure TEsNinePathImage.PictureChange(Sender: TObject);
+procedure TEsNinePatchImage.PictureChange(Sender: TObject);
 begin
-  NinePath.AssignImage(FImage);
+  NinePatch.AssignImage(FImage);
 end;
 
-procedure TEsNinePathImage.SetAlpha(const Value: byte);
+procedure TEsNinePatchImage.SetAlpha(const Value: byte);
 begin
   if Value <> FAlpha then
   begin
@@ -444,68 +444,68 @@ begin
   end;
 end;
 
-procedure TEsNinePathImage.SetImage(const Value: TPngImage);
+procedure TEsNinePatchImage.SetImage(const Value: TPngImage);
 begin
   FImage.Assign(Value);
-  NinePath.AssignImage(FImage);
+  NinePatch.AssignImage(FImage);
 end;
 
-procedure TEsNinePathImage.SetImageMargins(const Value: TImageMargins);
+procedure TEsNinePatchImage.SetImageMargins(const Value: TImageMargins);
 begin
-  NinePath.Margins := Value;
+  NinePatch.Margins := Value;
 end;
 
-procedure TEsNinePathImage.SetMargins(const Value: TImageMargins);
+procedure TEsNinePatchImage.SetMargins(const Value: TImageMargins);
 begin
-  NinePath.OverlayMargins := Value;
+  NinePatch.OverlayMargins := Value;
 end;
 
-procedure TEsNinePathImage.SetOverlay(const Value: TPngImage);
+procedure TEsNinePatchImage.SetOverlay(const Value: TPngImage);
 begin
   FOverlay.Assign(Value);
-  NinePath.AssignOverlay(FOverlay);
+  NinePatch.AssignOverlay(FOverlay);
 end;
 
-procedure TEsNinePathImage.SetOverlayAlign(const Value: TImageAlign);
+procedure TEsNinePatchImage.SetOverlayAlign(const Value: TImageAlign);
 begin
-  NinePath.OverlayAlign := Value;
+  NinePatch.OverlayAlign := Value;
 end;
 
-procedure TEsNinePathImage.SetOverlaySpace(const Value: Boolean);
+procedure TEsNinePatchImage.SetOverlaySpace(const Value: Boolean);
 begin
-  if NinePath.OverlaySpace <> Value then
+  if NinePatch.OverlaySpace <> Value then
   begin
-    NinePath.OverlaySpace := Value;
+    NinePatch.OverlaySpace := Value;
   end;
 end;
 
-procedure TEsNinePathImage.SetShowCaption(const Value: Boolean);
+procedure TEsNinePatchImage.SetShowCaption(const Value: Boolean);
 begin
-  NinePath.ShowCaption := Value;
+  NinePatch.ShowCaption := Value;
 end;
 
-procedure TEsNinePathImage.SetTextAlignment(const Value: TAlignment);
+procedure TEsNinePatchImage.SetTextAlignment(const Value: TAlignment);
 begin
-  NinePath.TextAlignment := Value;
+  NinePatch.TextAlignment := Value;
 end;
 
-procedure TEsNinePathImage.SetTextDistance(const Value: Integer);
+procedure TEsNinePatchImage.SetTextDistance(const Value: Integer);
 begin
-  NinePath.TextDistance := Value;
+  NinePatch.TextDistance := Value;
 end;
 
-procedure TEsNinePathImage.SetTextLayout(const Value: TVertLayout);
+procedure TEsNinePatchImage.SetTextLayout(const Value: TVertLayout);
 begin
-  NinePath.TextLayout := Value;
+  NinePatch.TextLayout := Value;
 end;
 
-procedure TEsNinePathImage.SetTextMultiline(const Value: Boolean);
+procedure TEsNinePatchImage.SetTextMultiline(const Value: Boolean);
 begin
-  NinePath.TextMultiline := Value;
+  NinePatch.TextMultiline := Value;
 end;
 
 {$ifdef VER240UP}
-procedure TEsNinePathImage.UpdateStyleElements;
+procedure TEsNinePatchImage.UpdateStyleElements;
 begin
   inherited;
   Invalidate;
@@ -529,7 +529,7 @@ end;
 procedure TEsCustomImageLayout.CMEnabledChanged(var Message: TMessage);
 begin
   Inherited;
-  if NinePath.ShowCaption then
+  if NinePatch.ShowCaption then
     Invalidate;
 end;
 
@@ -543,14 +543,14 @@ begin
 
   ParentBackground := True;
   ParentColor := True;
-  NinePath := TTextNinePathObject.Create;
-  NinePath.OnNeedRepaint := NeedRepaint;
+  NinePatch := TTextNinePatchObject.Create;
+  NinePatch.OnNeedRepaint := NeedRepaint;
   FImage := TPngImage.Create;
   FImage.OnChange := PictureChange;
   FOverlay := TPngImage.Create;
   FOverlay.OnChange := PictureChange;
-  NinePath.OverlayAlign := iaTopLeft;
-  NinePath.OverlaySpace := False;
+  NinePatch.OverlayAlign := iaTopLeft;
+  NinePatch.OverlaySpace := False;
   FAlpha := 255;
 end;
 
@@ -563,29 +563,29 @@ destructor TEsCustomImageLayout.Destroy;
 begin
   FImage.Free;
   FOverlay.Free;
-  NinePath.Free;
+  NinePatch.Free;
   FPadding.Free;
   inherited;
 end;
 
 function TEsCustomImageLayout.GetImageMargins: TImageMargins;
 begin
-  Result := NinePath.Margins;
+  Result := NinePatch.Margins;
 end;
 
 function TEsCustomImageLayout.GetOverlayMargins: TImageMargins;
 begin
-  Result := NinePath.OverlayMargins;
+  Result := NinePatch.OverlayMargins;
 end;
 
 function TEsCustomImageLayout.GetOverlayAlign: TImageAlign;
 begin
-  Result := NinePath.OverlayAlign;
+  Result := NinePatch.OverlayAlign;
 end;
 
 function TEsCustomImageLayout.GetOverlaySpace: Boolean;
 begin
-  Result := NinePath.OverlaySpace;
+  Result := NinePatch.OverlaySpace;
 end;
 
 function TEsCustomImageLayout.GetPadding: TPadding;
@@ -600,44 +600,44 @@ end;
 
 function TEsCustomImageLayout.GetShowCaption: Boolean;
 begin
-  Result := NinePath.ShowCaption;
+  Result := NinePatch.ShowCaption;
 end;
 
 function TEsCustomImageLayout.GetTextAlignment: TAlignment;
 begin
-  Result := NinePath.TextAlignment;
+  Result := NinePatch.TextAlignment;
 end;
 
 function TEsCustomImageLayout.GetTextDistance: Integer;
 begin
-  Result := NinePath.TextDistance;
+  Result := NinePatch.TextDistance;
 end;
 
 function TEsCustomImageLayout.GetTextLayout: TVertLayout;
 begin
-  Result := NinePath.TextLayout;
+  Result := NinePatch.TextLayout;
 end;
 
 function TEsCustomImageLayout.GetTextMultiline: Boolean;
 begin
-  Result := NinePath.TextMultiline;
+  Result := NinePatch.TextMultiline;
 end;
 
 procedure TEsCustomImageLayout.Loaded;
 begin
   inherited;
   if FImage <> nil then
-    NinePath.AssignImage(FImage);
+    NinePatch.AssignImage(FImage);
   if FOverlay <> nil then
-    NinePath.AssignOverlay(FOverlay);
+    NinePatch.AssignOverlay(FOverlay);
 end;
 
 procedure TEsCustomImageLayout.NeedRepaint(Sender: TObject);
 begin
   if FPaddingWithImage then
-    if (Padding.Left <> NinePath.Margins.Left)or(Padding.Right <> NinePath.Margins.Right)or
-      (Padding.Top <> NinePath.Margins.Top)or(Padding.Bottom <> NinePath.Margins.Bottom) then
-      Padding := TPadding(NinePath.Margins);
+    if (Padding.Left <> NinePatch.Margins.Left)or(Padding.Right <> NinePatch.Margins.Right)or
+      (Padding.Top <> NinePatch.Margins.Top)or(Padding.Bottom <> NinePatch.Margins.Bottom) then
+      Padding := TPadding(NinePatch.Margins);
   Invalidate;
 end;
 
@@ -655,40 +655,40 @@ end;
 procedure TEsCustomImageLayout.PaddingChange(Sender: TObject);
 begin
   Inherited Padding.Assign(TPadding(Sender));
-  NinePath.Margins.SetBounds(TPadding(Sender).Left, TPadding(Sender).Top,
+  NinePatch.Margins.SetBounds(TPadding(Sender).Left, TPadding(Sender).Top,
     TPadding(Sender).Right, TPadding(Sender).Bottom);
 end;
 
 procedure TEsCustomImageLayout.Paint;
 begin
   Canvas.Font := Font;
-  NinePath.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
   inherited;
 end;
 
 procedure TEsCustomImageLayout.PictureChange(Sender: TObject);
 begin
-  NinePath.AssignImage(FImage);
+  NinePatch.AssignImage(FImage);
 end;
 
 procedure TEsCustomImageLayout.SetTextAlignment(const Value: TAlignment);
 begin
-  NinePath.TextAlignment := Value;
+  NinePatch.TextAlignment := Value;
 end;
 
 procedure TEsCustomImageLayout.SetTextDistance(const Value: Integer);
 begin
-  NinePath.TextDistance := Value;
+  NinePatch.TextDistance := Value;
 end;
 
 procedure TEsCustomImageLayout.SetTextLayout(const Value: TVertLayout);
 begin
-  NinePath.TextLayout := Value;
+  NinePatch.TextLayout := Value;
 end;
 
 procedure TEsCustomImageLayout.SetTextMultiline(const Value: Boolean);
 begin
-  NinePath.TextMultiline := Value;
+  NinePatch.TextMultiline := Value;
 end;
 
 procedure TEsCustomImageLayout.SetAlpha(const Value: byte);
@@ -703,12 +703,12 @@ end;
 procedure TEsCustomImageLayout.SetImage(const Value: TPngImage);
 begin
   FImage.Assign(Value);
-  NinePath.AssignImage(FImage);
+  NinePatch.AssignImage(FImage);
 end;
 
 procedure TEsCustomImageLayout.SetImageMargins(const Value: TImageMargins);
 begin
-  NinePath.Margins := Value;
+  NinePatch.Margins := Value;
   if FPaddingWithImage then
     Inherited Padding := TPadding(Value);
 end;
@@ -732,30 +732,30 @@ end;
 
 procedure TEsCustomImageLayout.SetOverlayMargins(const Value: TImageMargins);
 begin
-  NinePath.OverlayMargins := Value;
+  NinePatch.OverlayMargins := Value;
 end;
 
 procedure TEsCustomImageLayout.SetOverlay(const Value: TPngImage);
 begin
   FOverlay.Assign(Value);
-  NinePath.AssignOverlay(FOverlay);
+  NinePatch.AssignOverlay(FOverlay);
 end;
 
 procedure TEsCustomImageLayout.SetOverlayAlign(const Value: TImageAlign);
 begin
-  NinePath.OverlayAlign := Value;
+  NinePatch.OverlayAlign := Value;
 end;
 
 procedure TEsCustomImageLayout.SetShowCaption(const Value: Boolean);
 begin
-  NinePath.ShowCaption := Value;
+  NinePatch.ShowCaption := Value;
 end;
 
 procedure TEsCustomImageLayout.SetOverlaySpace(const Value: Boolean);
 begin
-  if NinePath.OverlaySpace <> Value then
+  if NinePatch.OverlaySpace <> Value then
   begin
-    NinePath.OverlaySpace := Value;
+    NinePatch.OverlaySpace := Value;
   end;
 end;
 
@@ -791,7 +791,7 @@ begin
   OverlayAlign := iaLeft;
   OverlaySpace := True;
   ShowCaption := True;
-  NinePath.Control := Self;
+  NinePatch.Control := Self;
 end;
 
 { TEsImageLabel }

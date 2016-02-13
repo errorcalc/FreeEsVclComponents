@@ -37,7 +37,7 @@ requires
 
 contains
   ES.Vcl.Switch in 'Source\ES.Vcl.Switch.pas',
-  ES.Vcl.NinePath in 'Source\ES.Vcl.NinePath.pas',
+  ES.Vcl.NinePatch in 'Source\ES.Vcl.NinePatch.pas',
   ES.Vcl.Layouts in 'Source\ES.Vcl.Layouts.pas',
   ES.Vcl.Indicators in 'Source\ES.Vcl.Indicators.pas';
 

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.NinePath;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.NinePatch;
 
 type
   TForm2 = class(TForm)

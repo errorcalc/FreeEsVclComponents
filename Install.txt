@@ -11,8 +11,12 @@
 6. Enjoy!
 
 WARNING:
+1)
 Activate FixLoadPng in "Source/FreeEsVclComponents.inc" if you are having problems downloading PNG images in the Design time, 
 because of some installed packages (ex: AlphaSkins)
+2)
+Name of TNinePatchImage component was a typo, I fixed it.
+To correct this error in your projects need replaced in uses "Es.Vcl.NinePath" to "Es.Vcl.NinePatch", and replace in files forms (dfm) TNinePathImage to TNinePatchImage.
 
 [RUS]
 1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path)
@@ -23,4 +27,9 @@ because of some installed packages (ex: AlphaSkins)
 6. Пользуйтесь :) и пишите отзывы.
 
 ВНИМАНИЕ:
+1)
 Активируйте FixLoadPng в "Source/FreeEsVclComponents.inc", если у вас возникли проблемы с загрузкой изображений в формате PNG в Design Time, из-за некоторых установленных пакетов (к примеру AlphaSkins)
+2)
+В названии компонента TNinePatchImage была опечатка, я исправил это.
+Для исправления этой ошибки в ваших проектах необходимо заменить в uses "Es.Vcl.NinePath" на "Es.Vcl.NinePatch",
+а также заменить в файлах форм (dfm) TNinePathImage на TNinePatchImage. 

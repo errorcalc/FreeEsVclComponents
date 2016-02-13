@@ -1,0 +1,9 @@
+[13.02.2016]
+[ENG]
+Name of TNinePatchImage component was a typo, I fixed it.
+To correct this error in your projects need replaced in uses "Es.Vcl.NinePath" to "Es.Vcl.NinePatch", and replace in files forms (dfm) TNinePathImage to TNinePatchImage.
+
+[RUS]
+В названии компонента TNinePatchImage была опечатка, я исправил это.
+Для исправления этой ошибки в ваших проектах необходимо заменить в uses "Es.Vcl.NinePath" на "Es.Vcl.NinePatch",
+а также заменить в файлах форм (dfm) TNinePathImage на TNinePatchImage. 

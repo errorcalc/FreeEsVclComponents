@@ -60,7 +60,7 @@ type
   end;
 
   // Internal use only
-  TNinePathObject = class
+  TNinePatchObject = class
   private
     FBitmap: TBitmap;
     FOverlay: TBitmap;
@@ -103,7 +103,7 @@ type
   end;
 
   // Internal use only
-  TTextNinePathObject = class(TNinePathObject)
+  TTextNinePatchObject = class(TNinePatchObject)
   private
     FShowCaption: Boolean;
     FTextAlignment: TAlignment;
@@ -139,7 +139,7 @@ type
   end;
 
   // Internal use only
-  TStyleNinePath = class(TPersistent)
+  TStyleNinePatch = class(TPersistent)
   private
     ImageList: TList<TPngImage>;
     BitmapList: TList<TBitmap>;
@@ -405,9 +405,9 @@ begin
   // zero values on default
 end;
 
-{ TNinePathObject }
+{ TNinePatchObject }
 
-procedure TNinePathObject.BoundsChange(Sender: TObject);
+procedure TNinePatchObject.BoundsChange(Sender: TObject);
 begin
   if Assigned(OnNeedRepaint) then
     OnNeedRepaint(Self);
@@ -415,7 +415,7 @@ begin
 //    OnMarginsChange(Self);
 end;
 
-constructor TNinePathObject.Create;
+constructor TNinePatchObject.Create;
 begin
   inherited;
   FMargins := TImageMargins.Create(nil);
@@ -432,7 +432,7 @@ begin
   // FContentSpace := True;
 end;
 
-destructor TNinePathObject.Destroy;
+destructor TNinePatchObject.Destroy;
 begin
   FMargins.Free;
   FOverlayMargins.Free;
@@ -441,14 +441,14 @@ begin
   inherited;
 end;
 
-procedure TNinePathObject.Draw(Canvas: TCanvas; Rect: TRect; Alpha: byte);
+procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Alpha: byte);
 var
   R: TRect;
 begin
-  Canvas.DrawNinePath(Rect, FMargins.Rect, FBitmap, Alpha);
+  Canvas.DrawNinePatch(Rect, FMargins.Rect, FBitmap, Alpha);
 
   // for painting child class
-  if (Self.ClassType <> TNinePathObject) and ContentSpace then
+  if (Self.ClassType <> TNinePatchObject) and ContentSpace then
   begin
     ContentRect.Left := Rect.Left + FMargins.Left;
     ContentRect.Top := Rect.Top + FMargins.Top;
@@ -517,19 +517,19 @@ begin
   //   IntToStr(Canvas.ClipRect.Left)+','+IntToStr(Canvas.ClipRect.Top) + '-'+IntToStr(Canvas.ClipRect.Width)+','+IntToStr(Canvas.ClipRect.Height));
 end;
 
-procedure TNinePathObject.NeedRepaint;
+procedure TNinePatchObject.NeedRepaint;
 begin
   if Assigned(OnNeedRepaint) then
     OnNeedRepaint(Self);
 end;
 
-procedure TNinePathObject.SetBitMap(const Value: TBitmap);
+procedure TNinePatchObject.SetBitMap(const Value: TBitmap);
 begin
   FBitmap.Assign(Value);
   NeedRepaint;
 end;
 
-procedure TNinePathObject.SetContentSpace(const Value: Boolean);
+procedure TNinePatchObject.SetContentSpace(const Value: Boolean);
 begin
   if Value <> FContentSpace then
   begin
@@ -538,18 +538,18 @@ begin
   end;
 end;
 
-procedure TNinePathObject.SetControl(const Value: TControl);
+procedure TNinePatchObject.SetControl(const Value: TControl);
 begin
   FControl := Value;
   NeedRepaint;
 end;
 
-procedure TNinePathObject.SetMargins(const Value: TImageMargins);
+procedure TNinePatchObject.SetMargins(const Value: TImageMargins);
 begin
   FMargins.Assign(Value);
 end;
 
-procedure TNinePathObject.AssignImage(G: TGraphic);
+procedure TNinePatchObject.AssignImage(G: TGraphic);
 begin
   FBitmap.SetSize(G.Width, G.Height);
   FBitmap.Canvas.Brush.Color := 0;
@@ -559,7 +559,7 @@ begin
   NeedRepaint;
 end;
 
-procedure TNinePathObject.AssignOverlay(G: TGraphic);
+procedure TNinePatchObject.AssignOverlay(G: TGraphic);
 begin
   FOverlay.SetSize(G.Width, G.Height);
   FOverlay.Canvas.Brush.Color := 0;
@@ -569,13 +569,13 @@ begin
   NeedRepaint;
 end;
 
-procedure TNinePathObject.SetOverlay(const Value: TBitmap);
+procedure TNinePatchObject.SetOverlay(const Value: TBitmap);
 begin
   FOverlay.Assign(Value);
   NeedRepaint;
 end;
 
-procedure TNinePathObject.SetOverlayAlign(const Value: TImageAlign);
+procedure TNinePatchObject.SetOverlayAlign(const Value: TImageAlign);
 begin
   if Value <> FOverlayAlign then
   begin
@@ -585,14 +585,14 @@ begin
   end;
 end;
 
-procedure TNinePathObject.SetOverlayMargins(const Value: TImageMargins);
+procedure TNinePatchObject.SetOverlayMargins(const Value: TImageMargins);
 begin
   FOverlayMargins.Assign(Value);
   if Assigned(FOverlay) then
     NeedRepaint;
 end;
 
-procedure TNinePathObject.SetOverlaySpace(const Value: Boolean);
+procedure TNinePatchObject.SetOverlaySpace(const Value: Boolean);
 begin
   if Value <> FOverlaySpace then
   begin
@@ -601,9 +601,9 @@ begin
   end;
 end;
 
-{ TTextNinePathObject }
+{ TTextNinePatchObject }
 
-constructor TTextNinePathObject.Create;
+constructor TTextNinePatchObject.Create;
 begin
   inherited;
   FTextAlignment := taCenter;
@@ -614,7 +614,7 @@ begin
   OverlayAlign := TImageAlign.iaLeft;
 end;
 
-procedure TTextNinePathObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte);
+procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte);
 {$ifdef VER230UP}
 const
   D: array[Boolean] of TThemedTextLabel = (ttlTextLabelDisabled, ttlTextLabelNormal);//TStyleFont = (sfPanelTextDisabled, sfPanelTextNormal);
@@ -760,7 +760,7 @@ begin
   Canvas.Brush.Style := bsSolid;
 end;
 
-procedure TTextNinePathObject.SetShowCaption(const Value: Boolean);
+procedure TTextNinePatchObject.SetShowCaption(const Value: Boolean);
 begin
   if FShowCaption <> Value then
   begin
@@ -769,7 +769,7 @@ begin
   end;
 end;
 
-procedure TTextNinePathObject.SetTextAlignment(const Value: TAlignment);
+procedure TTextNinePatchObject.SetTextAlignment(const Value: TAlignment);
 begin
   if FTextAlignment <> Value then
   begin
@@ -779,7 +779,7 @@ begin
   end;
 end;
 
-procedure TTextNinePathObject.SetTextDistance(const Value: Integer);
+procedure TTextNinePatchObject.SetTextDistance(const Value: Integer);
 begin
   if FTextDistance <> Value then
   begin
@@ -789,7 +789,7 @@ begin
   end;
 end;
 
-procedure TTextNinePathObject.SetTextLayout(const Value: TVertLayout);
+procedure TTextNinePatchObject.SetTextLayout(const Value: TVertLayout);
 begin
   if FTextLayout <> Value then
   begin
@@ -799,7 +799,7 @@ begin
   end;
 end;
 
-procedure TTextNinePathObject.SetTextMultiline(const Value: Boolean);
+procedure TTextNinePatchObject.SetTextMultiline(const Value: Boolean);
 begin
   if FTextMultiline <> Value then
   begin
@@ -809,30 +809,30 @@ begin
   end;
 end;
 
-{ TStateNinePath }
+{ TStateNinePatch }
 
-procedure TStyleNinePath.AssignDefaultValues;
+procedure TStyleNinePatch.AssignDefaultValues;
 begin
   //FIsDefaultValues := True;
 end;
 
-procedure TStyleNinePath.AssignTo(Dest: TPersistent);
+procedure TStyleNinePatch.AssignTo(Dest: TPersistent);
 begin
-  if Dest is TStyleNinePath then
+  if Dest is TStyleNinePatch then
   begin
     AssignPersistent(Dest, Self);
-    //TStyleNinePath(Dest).Change;
+    //TStyleNinePatch(Dest).Change;
   end
   else
     inherited;
 end;
 
-procedure TStyleNinePath.BeginUpdate;
+procedure TStyleNinePatch.BeginUpdate;
 begin
   Inc(FUpdateCount);
 end;
 
-procedure TStyleNinePath.Change;
+procedure TStyleNinePatch.Change;
 begin
   if FUpdateCount <> 0 then
     Exit;
@@ -842,18 +842,18 @@ begin
   ChangeNotify;
 end;
 
-procedure TStyleNinePath.ChangeMargins(Sender: TObject);
+procedure TStyleNinePatch.ChangeMargins(Sender: TObject);
 begin
   Change;
 end;
 
-procedure TStyleNinePath.ChangeNotify;
+procedure TStyleNinePatch.ChangeNotify;
 begin
   if Assigned(FOnChange) and not((Control <> nil) and (csLoading in Control.ComponentState)) then
     FOnChange(Self);
 end;
 
-procedure TStyleNinePath.Clear;
+procedure TStyleNinePatch.Clear;
 var
   I: Integer;
 begin
@@ -872,7 +872,7 @@ begin
     end;
 end;
 
-constructor TStyleNinePath.Create;
+constructor TStyleNinePatch.Create;
 begin
   inherited;
   ImageList := TList<TPngImage>.Create;
@@ -899,7 +899,7 @@ begin
   end;
 end;
 
-destructor TStyleNinePath.Destroy;
+destructor TStyleNinePatch.Destroy;
 begin
   Clear;
   ImageList.Free;
@@ -909,12 +909,12 @@ begin
   inherited;
 end;
 
-procedure TStyleNinePath.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255);
+procedure TStyleNinePatch.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255);
 begin
   DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Alpha);
 end;
 
-procedure TStyleNinePath.EndUpdate;
+procedure TStyleNinePatch.EndUpdate;
 begin
   Dec(FUpdateCount);
   if FUpdateCount <= 0 then
@@ -923,14 +923,14 @@ begin
   end;
 end;
 
-function TStyleNinePath.GetBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.GetBitmap(Index: Integer): TBitmap;
 begin
   if (Index < 0) or (Index >= StateCount) then
     raise Exception.CreateFmt('GetBitmap(%d) - Index of bounds!', [Index]);
   Result := RequestBitmap(Index);
 end;
 
-function TStyleNinePath.GetImage(const Index: Integer): TPngImage;
+function TStyleNinePatch.GetImage(const Index: Integer): TPngImage;
 begin
   Result := RequestImage(Index);
   // TPngImage not support OnChange event, because we need delete cache in Getter :(
@@ -941,19 +941,19 @@ begin
 //  end;
 end;
 
-function TStyleNinePath.GetIsDefaultStyle: Boolean;
+function TStyleNinePatch.GetIsDefaultStyle: Boolean;
 begin
   Result := IsDefaultValues and IsDefaultImages;
 end;
 
-function TStyleNinePath.GetOverlayBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.GetOverlayBitmap(Index: Integer): TBitmap;
 begin
   if (Index < StateCount) or (Index >= StateCount * 2) then
     raise Exception.CreateFmt('GetOverlayBitmap(%d) - Index of bounds!', [Index]);
   Result := RequestBitmap(Index + StateCount);
 end;
 
-function TStyleNinePath.GetOverlay(const Index: Integer): TPngImage;
+function TStyleNinePatch.GetOverlay(const Index: Integer): TPngImage;
 begin
   Result := RequestImage(Index + StateCount);
   // TPngImage not support OnChange event, because we need delete cache in Getter :(
@@ -964,12 +964,12 @@ begin
 //  end;
 end;
 
-function TStyleNinePath.GetStylePrefix: string;
+function TStyleNinePatch.GetStylePrefix: string;
 begin
   Result := Self.ClassName;
 end;
 
-function TStyleNinePath.GetSuitedBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.GetSuitedBitmap(Index: Integer): TBitmap;
 var
   I: Integer;
 begin
@@ -990,7 +990,7 @@ begin
   Result := BitmapList[Index];
 end;
 
-function TStyleNinePath.GetSuitedOverlayBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.GetSuitedOverlayBitmap(Index: Integer): TBitmap;
 var
   I: Integer;
 begin
@@ -1012,7 +1012,7 @@ begin
   Result := BitmapList[Index];
 end;
 
-procedure TStyleNinePath.ImageChange(Sender: TObject);
+procedure TStyleNinePatch.ImageChange(Sender: TObject);
 var
   Index: Integer;
 begin
@@ -1043,17 +1043,17 @@ begin
   Change;
 end;
 
-procedure TStyleNinePath.DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
+procedure TStyleNinePatch.DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
       OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255);
 var
   R: TRect;
   ContentRect: TRect;
 begin
   if Assigned(Bitmap) then
-    Canvas.DrawNinePath(Rect, FImageMargins.Rect, Bitmap, Mode, Alpha);
+    Canvas.DrawNinePatch(Rect, FImageMargins.Rect, Bitmap, Mode, Alpha);
 
 //  // for painting child class
-//  if (Self.ClassType <> TNinePathObject) and ContentSpace then
+//  if (Self.ClassType <> TNinePatchObject) and ContentSpace then
 //  begin
 //    ContentRect.Left := Rect.Left + FMargins.Left;
 //    ContentRect.Top := Rect.Top + FMargins.Top;
@@ -1116,7 +1116,7 @@ begin
   end;
 end;
 
-function TStyleNinePath.IsPresented(Index: Integer): Boolean;
+function TStyleNinePatch.IsPresented(Index: Integer): Boolean;
 begin
   Result := False;
 
@@ -1136,12 +1136,12 @@ begin
     Result := True;
 end;
 
-function TStyleNinePath.IsStyleStored: Boolean;
+function TStyleNinePatch.IsStyleStored: Boolean;
 begin
   Result := not (FIsDefaultValues and FIsDefaultImages);
 end;
 
-procedure TStyleNinePath.AssignDefaultImages;
+procedure TStyleNinePatch.AssignDefaultImages;
 var
   StylePrefix: string;
   Name: string;
@@ -1195,7 +1195,7 @@ begin
     end;
 end;
 
-function TStyleNinePath.RequestBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.RequestBitmap(Index: Integer): TBitmap;
 begin
   if BitmapList[Index] = nil then
   begin
@@ -1210,7 +1210,7 @@ begin
   Result := BitmapList[Index];
 end;
 
-function TStyleNinePath.RequestImage(Index: Integer): TPngImage;
+function TStyleNinePatch.RequestImage(Index: Integer): TPngImage;
 begin
   if ImageList[Index] = nil then
   begin
@@ -1221,12 +1221,12 @@ begin
   Result := ImageList[Index];
 end;
 
-function TStyleNinePath.RequestOverlayBitmap(Index: Integer): TBitmap;
+function TStyleNinePatch.RequestOverlayBitmap(Index: Integer): TBitmap;
 begin
   result := RequestBitmap(Index + StateCount);
 end;
 
-procedure TStyleNinePath.AssignDefaultStyle;
+procedure TStyleNinePatch.AssignDefaultStyle;
 begin
   AssignDefaultImages;
   BeginUpdate;
@@ -1239,7 +1239,7 @@ begin
   ChangeNotify;
 end;
 
-procedure TStyleNinePath.SetIsDefaultValues(const Value: Boolean);
+procedure TStyleNinePatch.SetIsDefaultValues(const Value: Boolean);
 begin
   if Value <> FIsDefaultValues then
   begin
@@ -1260,20 +1260,20 @@ begin
   end;
 end;
 
-procedure TStyleNinePath.SetImage(const Index: Integer; const Image: TPngImage);
+procedure TStyleNinePatch.SetImage(const Index: Integer; const Image: TPngImage);
 begin
   RequestImage(Index).Assign(Image);
   // ImageChange(RequestImage(Index));
   // Change;
 end;
 
-procedure TStyleNinePath.SetImageMargins(const Value: TStyleMargins);
+procedure TStyleNinePatch.SetImageMargins(const Value: TStyleMargins);
 begin
   FImageMargins.Assign(Value);
 end;
 
 
-procedure TStyleNinePath.SetImageMode(const Value: TStretchMode);
+procedure TStyleNinePatch.SetImageMode(const Value: TStretchMode);
 begin
   if FImageMode <> Value then
   begin
@@ -1282,7 +1282,7 @@ begin
   end;
 end;
 
-procedure TStyleNinePath.SetIsDefaultImages(const Value: Boolean);
+procedure TStyleNinePatch.SetIsDefaultImages(const Value: Boolean);
 begin
   if Value <> FIsDefaultImages then
   begin
@@ -1297,13 +1297,13 @@ begin
   end;
 end;
 
-procedure TStyleNinePath.SetIsDefaultStyle(const Value: Boolean);
+procedure TStyleNinePatch.SetIsDefaultStyle(const Value: Boolean);
 begin
   IsDefaultImages := Value;
   IsDefaultValues := Value;
 end;
 
-procedure TStyleNinePath.SetOverlayAlign(const Value: TImageAlign);
+procedure TStyleNinePatch.SetOverlayAlign(const Value: TImageAlign);
 begin
   if FOverlayAlign <> Value then
   begin
@@ -1312,19 +1312,19 @@ begin
   end;
 end;
 
-procedure TStyleNinePath.SetOverlay(const Index: Integer; const Image: TPngImage);
+procedure TStyleNinePatch.SetOverlay(const Index: Integer; const Image: TPngImage);
 begin
   RequestImage(Index + StateCount).Assign(Image);
   // ImageChange(RequestImage(Index));
   // Change;
 end;
 
-procedure TStyleNinePath.SetOverlayMargins(const Value: TStyleMargins);
+procedure TStyleNinePatch.SetOverlayMargins(const Value: TStyleMargins);
 begin
   FOverlayMargins.Assign(Value);
 end;
 
-procedure TStyleNinePath.UpdateImages;
+procedure TStyleNinePatch.UpdateImages;
 var
   I: Integer;
 begin

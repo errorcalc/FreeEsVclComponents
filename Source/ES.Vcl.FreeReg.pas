@@ -20,20 +20,20 @@ implementation
 {$R 'Icons/Icons.res'}
 
 uses
-  System.Classes, ES.Vcl.Layouts, ES.Vcl.NinePath, ES.Vcl.Indicators, ES.Vcl.Switch,
+  System.Classes, ES.Vcl.Layouts, ES.Vcl.NinePatch, ES.Vcl.Indicators, ES.Vcl.Switch,
   Es.Vcl.FreeEditors, Designintf, Vcl.Imaging.PngImage;
 
 procedure Register;
 begin
   RegisterComponents('ErrorSoft', [
     TEsLayout,// Layouts
-    TEsNinePathImage, TEsImageLabel, TEsImageLayout, TEsLabelLayout,// NinePath
+    TEsNinePatchImage, TEsImageLabel, TEsImageLayout, TEsLabelLayout,// NinePatch
     TEsActivityBar,// Indicators
     TEsSwitch// Switch
   ]);
 
   {$ifdef FixLoadPng}
-  RegisterPropertyEditor(TypeInfo(TPngImage), TEsNinePathImage, '', TEsPngPropertyFix);
+  RegisterPropertyEditor(TypeInfo(TPngImage), TEsNinePatchImage, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageLabel, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageLayout, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsLabelLayout, '', TEsPngPropertyFix);

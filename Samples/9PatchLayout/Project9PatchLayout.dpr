@@ -1,4 +1,4 @@
-program Project9PathLayout;
+program Project9PatchLayout;
 
 uses
   Vcl.Forms,

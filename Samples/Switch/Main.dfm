@@ -33,7 +33,6 @@ object MainForm: TMainForm
     Align = alClient
     IsDrawHelper = True
     TabOrder = 0
-    ExplicitHeight = 499
     object Label1: TLabel
       Left = 9
       Top = 9
@@ -296,7 +295,7 @@ object MainForm: TMainForm
       Width = 137
       Height = 22
       AutoSize = False
-      Caption = '_________'
+      Caption = '5'
       TabOrder = 16
     end
     object udFontSize: TUpDown
@@ -307,6 +306,7 @@ object MainForm: TMainForm
       Associate = StaticText1
       Min = 5
       Max = 40
+      Position = 5
       TabOrder = 17
       OnClick = udFontSizeClick
     end

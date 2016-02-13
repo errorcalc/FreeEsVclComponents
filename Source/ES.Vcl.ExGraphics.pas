@@ -39,9 +39,9 @@ type
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap); overload;
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte); overload;
 //    procedure StretchDraw(DestRect, ClipRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte); overload;
-    procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
-    procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte); overload;
-    procedure DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); overload;
+    procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
+    procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte); overload;
+    procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); overload;
     {$ifdef VER230UP}
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
     {$endif}
@@ -184,9 +184,9 @@ begin
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap);
+  DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap);
 begin
-  DrawNinePath(Dest, Bounds, Bitmap, 255);
+  DrawNinePatch(Dest, Bounds, Bitmap, 255);
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
@@ -220,7 +220,7 @@ begin
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawNinePath(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte);
+  .DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Alpha: byte);
 var
   dx, dy: Integer;
   D, S: TRect;
@@ -416,7 +416,7 @@ end;
 // TOOOOOOOOOO LONG PROCEDURE
 // FFFFUUUUU!!!!1111
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawNinePath(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
+  .DrawNinePatch(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
   Alpha: Byte);
 var
   dx, dy: Integer;
@@ -442,7 +442,7 @@ begin
 
   if (Mode = TStretchMode.smNormal) or (Mode = TStretchMode.smHorzFit) or (Mode = TStretchMode.smVertFit) then
   begin
-    DrawNinePath(Dest, Bounds, Bitmap, Alpha);
+    DrawNinePatch(Dest, Bounds, Bitmap, Alpha);
     Exit;
   end;
 
