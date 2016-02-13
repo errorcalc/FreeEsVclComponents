@@ -1436,10 +1436,7 @@ end;
 procedure TEsTimer.WndProc(var Message: TMessage);
 begin
   if Message.Msg = WM_TIMER then
-    try
-      DoTimer;
-    except
-    end
+    DoTimer
   else
     Message.Result := DefWindowProc(HidenWindow, Message.Msg, Message.WParam, Message.LParam);
 end;

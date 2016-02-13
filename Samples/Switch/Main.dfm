@@ -140,7 +140,7 @@ object MainForm: TMainForm
       Width = 77
       Height = 24
       ShowCaption = True
-      SwitchLayot = slAutoSize
+      SwitchLayout = slAutoSize
       TabOrder = 3
     end
     object EsSwitch4: TEsSwitch
@@ -149,7 +149,7 @@ object MainForm: TMainForm
       Width = 77
       Height = 32
       ShowCaption = True
-      SwitchLayot = slClient
+      SwitchLayout = slClient
       TabOrder = 4
     end
     object EsSwitch5: TEsSwitch

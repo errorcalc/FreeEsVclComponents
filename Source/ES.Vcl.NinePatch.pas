@@ -37,8 +37,8 @@ type
     function GetOverlayAlign: TImageAlign;
     function GetOverlaySpace: Boolean;
     procedure SetOverlaySpace(const Value: Boolean);
-    function GetMargins: TImageMargins;
-    procedure SetMargins(const Value: TImageMargins);
+    function GetOverlayMargins: TImageMargins;
+    procedure SetOverlayMargins(const Value: TImageMargins);
     // text
     function GetTextAlignment: TAlignment;
     procedure SetTextAlignment(const Value: TAlignment);
@@ -76,7 +76,7 @@ type
     property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign;
     property Alpha: byte read FAlpha write SetAlpha default 255;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
-    property OverlayMargins: TImageMargins read GetMargins write SetMargins;
+    property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
     //
     property Align;
     property Anchors;
@@ -368,7 +368,7 @@ begin
   Result := NinePatch.Margins;
 end;
 
-function TEsNinePatchImage.GetMargins: TImageMargins;
+function TEsNinePatchImage.GetOverlayMargins: TImageMargins;
 begin
   Result := NinePatch.OverlayMargins;
 end;
@@ -455,7 +455,7 @@ begin
   NinePatch.Margins := Value;
 end;
 
-procedure TEsNinePatchImage.SetMargins(const Value: TImageMargins);
+procedure TEsNinePatchImage.SetOverlayMargins(const Value: TImageMargins);
 begin
   NinePatch.OverlayMargins := Value;
 end;

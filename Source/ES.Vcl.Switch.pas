@@ -227,7 +227,7 @@ type
     property Animated: Boolean read FAnimated write FAnimated default True;
     property SwitchWidth: Integer read FSwitchWidth write SetSwitchWidth default DefaultWidth;
     property SwitchHeight: Integer read FSwitchHeight write SetSwitchHeight default DefaultHeight;
-    property SwitchLayot: TSwitchLayout read FSwitchLayout write SetSwitchLayout default slFixed;
+    property SwitchLayout: TSwitchLayout read FSwitchLayout write SetSwitchLayout default slFixed;
     property AutoSize: Boolean read FAutoSize write SetAutoSize default True;
     property VerticalSpace: Cardinal read FVerticalSpace write SetVerticalSpace default 0;
     //
@@ -250,7 +250,7 @@ type
     property Animated;
     property SwitchWidth;
     property SwitchHeight;
-    property SwitchLayot;
+    property SwitchLayout;
     property AutoSize;
     property VerticalSpace;
     //
