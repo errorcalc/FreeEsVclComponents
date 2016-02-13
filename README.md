@@ -18,6 +18,45 @@ Attribution-ShareAlike 3.0
 
 # XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle) - compatibility
 
+#English ReadMe:
+
+** FreeEsVCLComponents ** - a free library of VCL components for Delphi. All components has best support transparency, FreeEsVCLComponents not flicker, support Interesting possibility for double buffering for TGraphicControl heirs - BufferedChildens property.
+
+Pluses:
+* Windows XP support
+* Support for built-in VCL skins
+* Display convenient borders in DesignTime, activate properties IsDrawHelper
+* Excellent support for transparency!
+* Ability to make transparent to the mouse, activate properties IsTransparentMouse
+
+**TEsCustomControl** - The base class contains the anti-flicker magic and support transparency.
+
+**TEsNinePatchImage** - TImage for 9-Patch images (raster image with the ability to zoom without loss of quality, almost all modern interfaces are built on them), as well as images - Overley
+
+**TEsImageLabel** - The Label supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
+
+**TEsLayout** - The basic container. Interesting possibility for double buffering TGraphicControl heirs (TLabel, TGlyphButton, TImage, TBevel ...)
+
+**TEsImageLayot** - The Layout with support background 9-Patch images and image - Overley
+
+**TEsLabelLayout** - The Layout supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
+
+**TEsActivityBar** - Component simulates XAML control Windows 10, designed to indicate or display the progress of employment (something TProgressBar type). It has a lot of settings.
+* Support for two display modes
+* Three types of animation and progress indication
+* Support VCL styles
+* Lack of Flicker
+* Full customization
+
+** TEsSwitch ** - Component simulates the eponymous XAML control Windows 10. It has a lot of settings. 
+* Complete simulation XAML control 
+* Animation 
+* Support VCL styles
+* Lack of Flicker 
+* Full customization of colors 
+* Multiple AutoSize-and modes 
+* Support ActionList
+
 #Russian ReadMe:
 **FreeEsVCLComponents** - это бесплатная библиотека VCL компонентов для Delphi.
 Все компоненты FreeEsVCLComponents не мерцают, также не мерцают на них и наследники TGraphiControl при активации свойства BufferedChildens.
