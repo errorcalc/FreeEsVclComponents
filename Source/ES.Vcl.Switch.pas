@@ -198,6 +198,7 @@ type
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure Click; override;
     procedure CreateWnd; override;
+    procedure ChangeScale(M, D: Integer); override;
     // for external styles
     function CreateColors: TSwitchColors; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -399,6 +400,13 @@ begin
     end;
   end else
     RealCalc;
+end;
+
+procedure TEsCustomSwitch.ChangeScale(M, D: Integer);
+begin
+  inherited;
+  SwitchWidth := MulDiv(SwitchWidth, M, D);
+  SwitchHeight := MulDiv(SwitchHeight, M, D);
 end;
 
 procedure TEsCustomSwitch.ChangeState;

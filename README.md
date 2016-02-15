@@ -25,6 +25,7 @@ Attribution-ShareAlike 3.0
 Pluses:
 * Windows XP support
 * Support for built-in VCL skins
+* Support Hight DPI (Seattle+)
 * Display convenient borders in DesignTime, activate properties IsDrawHelper
 * Excellent support for transparency!
 * Ability to make transparent to the mouse, activate properties IsTransparentMouse
@@ -68,6 +69,7 @@ Pluses:
 Плюсы:
 * Поддержка Windows XP
 * Поддержка встроенного в VCL движка тем
+* Поддержка Hight DPI (Seattle+)
 * Удобное отображение границ в DesignTime, при активации свойства IsDrawHelper
 * Превосходная поддержка прозрачности
 * Возможность сделать прозрачным для мыши, при активации свойства IsTransparentMouse
