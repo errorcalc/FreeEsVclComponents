@@ -192,9 +192,11 @@ object MainForm: TMainForm
       Top = 283
       Width = 68
       Height = 20
-      Style.MainColor = clLime
       Checked = True
       ShowCaption = True
+      FrameColor = clGray
+      ThumbColor = clWhite
+      MainColor = clLime
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clTeal
       Font.Height = -15

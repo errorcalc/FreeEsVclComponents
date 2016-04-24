@@ -94,7 +94,7 @@ type
     DefaultHeight = 20;
     SwitchSizeFactor = 2.2;
   private
-    FStyle: TSwitchStyle;
+    Style: TSwitchStyle;
     FChecked: Boolean;
     FThumbBorder: TThumbBorder;
     FTextOn: string;
@@ -129,7 +129,6 @@ type
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     // Setters and getters
-    procedure SetStyle(const Value: TSwitchStyle);
     procedure ColorsChange(Sender: TObject);
     procedure SetChecked(const Value: Boolean);
     procedure SetThumbBorder(const Value: TThumbBorder);
@@ -145,6 +144,12 @@ type
     procedure SetSwitchBorder(const Value: TSwitchBorder);
     procedure SetAutoSize(const Value: Boolean); reintroduce;
     procedure SetAlignment(const Value: TSwitchAlignment);
+    function GetFrameColor: TColor;
+    function GetMainColor: TColor;
+    function GetThumbColor: TColor;
+    procedure SetFrameColor(const Value: TColor);
+    procedure SetMainColor(const Value: TColor);
+    procedure SetThumbColor(const Value: TColor);
   protected
     State: TSwitchState;
     IsTracking: Boolean;
@@ -181,8 +186,11 @@ type
     property ThumbSize: TSize read GetThumbSize;
     property ThumbPos: Integer read GetThumbPos;
     // to published...
+    property FrameColor: TColor read GetFrameColor write SetFrameColor default clDefault;
+    property ThumbColor: TColor read GetThumbColor write SetThumbColor default clDefault;
+    property MainColor: TColor read GetMainColor write SetMainColor default clDefault;
+    //
     property Alignment: TSwitchAlignment read FAlignment write SetAlignment default saRight;
-    property Style: TSwitchStyle read FStyle write SetStyle;
     property Checked: Boolean read FChecked write SetChecked default False;
     property ThumbBorder: TThumbBorder read FThumbBorder write SetThumbBorder default 3;
     property SwitchBorder: TSwitchBorder read FSwitchBorder write SetSwitchBorder default 2;
@@ -206,7 +214,6 @@ type
   TEsSwitch = class(TEsCustomSwitch)
   published
     property Alignment;
-    property Style;
     property Checked;
     property ThumbBorder;
     property TextOn;
@@ -224,6 +231,9 @@ type
     property Anchors;
     property BiDiMode;
     property Color;
+    property FrameColor;
+    property ThumbColor;
+    property MainColor;
     property Constraints;
     property DoubleBuffered;
     property DragCursor;
@@ -433,9 +443,9 @@ begin
   Width := DefaultWidth;
   Height := DefaultHeight;
 
-  FStyle := CreateStyle;
-  FStyle.OnChange := ColorsChange;
-  FStyle.Control := Self;
+  Style := CreateStyle;
+  Style.OnChange := ColorsChange;
+  Style.Control := Self;
   State := ssOffNormal;
 
   IsFullSizeBuffer := True;
@@ -465,7 +475,7 @@ end;
 
 destructor TEsCustomSwitch.Destroy;
 begin
-  FStyle.Free;
+  Style.Free;
   inherited;
 end;
 
@@ -508,6 +518,16 @@ end;
 function TEsCustomSwitch.GetActionLinkClass: TControlActionLinkClass;
 begin
   Result := TEsCustomSwitchActionLinkClass;
+end;
+
+function TEsCustomSwitch.GetFrameColor: TColor;
+begin
+  Result := Style.FrameColor;
+end;
+
+function TEsCustomSwitch.GetMainColor: TColor;
+begin
+  Result := Style.MainColor;
 end;
 
 function TEsCustomSwitch.GetSwitchRect: TRect;
@@ -557,6 +577,11 @@ begin
       Result.Width := W;
     end;
   end;
+end;
+
+function TEsCustomSwitch.GetThumbColor: TColor;
+begin
+  Result := Style.ThumbColor;
 end;
 
 function TEsCustomSwitch.GetThumbPos: Integer;
@@ -820,9 +845,14 @@ begin
   end;
 end;
 
-procedure TEsCustomSwitch.SetStyle(const Value: TSwitchStyle);
+procedure TEsCustomSwitch.SetFrameColor(const Value: TColor);
 begin
-  FStyle.Assign(Value);
+  Style.FrameColor := Value;
+end;
+
+procedure TEsCustomSwitch.SetMainColor(const Value: TColor);
+begin
+  Style.MainColor := Value;
 end;
 
 procedure TEsCustomSwitch.SetShowCaption(const Value: Boolean);
@@ -921,6 +951,11 @@ begin
     FThumbBorder := Value;
     Invalidate;
   end;
+end;
+
+procedure TEsCustomSwitch.SetThumbColor(const Value: TColor);
+begin
+  Style.ThumbColor := Value;
 end;
 
 procedure TEsCustomSwitch.SetVerticalSpace(const Value: Cardinal);
