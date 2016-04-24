@@ -4,9 +4,9 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Vcl.BaseControls, ES.Vcl.Switch, ES.Vcl.Layouts,
-  ES.Vcl.NinePatch, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls,
-  Vcl.ComCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.BaseControls, ES.Switch, ES.Layouts,
+  ES.NinePatch, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls,
+  Vcl.ComCtrls, System.Actions;
 
 type
   TMainForm = class(TForm)

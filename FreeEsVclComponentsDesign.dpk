@@ -37,7 +37,7 @@ requires
   FreeEsVclComponents;
 
 contains
-  ES.Vcl.FreeReg in 'Source\ES.Vcl.FreeReg.pas',
-  ES.Vcl.FreeEditors in 'Source\ES.Vcl.FreeEditors.pas';
+  ES.FreeReg in 'Source\ES.FreeReg.pas',
+  ES.FreeEditors in 'Source\ES.FreeEditors.pas';
 
 end.

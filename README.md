@@ -1,6 +1,7 @@
 ![Logo](Source/icons/Logo.png)
 # FreeEsVCLComponents
-Free components for delphi (VCL)
+**Version 1.0**
+Free components for delphi & C++Builder (VCL)
 Attribution-ShareAlike 3.0
 
 *** You can help, if you send me where you are using the component and attach a screenshot example of use ***
@@ -10,17 +11,24 @@ Attribution-ShareAlike 3.0
 # List of components:
 * TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
 * TEsImageLayout (Best for your application)
-* TEsLabelLayout
+* TEsImageStaticText
 * TEsNinePatchImage
 * TEsImageLabel
 * TEsActivityBar (looks like Windows 10 XAML control!)
 * TEsSwitch (looks like Windows 10 XAML control!)
+* TEsImage (much better than the TImage)
+* TEsImageControl (much better than the TImage & absolitly no flicker!)
 
-# XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle) - compatibility
+# XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin) - compatibility
+# Now: And support C++Builder
 
 #English ReadMe:
 
 ** FreeEsVCLComponents ** - a free library of VCL components for Delphi. All components has best support transparency, FreeEsVCLComponents not flicker, support Interesting possibility for double buffering for TGraphicControl heirs - BufferedChildens property.
+Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
+errorsoft(at)mail.ru
+
+**Units was renamed!(for C++Builder Support) Need rename in your project "ES.Vcl.xxx.pas -> ES.xxx.pas"**
 
 Pluses:
 * Windows XP support
@@ -28,7 +36,6 @@ Pluses:
 * Support Hight DPI (Seattle+)
 * Display convenient borders in DesignTime, activate properties IsDrawHelper
 * Excellent support for transparency!
-* Ability to make transparent to the mouse, activate properties IsTransparentMouse
 
 **TEsCustomControl** - The base class contains the anti-flicker magic and support transparency.
 
@@ -40,7 +47,7 @@ Pluses:
 
 **TEsImageLayot** - The Layout with support background 9-Patch images and image - Overley
 
-**TEsLabelLayout** - The Layout supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
+**TEsImageStaticText** - The StaticText supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
 
 **TEsActivityBar** - Component simulates XAML control Windows 10, designed to indicate or display the progress of employment (something TProgressBar type). It has a lot of settings.
 * Support for two display modes
@@ -49,7 +56,7 @@ Pluses:
 * Lack of Flicker
 * Full customization
 
-** TEsSwitch ** - Component simulates the eponymous XAML control Windows 10. It has a lot of settings. 
+**TEsSwitch** - Component simulates the eponymous XAML control Windows 10. It has a lot of settings. 
 * Complete simulation XAML control 
 * Animation 
 * Support VCL styles
@@ -57,6 +64,21 @@ Pluses:
 * Full customization of colors 
 * Multiple AutoSize-and modes 
 * Support ActionList
+
+**TEsImage** - Much better than the TImage, many other properties.
+* Smoothing(Interpolation) support, this is always lacked TImage
+* Support ImageList
+* Support Opacity
+* More Stretch modes
+
+**TEsImageControl** - Much better than the TImage & absolitly no flicker!
+* Absolitly no flicker!
+* Smoothing(Interpolation) support, this is always lacked TImage
+* Support ImageList
+* Support Opacity
+* More Stretch modes
+* Draw frame if need
+* Support Focusing
 
 #Russian ReadMe:
 **FreeEsVCLComponents** - это бесплатная библиотека VCL компонентов для Delphi.
@@ -66,13 +88,14 @@ Pluses:
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
 
+**Модули были переименованы!(Для поддержки C++Builder) Необходимо исправить названия "ES.Vcl.xxx -> ES.xxx"**
+
 Плюсы:
 * Поддержка Windows XP
 * Поддержка встроенного в VCL движка тем
 * Поддержка Hight DPI (Seattle+)
 * Удобное отображение границ в DesignTime, при активации свойства IsDrawHelper
 * Превосходная поддержка прозрачности
-* Возможность сделать прозрачным для мыши, при активации свойства IsTransparentMouse
 
 **TEsCustomControl** - Базовый класс, содержит в себе магию подавления мерцания и поддержки прозрачности.
 
@@ -85,7 +108,7 @@ Pluses:
 
 **TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a
 
-**TEsLabelLayout** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно комбинировать по-разному
+**TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно по-разному комбинировать 
 
 **TEsActivityBar** - Компонент имитирует XAML контрол Windows 10, созданный для индикации занятости или отображения прогресса (что-то типа TProgressBar).
 Имеет множество настроек.
@@ -105,9 +128,25 @@ Pluses:
 * Несколько режимов AutoSize-а
 * Поддержка ActionList
 
+**TEsImage** - Much better than the TImage, many other properties.
+* Сглаживание, то чего всегда не хватало TImage
+* Поддержка ImageList
+* Поддержка полупрозрачности
+* Несколько режимов растягивания изображения
+
+**TEsImageControl** - Much better than the TImage & absolitly no flicker!
+* Отсутствие мерцания!
+* Сглаживание, то чего всегда не хватало TImage
+* Поддержка ImageList
+* Поддержка полупрозрачности
+* Несколько режимов растягивания изображения
+* Рисование границы, если необходимо
+* Поддежка фокуса ввода
+
 Пишите ваши отзывы, а также пожелания по улучшению :)
+errorsoft(at)mail.ru
 
 Более оперативно на вопросы я могу ответить здесь: http://vk.com/errorsoft
 
-Совместима с XE2-10
+Совместима с XE2-10.1
 (Хотя класс **TEsCustomControl** будет полезен и ценителям Delphi 7)

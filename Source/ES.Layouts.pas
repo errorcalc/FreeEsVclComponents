@@ -3,36 +3,33 @@
 {                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.Layouts;
+unit ES.Layouts;
 
 interface
 
 uses
-  Winapi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.Vcl.BaseControls;
+  Winapi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.BaseControls;
 
 type
-  TEsCustomLayout = class(TEsCustomControl)
+  TEsCustomLayout = class(TEsBaseLayout)
   private
     FLocked: Boolean;
-    FBorderWidth: TBorderWidth;
     procedure CMIsToolControl(var Message: TMessage); message CM_ISTOOLCONTROL;
-    procedure SetBorderWidth(const Value: TBorderWidth);
   protected
     procedure CreateParams(var Params: TCreateParams); override;
-    procedure AdjustClientRect(var Rect: TRect); override;
     property UseDockManager default True;
-    procedure Paint; override;
-    procedure AlignControls(AControl: TControl; var Rect: TRect); override;
   public
     constructor Create(AOwner: TComponent); override;
     property Color default clBtnFace;
     property DockManager;
     property Locked: Boolean read FLocked write FLocked default False;
-    property BorderWidth: TBorderWidth read FBorderWidth write SetBorderWidth default 0;
   end;
 
   TEsLayout = class(TEsCustomLayout)
@@ -58,7 +55,6 @@ type
     property IsCachedBackground;// TEsCustomControl
     property IsDrawHelper;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
-    property IsTransparentMouse;// TEsCustomControl
     property IsFullSizeBuffer;// TEsCustomControl
     property Locked;
     property Padding;
@@ -110,37 +106,10 @@ type
     property OnUnDock;
   end;
 
-//procedure Register;
-
 implementation
 
 uses
-  ES.Vcl.ExGraphics;
-
-//procedure Register;
-//begin
-//  RegisterComponents('ErrorSoft', [TEsLayout]);
-//end;
-
-{ TESCustomLayout }
-
-procedure TEsCustomLayout.AdjustClientRect(var Rect: TRect);
-begin
-  inherited AdjustClientRect(Rect);
-  if BorderWidth <> 0 then
-  begin
-    InflateRect(Rect, -Integer(BorderWidth), -Integer(BorderWidth));
-    if Rect.Width < 0 then Rect.Width := 0;
-    if Rect.Height < 0 then Rect.Height := 0;
-  end;
-end;
-
-procedure TEsCustomLayout.AlignControls(AControl: TControl; var Rect: TRect);
-begin
-  inherited AlignControls(AControl, Rect);
-  if (csDesigning in ComponentState) and IsDrawHelper then
-    Invalidate;
-end;
+  ES.ExGraphics;
 
 procedure TEsCustomLayout.CMIsToolControl(var Message: TMessage);
 begin
@@ -161,55 +130,6 @@ procedure TEsCustomLayout.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
   // nope now
-end;
-
-procedure TEsCustomLayout.Paint;
-  procedure Line(Canvas: TCanvas; x1, y1, x2, y2: Integer);
-  begin
-    Canvas.MoveTo(x1, y1);
-    Canvas.LineTo(x2, y2);
-  end;
-begin
-  inherited;
-  if (csDesigning in ComponentState) and IsDrawHelper then
-  begin
-    if (FBorderWidth * 2 > Height)or(FBorderWidth * 2 > Width) then
-      exit;
-    Canvas.Pen.Mode := pmNot;
-    Canvas.Pen.Style := psDash;
-    Canvas.Brush.Style := bsClear;
-    if FBorderWidth <> 0 then
-      Canvas.Rectangle(FBorderWidth, FBorderWidth, Width - FBorderWidth, Height - FBorderWidth);
-
-    if (FBorderWidth * 2 + Padding.Top + Padding.Bottom > Height)or
-       (FBorderWidth * 2 + Padding.Left + Padding.Right > Width) then
-      exit;
-    //Canvas.Pen.Mode := pmCopy;
-    Canvas.Pen.Style := psDot;
-    //Canvas.Pen.Color := clBlue;
-    if Padding.Left <> 0 then
-      Line(Canvas, Padding.Left + FBorderWidth, Padding.Top + FBorderWidth,
-        Padding.Left + FBorderWidth, Height - Padding.Bottom - FBorderWidth - 1);
-    if Padding.Top <> 0 then
-      Line(Canvas, Padding.Left + FBorderWidth, Padding.Top + FBorderWidth,
-        Width - Padding.Right - FBorderWidth - 1, Padding.Top + FBorderWidth);
-    if Padding.Right <> 0 then
-      Line(Canvas, Width - Padding.Right - FBorderWidth - 1, Padding.Top + FBorderWidth,
-        Width - Padding.Right - FBorderWidth - 1, Height - Padding.Bottom - FBorderWidth - 1);
-    if Padding.Bottom <> 0 then
-      Line(Canvas, Padding.Left + FBorderWidth, Height - Padding.Bottom - FBorderWidth - 1,
-        Width - Padding.Right - FBorderWidth - 1, Height - Padding.Bottom - FBorderWidth - 1);
-  end;
-end;
-
-procedure TEsCustomLayout.SetBorderWidth(const Value: TBorderWidth);
-begin
-  if Value <> FBorderWidth then
-  begin
-    FBorderWidth := Value;
-    Realign;
-    Invalidate;
-  end;
 end;
 
 end.

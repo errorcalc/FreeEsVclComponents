@@ -4,15 +4,15 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, ES.Vcl.Indicators,
-  ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.NinePatch;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, ES.Indicators,
+  ES.BaseControls, ES.Layouts, ES.NinePatch;
 
 type
   TMainForm = class(TForm)
     EsActivityBar: TEsActivityBar;
     Panel1: TPanel;
     EsLayoutMain: TEsLayout;
-    EsLabelLayout1: TEsLabelLayout;
+    EsImageStaticText1: TEsImageStaticText;
     Label3: TLabel;
     Label4: TLabel;
     Label7: TLabel;
@@ -24,7 +24,7 @@ type
     udHeight: TUpDown;
     ckbActive: TCheckBox;
     cbStyle: TComboBox;
-    EsLabelLayout2: TEsLabelLayout;
+    EsImageStaticText2: TEsImageStaticText;
     Label1: TLabel;
     Label2: TLabel;
     Label5: TLabel;
@@ -36,7 +36,7 @@ type
     TrackBar1: TTrackBar;
     edPointCount: TEdit;
     udPointCount: TUpDown;
-    EsLabelLayout3: TEsLabelLayout;
+    EsImageStaticText3: TEsImageStaticText;
     lblAnimationTime: TLabel;
     lblAnimationDelay: TLabel;
     lblAnimationEnergy: TLabel;

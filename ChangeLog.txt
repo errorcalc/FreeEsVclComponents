@@ -1,3 +1,13 @@
+[26.02.2016]
+Поддержка BevelKind в TEsCustomControl
+
+[15.02.2016]
+[ENG]
+Support Hight DPI (Seattle+)
+
+[RUS]
+Поддержка Hight DPI (Seattle+)
+
 [13.02.2016]
 [ENG]
 Name of TNinePatchImage component was a typo, I fixed it.
@@ -7,3 +17,30 @@ To correct this error in your projects need replaced in uses "Es.Vcl.NinePath" t
 В названии компонента TNinePatchImage была опечатка, я исправил это.
 Для исправления этой ошибки в ваших проектах необходимо заменить в uses "Es.Vcl.NinePath" на "Es.Vcl.NinePatch",
 а также заменить в файлах форм (dfm) TNinePathImage на TNinePatchImage. 
+
+[21.04.2016]
+// Big release, first release! Version 1.0!
+// Support Rad Studio 10.1 BigBen!
+[ENG]
+1. Add two New components!
+2. Now Support C++Builder!
+List of new components: TEsImage, TEsImageControl 
+3. Change color settings on TEsSwitch
+4. Rename units, sample: "Es.Vcl.CfxClasses" to "Es.CfxClasses", for support C++Builder
+5. Fix many bugs and other improvements
+6. New base class TEsGraphicControl, this support
+Padding, IsDrawHelper props, and ContentRect, ContentMargins functions 
+7. TEsCustomLayot improvement
+8. TEsLabelLayout was renamed to TEsImageStaticText
+
+[RUS]
+1. Два новых компонента!
+Список новых компонентов: TEsImage, TEsImageControl 
+2. Поддежка C++Builder!
+3. Изменение в настройках цвета в TEsSwitch
+4. Переименование модулей, пример: "Es.Vcl.CfxClasses" на "Es.CfxClasses", для поддержки C++Builder
+5. Исправление багов и улучшения некоторых компонентов и классов
+6. Новый базовый класс TEsGraphicControl, поддержиивающий
+Padding, IsDrawHelper проперти, и ContentRect, ContentMargins функции
+7. улучшение TEsCustomLayot 
+8. TEsLabelLayout был переименован в TEsImageStaticText

@@ -1,13 +1,16 @@
 {******************************************************************************}
-{                             FreeEsVclComponents                              }
+{                          FreeEsVclComponents/Core                            }
 {                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.Utils;
+unit ES.Utils;
 
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
@@ -19,7 +22,7 @@ unit ES.Vcl.Utils;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls, Messages, Graphics, Themes;
+  Windows, SysUtils, Classes, Controls, Messages, Graphics, Themes, ImgList, DwmApi;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -42,11 +45,23 @@ procedure DeserializeFromResource(Obj: TPersistent; Instance: HINST; const Resou
   ResourceType: PChar; Name: string = '');
 procedure DeserializeFromFile(Obj: TPersistent; FileName: string; Name: string = '');
 
+function ImageListGetBitmap(ImageList: TCustomImageList; Index: Integer; Bitmap: TBitmap; IsPremultiplied: Boolean = True): Boolean;
+
+function GetMainColor: Cardinal; overload;
+function GetMainColor(var Color: Cardinal): Boolean; overload;
+procedure InitMainColor;
+
 implementation
+
+uses
+  CommCtrl;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 begin
-  Result := ((Control.Perform(WM_QUERYUISTATE, 0, 0) and UISF_HIDEFOCUS) = 0) and Control.Focused;
+  if Control.Focused then
+    Result := ((Control.Perform(WM_QUERYUISTATE, 0, 0) and UISF_HIDEFOCUS) = 0)
+  else
+    Result := False;
 end;
 
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -293,5 +308,79 @@ begin
 end;
 
 //--------------------------------------------------------------------------------------------------
+
+function ImageListGetBitmap(ImageList: TCustomImageList; Index: Integer; Bitmap: TBitmap; IsPremultiplied: Boolean = True): Boolean;
+var
+  Info: TIconInfo;
+  DC: HDC;
+  Icon: TIcon;
+begin
+  Result := (Bitmap <> nil) and ImageList.HandleAllocated and (Index > -1) and (Index < ImageList.Count);
+
+  if Result then
+    if (ImageList.ColorDepth <> TColorDepth.cd32Bit) then
+      Result := ImageList.GetBitmap(Index, Bitmap)
+    else
+    begin
+      Bitmap.SetSize(0, 0);
+      // set alpha bitmap
+      Bitmap.PixelFormat := TPixelFormat.pf32bit;
+      // new size
+      Bitmap.SetSize(ImageList.Width, ImageList.Height);
+
+      // create icon
+      Icon := TIcon.Create;
+      DC := 0;
+      Info.hbmMask := 0;
+      Info.hbmColor := 0;
+      try
+        // get icon
+        ImageList.GetIcon(Index, Icon);
+        GetIconInfo(Icon.Handle, Info);
+
+        // select icon bitmap to dc
+        DC := CreateCompatibleDC(Bitmap.Canvas.Handle);
+        SelectObject(DC, Info.hbmColor);
+
+        // copy icon to bitmap
+        BitBlt(Bitmap.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height,
+          DC, 0, 0, SRCCOPY);
+
+        if IsPremultiplied then
+          Bitmap.AlphaFormat := TAlphaFormat.afPremultiplied
+        else
+          Bitmap.AlphaFormat := TAlphaFormat.afDefined;
+      finally
+        DeleteDC(DC);
+        DeleteObject(Info.hbmMask);
+        DeleteObject(Info.hbmColor);
+        Icon.Free;
+      end;
+    end;
+end;
+
+var
+  MainColor: Cardinal = $FF000000;
+
+function GetMainColor: Cardinal;
+begin
+  if MainColor = $FF000000 then
+    InitMainColor;
+  Result := MainColor;
+end;
+
+function GetMainColor(var Color: Cardinal): Boolean;
+begin
+  Color := GetMainColor;
+  Result := Color <> 0;
+end;
+
+procedure InitMainColor;
+var
+  DwnOpaqueBlend: BOOL;
+begin
+  if (not CheckWin32Version(6, 0)) or (DwmGetColorizationColor(MainColor, DwnOpaqueBlend) <> S_OK) then
+    MainColor := 0;
+end;
 
 end.

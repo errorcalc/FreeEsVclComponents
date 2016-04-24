@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.NinePatch;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.BaseControls, ES.Layouts, ES.NinePatch;
 
 type
   TForm2 = class(TForm)
@@ -14,7 +14,7 @@ type
     EsImageLabel3: TEsImageLabel;
     EsImageLabel4: TEsImageLabel;
     EsImageLabel5: TEsImageLabel;
-    EsLabelLayout1: TEsLabelLayout;
+    EsImageStaticText1: TEsImageStaticText;
   private
     { Private declarations }
   public

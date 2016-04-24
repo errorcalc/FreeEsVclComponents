@@ -3,11 +3,14 @@
 {                           ErrorSoft(c) 2012-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.NinePatch;
+unit ES.NinePatch;
 
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
@@ -17,21 +20,21 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
-  WinApi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls, ES.Vcl.Layouts, ES.Vcl.CfxClasses;
+  WinApi.Messages, ES.ExGraphics, ES.BaseControls, ES.Layouts, ES.CfxClasses;
 
 type
-  TEsNinePatchImage = class(TGraphicControl)
+  TEsNinePatchImage = class(TEsGraphicControl)
   private
     NinePatch: TTextNinePatchObject;
     FImage: TPngImage;
-    FAlpha: byte;
+    FOpacity: Byte;
     FOverlay: TPngImage;
     procedure NeedRepaint(Sender: TObject);
     procedure SetImageMargins(const Value: TImageMargins);
     function GetImageMargins: TImageMargins;
     procedure SetImage(const Value: TPngImage);
     procedure PictureChange(Sender: TObject);
-    procedure SetAlpha(const Value: byte);
+    procedure SetOpacity(const Value: byte);
     procedure SetOverlay(const Value: TPngImage);
     procedure SetOverlayAlign(const Value: TImageAlign);
     function GetOverlayAlign: TImageAlign;
@@ -74,9 +77,11 @@ type
     property Image: TPngImage read FImage write SetImage;
     property Overlay: TPngImage read FOverlay write SetOverlay;
     property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign;
-    property Alpha: byte read FAlpha write SetAlpha default 255;
+    property Opacity: byte read FOpacity write SetOpacity default 255;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
     property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
+    //
+    property IsDrawHelper;
     //
     property Align;
     property Anchors;
@@ -153,7 +158,7 @@ type
   private
     NinePatch: TTextNinePatchObject;
     FImage: TPngImage;
-    FAlpha: byte;
+    FOpacity: Byte;
     FOverlay: TPngImage;
     FPaddingWithImage: Boolean;
     FPadding: TPadding;
@@ -161,7 +166,7 @@ type
     function GetImageMargins: TImageMargins;
     procedure SetImage(const Value: TPngImage);
     procedure PictureChange(Sender: TObject);
-    procedure SetAlpha(const Value: byte);
+    procedure SetOpacity(const Value: byte);
     procedure SetOverlay(const Value: TPngImage);
     procedure SetOverlayAlign(const Value: TImageAlign);
     function GetOverlayAlign: TImageAlign;
@@ -209,7 +214,7 @@ type
     property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign default iaTopLeft;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
     property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
-    property Alpha: byte read FAlpha write SetAlpha default 255;
+    property Opacity: Byte read FOpacity write SetOpacity default 255;
     property Padding: TPadding read GetPadding write SetPadding stored IsPaddingStored;
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
@@ -226,7 +231,7 @@ type
     property OverlayAlign;
     property OverlaySpace;
     property OverlayMargins;
-    property Alpha;
+    property Opacity;
     // property AlignWithImageBounds;
     property PaddingWithImage;
     property Align;
@@ -250,7 +255,6 @@ type
     property IsCachedBackground;// TEsCustomControl
     property IsDrawHelper;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
-    property IsTransparentMouse;// TEsCustomControl
     property IsFullSizeBuffer;// TEsCustomControl
     property Locked;
     property Padding;
@@ -302,7 +306,7 @@ type
     property OnUnDock;
   end;
 
-  TEsLabelLayout = class(TEsImageLayout)
+  TEsImageStaticText = class(TEsImageLayout)
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -352,7 +356,7 @@ begin
   FImage.OnChange := PictureChange;
   FOverlay := TPngImage.Create;
   FOverlay.OnChange := PictureChange;
-  FAlpha := 255;
+  FOpacity := 255;
 end;
 
 destructor TEsNinePatchImage.Destroy;
@@ -425,8 +429,7 @@ end;
 procedure TEsNinePatchImage.Paint;
 begin
   Canvas.Font := Font;
-  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
-  inherited;
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
   inherited;
 end;
 
@@ -435,11 +438,11 @@ begin
   NinePatch.AssignImage(FImage);
 end;
 
-procedure TEsNinePatchImage.SetAlpha(const Value: byte);
+procedure TEsNinePatchImage.SetOpacity(const Value: byte);
 begin
-  if Value <> FAlpha then
+  if Value <> FOpacity then
   begin
-    FAlpha := Value;
+    FOpacity := Value;
     Invalidate;
   end;
 end;
@@ -551,7 +554,7 @@ begin
   FOverlay.OnChange := PictureChange;
   NinePatch.OverlayAlign := iaTopLeft;
   NinePatch.OverlaySpace := False;
-  FAlpha := 255;
+  FOpacity := 255;
 end;
 
 procedure TEsCustomImageLayout.CreateParams(var Params: TCreateParams);
@@ -662,7 +665,7 @@ end;
 procedure TEsCustomImageLayout.Paint;
 begin
   Canvas.Font := Font;
-  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FAlpha);
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
   inherited;
 end;
 
@@ -691,11 +694,11 @@ begin
   NinePatch.TextMultiline := Value;
 end;
 
-procedure TEsCustomImageLayout.SetAlpha(const Value: byte);
+procedure TEsCustomImageLayout.SetOpacity(const Value: byte);
 begin
-  if Value <> FAlpha then
+  if Value <> FOpacity then
   begin
-    FAlpha := Value;
+    FOpacity := Value;
     Invalidate;
   end;
 end;
@@ -783,11 +786,12 @@ begin
   Invalidate;
 end;
 
-{ TEsTextImageLayout }
+{ TEsImageStatic }
 
-constructor TEsLabelLayout.Create(AOwner: TComponent);
+constructor TEsImageStaticText.Create(AOwner: TComponent);
 begin
   inherited;
+  ControlStyle := ControlStyle + [csSetCaption];
   OverlayAlign := iaLeft;
   OverlaySpace := True;
   ShowCaption := True;

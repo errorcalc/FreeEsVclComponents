@@ -1,24 +1,32 @@
 {******************************************************************************}
-{                             FreeEsVclComponents                              }
+{                          FreeEsVclComponents/Core                            }
 {                           ErrorSoft(c) 2011-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
+{
+  This is the base unit, which must remain Delphi 7 support, and it should not
+  be dependent on any other units!
+}
 
-unit ES.Vcl.BaseControls;
+unit Es.BaseControls;
 
-{$IF CompilerVersion >= 21}
-{$DEFINE VER210UP}
-{$IFEND}
-{$IF CompilerVersion >= 23}
-{$DEFINE VER230UP}
-{$IFEND}
-{$IF CompilerVersion >= 24}
-{$DEFINE VER240UP}
-{$IFEND}
+{$IF CompilerVersion >= 18} {$DEFINE VER180UP} {$IFEND}
+{$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
+{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
+{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
+
+// see function CalcClientRect
+{$define FAST_CALC_CLIENTRECT}
+
+// see TEsBaseLayout.ContentRect
+{$define TEST_CONTROL_CONTENT_RECT}
 
 interface
 
@@ -28,14 +36,20 @@ uses
 
 const
   CM_ESBASE = CM_BASE + $0800;
-
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
+  EsVclCoreVersion = 1.0;
+
 type
+  THelperOption = (hoPadding, hoBorder, hoClientRect);
+  THelperOptions = set of THelperOption;
+
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
 
+  /// <summary> The best replacement for TCustomControl, supports transparency and without flicker </summary>
   TEsCustomControl = class(TWinControl)
   private
+    // anti flicker and transparent magic
     FCanvas: TCanvas;
     CacheBitmap: HBITMAP;// Cache for buffer BitMap
     CacheBackground: HBITMAP;// Cache for background BitMap
@@ -43,33 +57,39 @@ type
     FIsCachedBackground: Boolean;
     StoredCachedBuffer: Boolean;
     StoredCachedBackground: Boolean;
-    FIsDrawHelper: Boolean;
-    FIsOpaque: Boolean;
     FBufferedChildrens: Boolean;
     FParentBufferedChildrens: Boolean;
-    FIsTransparentMouse: Boolean;
+    FIsFullSizeBuffer: Boolean;
+    // paint events
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
-    FIsFullSizeBuffer: Boolean;
+    // draw helper
+    FIsDrawHelper: Boolean;
+    // transparent mouse
+    // FIsTransparentMouse: Boolean;
     // paint
     procedure SetIsCachedBuffer(Value: Boolean);
     procedure SetIsCachedBackground(Value: Boolean);
     procedure SetIsDrawHelper(const Value: Boolean);
     procedure SetIsOpaque(const Value: Boolean);
+    function GetIsOpaque: Boolean;
     procedure SetBufferedChildrens(const Value: Boolean);
     procedure SetParentBufferedChildrens(const Value: Boolean);
+    function GetTransparent: Boolean;
+    procedure SetTransparent(const Value: Boolean);
+    function IsBufferedChildrensStored: Boolean;
+    // handle messages
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
     procedure WMEraseBkgnd(var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
     procedure CMParentBufferedChildrensChanged(var Message: TMessage); message CM_PARENT_BUFFEREDCHILDRENS_CHANGED;
     procedure DrawBackgroundForOpaqueControls(DC: HDC);
-    // Intercept Mouse
-    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
+    // intercept mouse
+    // procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
     // other
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
     procedure WMTextChanges(var Message: TMessage); message WM_SETTEXT;
-    function IsBufferedChildrensStored: Boolean;
   protected
     // paint
     property Canvas: TCanvas read FCanvas;
@@ -85,6 +105,7 @@ type
     procedure UpdateText; dynamic;
     //
     property ParentBackground default True;
+    property Transparent: Boolean read GetTransparent write SetTransparent default True;// analog of ParentBackground
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -93,7 +114,9 @@ type
     procedure UpdateBackground; overload;
     // ------------------ Properties for published -------------------------------------------------
     property DoubleBuffered default False;
+    {$IFDEF VER210UP}
     property ParentDoubleBuffered default False;
+    {$ENDIF}
     // Painting for chidrens classes
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
@@ -104,10 +127,74 @@ type
     property IsCachedBuffer: Boolean read FIsCachedBuffer write SetIsCachedBuffer default False;
     property IsCachedBackground: Boolean read FIsCachedBackground write SetIsCachedBackground default False;
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
-    property IsOpaque: Boolean read FIsOpaque write SetIsOpaque default False;
-    property IsTransparentMouse: Boolean read FIsTransparentMouse write FIsTransparentMouse default False;
+    property IsOpaque: Boolean read GetIsOpaque write SetIsOpaque default False;
+    // property IsTransparentMouse: Boolean read FIsTransparentMouse write FIsTransparentMouse default False;
     property IsFullSizeBuffer: Boolean read FIsFullSizeBuffer write FIsFullSizeBuffer default False;
   end;
+
+  {$IFDEF VER180UP}
+  TContentMargins = record
+  type
+    TMarginSize = 0..MaxInt;
+  private
+    Left: TMarginSize;
+    Top: TMarginSize;
+    Right: TMarginSize;
+    Bottom: TMarginSize;
+  public
+    function Width: TMarginSize;
+    function Height: TMarginSize;
+    procedure Inflate(DX, DY: Integer); overload;
+    procedure Inflate(DLeft, DTop, DRight, DBottom: Integer); overload;
+    procedure Reset;
+    constructor Create(Left, Top, Right, Bottom: TMarginSize); overload;
+  end;
+
+  /// <summary> ONLY INTERNAL USE! THIS CLASS CAN BE DELETED! (USE TEsCustomControl OR TEsCustomLayot) </summary>
+  TEsBaseLayout = class(TEsCustomControl)
+  private
+    FBorderWidth: TBorderWidth;
+    procedure SetBorderWidth(const Value: TBorderWidth);
+  protected
+    procedure AlignControls(AControl: TControl; var Rect: TRect); override;
+    procedure AdjustClientRect(var Rect: TRect); override;
+    procedure Paint; override;
+    // new
+    procedure CalcContentMargins(var Margins: TContentMargins); virtual;
+  public
+    function ContentRect: TRect; virtual;
+    function ContentMargins: TContentMargins; inline;
+    property BorderWidth: TBorderWidth read FBorderWidth write SetBorderWidth default 0;
+  end;
+
+  /// <summary> The GraphicControl, supports Padding and IsDrawHelper property </summary>
+  TEsGraphicControl = class(TGraphicControl)
+  private
+    FPadding: TPadding;
+    FIsDrawHelper: Boolean;
+    function GetPadding: TPadding;
+    procedure SetPadding(const Value: TPadding);
+    procedure PaddingChange(Sender: TObject);
+    procedure SetIsDrawHelper(const Value: Boolean);
+  protected
+    procedure Paint; override;
+    function HasPadding: Boolean;
+    // new
+    procedure CalcContentMargins(var Margins: TContentMargins); virtual;
+  public
+    destructor Destroy; override;
+    property Padding: TPadding read GetPadding write SetPadding;
+    function ContentRect: TRect; virtual;
+    function ContentMargins: TContentMargins; inline;
+    property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
+  end;
+
+  procedure DrawControlHelper(Control: TControl; Options: THelperOptions); overload;
+  procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
+    Padding: TPadding; Options: THelperOptions); overload;
+  {$ENDIF}
+
+  function CalcClientRect(Control: TControl): TRect;
 
 implementation
 
@@ -115,10 +202,148 @@ uses
   SysUtils, TypInfo;
 
 type
-  THackCtrl = class(TWinControl)
+  TOpenCtrl = class(TWinControl)
   public
     property BorderWidth;
   end;
+
+// Old delphi support
+{$IFNDEF VER210UP}
+function RectWidth(const Rect: TRect): Integer;
+begin
+  Result := Rect.Right - Rect.Left;
+end;
+
+function RectHeight(const Rect: TRect): Integer;
+begin
+  Result := Rect.Bottom - Rect.Top;
+end;
+{$ENDIF}
+
+{$IFDEF VER210UP} {$REGION 'DrawControlHelper'}
+procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
+  Padding: TPadding; Options: THelperOptions);
+  procedure Line(Canvas: TCanvas; x1, y1, x2, y2: Integer);
+  begin
+    Canvas.MoveTo(x1, y1);
+    Canvas.LineTo(x2, y2);
+  end;
+var
+  SaveBk: TColor;
+  SavePen, SaveBrush: TPersistent;
+begin
+  SavePen := nil;
+  SaveBrush := nil;
+
+  try
+    if Canvas.Handle = 0 then
+      Exit;
+
+    // save canvas state
+    SavePen := TPen.Create;
+    SavePen.Assign(Canvas.Pen);
+    SaveBrush := TBrush.Create;
+    SaveBrush.Assign(Canvas.Brush);
+
+    Canvas.Pen.Mode := pmNot;
+    Canvas.Pen.Style := psDash;
+    Canvas.Brush.Style := bsClear;
+
+    // ClientRect Helper
+    if THelperOption.hoClientRect in Options then
+    begin
+      SaveBk := SetBkColor(Canvas.Handle, RGB(127,255,255));
+      DrawFocusRect(Canvas.Handle, Rect);
+      SetBkColor(Canvas.Handle, SaveBk);
+    end;
+
+    // Border Helper
+    if THelperOption.hoBorder in Options then
+    begin
+      if (BorderWidth <> 0) and (BorderWidth * 2 <= RectWidth(Rect)) and (BorderWidth * 2 <= RectHeight(Rect)) then
+        Canvas.Rectangle(Rect.Left + BorderWidth, Rect.Top + BorderWidth,
+          Rect.Right - BorderWidth, Rect.Bottom - BorderWidth);
+    end;
+
+    // Padding Helper
+    if THelperOption.hoPadding in Options then
+    begin
+      if (BorderWidth + Padding.Top < RectHeight(Rect) - BorderWidth - Padding.Bottom) and
+         (BorderWidth + Padding.Left < RectWidth(Rect) - BorderWidth - Padding.Right) then
+      begin
+        Canvas.Pen.Style := psDot;
+
+        if Padding.Left <> 0 then
+          Line(Canvas, Rect.Left + Padding.Left + BorderWidth, Rect.Top + Padding.Top + BorderWidth,
+            Rect.Left + Padding.Left + BorderWidth, Rect.Bottom - Padding.Bottom - BorderWidth - 1);
+        if Padding.Top <> 0 then
+          Line(Canvas, Rect.Left + Padding.Left + BorderWidth, Rect.Top + Padding.Top + BorderWidth,
+            Rect.Right - Padding.Right - BorderWidth - 1, Rect.Top + Padding.Top + BorderWidth);
+        if Padding.Right <> 0 then
+          Line(Canvas, Rect.Right - Padding.Right - BorderWidth - 1, Rect.Top + Padding.Top + BorderWidth,
+            Rect.Right - Padding.Right - BorderWidth - 1, Rect.Bottom - Padding.Bottom - BorderWidth - 1);
+        if Padding.Bottom <> 0 then
+          Line(Canvas, Rect.Left + Padding.Left + BorderWidth, Rect.Bottom - Padding.Bottom - BorderWidth - 1,
+            Rect.Right - Padding.Right - BorderWidth - 1, Rect.Bottom - Padding.Bottom - BorderWidth - 1);
+      end;
+    end;
+
+    Canvas.Pen.Assign(SavePen);
+    Canvas.Brush.Assign(SaveBrush);
+  finally
+    SavePen.Free;
+    SaveBrush.Free;
+  end;
+end;
+
+procedure DrawControlHelper(Control: TControl; Options: THelperOptions);
+var
+  Canvas: TCanvas;
+  Padding: TPadding;
+  BorderWidth: Integer;
+  MyCanvas: Boolean;
+begin
+  MyCanvas := False;
+  Canvas := nil;
+  Padding := nil;
+  BorderWidth := 0;
+
+  // if win control
+  if Control is TWinControl then
+  begin
+    // get padding
+    Padding := TWinControl(Control).Padding;
+    // get canvas
+    if Control is TEsCustomControl then
+      Canvas := TEsCustomControl(Control).Canvas
+    else
+    begin
+      MyCanvas := True;
+      Canvas := TControlCanvas.Create;
+      TControlCanvas(Canvas).Control := Control;
+    end;
+    // get border width
+    if Control is TEsBaseLayout then
+      BorderWidth := TEsBaseLayout(Control).BorderWidth
+    else
+      BorderWidth := TOpenCtrl(Control).BorderWidth;
+  end else
+  if Control is TGraphicControl then
+  begin
+    // get canvas
+    Canvas := TEsGraphicControl(Control).Canvas;
+    if Control is TEsGraphicControl then
+      Padding := TEsGraphicControl(Control).Padding;
+  end;
+
+  try
+    DrawControlHelper(Canvas, Control.ClientRect, BorderWidth, Padding, Options);
+  finally
+    if MyCanvas then
+      Canvas.Free;
+  end;
+end;
+{$ENDREGION} {$ENDIF}
 
 function IsStyledClientControl(Control: TControl): Boolean;
 begin
@@ -136,29 +361,69 @@ begin
   {$ENDIF}
 end;
 
+function CalcClientRect(Control: TControl): TRect;
+var
+  {$ifdef FAST_CALC_CLIENTRECT}
+  Info: TWindowInfo;
+  {$endif}
+  IsFast: Boolean;
+begin
+  {$ifdef FAST_CALC_CLIENTRECT}
+  IsFast := True;
+  {$else}
+  IsFast := False;
+  {$endif}
+
+  Result := Rect(0, 0, Control.Width, Control.Height);
+
+  // Only TWinControl's has non client area
+  if not (Control is TWinControl) then
+    Exit;
+
+  // Fast method not work for controls not having Handle
+  if not TWinControl(Control).Handle <> 0 then
+    IsFast := False;
+
+  if IsFast then
+  begin
+    ZeroMemory(@Info, SizeOf(TWindowInfo));
+    Info.cbSize := SizeOf(TWindowInfo);
+    GetWindowInfo(TWinControl(Control).Handle, info);
+    Result.Left := Info.rcClient.Left - Info.rcWindow.Left;
+    Result.Top := Info.rcClient.Top - Info.rcWindow.Top;
+    Result.Right := -Info.rcWindow.Left + Info.rcClient.Right;
+    Result.Top := -Info.rcWindow.Top + Info.rcClient.Bottom;
+  end else
+  begin
+    Control.Perform(WM_NCCALCSIZE, 0, LParam(@Result));
+  end;
+end;
+
 procedure DrawParentImage(Control: TControl; DC: HDC; InvalidateParent: Boolean = False);
 var
+  ClientRect: TRect;
   P: TPoint;
-  SaveIndex, BorderWidth: Integer;
+  SaveIndex: Integer;
 begin
   if Control.Parent = nil then
     Exit;
   SaveIndex := SaveDC(DC);
   GetViewportOrgEx(DC, P);
 
-  if {(Control is TWinControl) and }(THackCtrl(Control).BorderWidth <> 0) then
+  // if control has non client border then need additional offset viewport
+  ClientRect := Control.ClientRect;
+  if (ClientRect.Right <> Control.Width) or (ClientRect.Bottom <> Control.Height) then
   begin
-    BorderWidth := THackCtrl(Control).BorderWidth;
-    SetViewportOrgEx(DC, P.X - Control.Left - BorderWidth, P.Y - Control.Top - BorderWidth, nil);
-  end
-  else
+    ClientRect := CalcClientRect(Control);
+    SetViewportOrgEx(DC, P.X - Control.Left - ClientRect.Left, P.Y - Control.Top - ClientRect.Top, nil);
+  end else
     SetViewportOrgEx(DC, P.X - Control.Left, P.Y - Control.Top, nil);
 
   IntersectClipRect(DC, 0, 0, Control.Parent.ClientWidth, Control.Parent.ClientHeight);
 
   Control.Parent.Perform(WM_ERASEBKGND, DC, 0);
   // Control.Parent.Perform(WM_PAINT, DC, 0);
-  Control.Parent.Perform(WM_PRINTCLIENT, DC, prf_Client);
+  Control.Parent.Perform(WM_PRINTCLIENT, DC, PRF_CLIENT);
 
   RestoreDC(DC, SaveIndex);
 
@@ -230,10 +495,10 @@ begin
   inherited Create(AOwner);
   FCanvas := TControlCanvas.Create;
   TControlCanvas(FCanvas).Control := Self;
-  ControlStyle := ControlStyle - [csOpaque];
-
+  ControlStyle := ControlStyle - [csOpaque] + [csParentBackground];
+  {$IFDEF VER210UP}
   ParentDoubleBuffered := False;
-  ParentBackground := True;// ?
+  {$ENDIF}
   FParentBufferedChildrens := True;// !!
   CacheBitmap := 0;
   CacheBackground := 0;
@@ -250,7 +515,6 @@ end;
 destructor TEsCustomControl.Destroy;
 begin
   FCanvas.Free;
-  // удаляем кэш, если он есть
   DeleteCache;
   inherited;
 end;
@@ -265,7 +529,8 @@ begin
   begin
     Control := Controls[i];
     if (Control is TGraphicControl) and (csOpaque in Control.ControlStyle) and Control.Visible and
-       (not (csDesigning in ComponentState) or not (csDesignerHide in Control.ControlState) and not (csNoDesignVisible in ControlStyle))
+       (not (csDesigning in ComponentState) or not (csNoDesignVisible in ControlStyle)
+       {$IFDEF VER210UP}or not (csDesignerHide in Control.ControlState){$ENDIF})
     then
     begin
       // Necessary to draw a background if the component has a Property 'Transparent' and also has a Property 'Color'
@@ -292,6 +557,16 @@ end;
 procedure TEsCustomControl.EndCachedBuffer;
 begin
   FIsCachedBuffer := StoredCachedBuffer;
+end;
+
+function TEsCustomControl.GetIsOpaque: Boolean;
+begin
+  Result := csOpaque in ControlStyle;
+end;
+
+function TEsCustomControl.GetTransparent: Boolean;
+begin
+  Result := ParentBackground;
 end;
 
 procedure TEsCustomControl.Paint;
@@ -446,9 +721,9 @@ begin
   inherited PaintTo(DC, X, Y);
 end;
 
-{$REGION 'BACKUP'}
+{$ifdef VER210UP} {$REGION 'BACKUP'}
 (*
-// Main crap located here:
+// Main magic located here:
 procedure TESCustomControl.PaintWindow(DC: HDC);
 var
   BufferDC, TempDC: HDC;
@@ -555,7 +830,7 @@ begin
   if not FCachedBuffer and (BufferBitMap <> 0) then DeleteObject(BufferBitMap);
 end;
 *)
-{$ENDREGION}
+{$ENDREGION} {$endif}
 
 { TODO -cMAJOR : 22.02.2013:
  See: PaintHandler,
@@ -677,8 +952,6 @@ begin
     Paint;
     if Assigned(FOnPaint) then
       FOnPaint(Self, Canvas, ClientRect);
-    // Canvas.Brush.Color := Random(256*256*256);
-    // Canvas.FillRect(Updaterect);
   finally
     FCanvas.Handle := 0;
     FCanvas.Unlock;
@@ -757,15 +1030,16 @@ end;
 
 procedure TEsCustomControl.SetIsOpaque(const Value: Boolean);
 begin
-  if (FIsOpaque = True) and (Value = False) then
+  if Value <> (csOpaque in ControlStyle) then
   begin
-    FIsOpaque := Value;
-    ControlStyle := ControlStyle - [csOpaque];
+    if Value then
+    begin
+      ControlStyle := ControlStyle + [csOpaque];
+    end else
+    begin
+      ControlStyle := ControlStyle - [csOpaque];
+    end;
     Invalidate;
-  end else
-  begin
-    ControlStyle := ControlStyle + [csOpaque];
-    FIsOpaque := Value;
   end;
 end;
 
@@ -789,6 +1063,11 @@ begin
     if (Parent <> nil) and not (csReading in ComponentState) then
       Perform(CM_PARENT_BUFFEREDCHILDRENS_CHANGED, 0, 0);
   end;
+end;
+
+procedure TEsCustomControl.SetTransparent(const Value: Boolean);
+begin
+  ParentBackground := Value;
 end;
 
 procedure TEsCustomControl.UpdateBackground;
@@ -820,13 +1099,13 @@ begin
   Message.Result := 1;
 end;
 
-procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
-begin
-  if (FIsTransparentMouse) and not(csDesigning in ComponentState) then
-    Message.Result := HTTRANSPARENT
-  else
-    inherited;
-end;
+//procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
+//begin
+//  if (FIsTransparentMouse) and not(csDesigning in ComponentState) then
+//    Message.Result := HTTRANSPARENT
+//  else
+//    inherited;
+//end;
 
 procedure TEsCustomControl.WMPaint(var Message: TWMPaint);
 begin
@@ -852,6 +1131,209 @@ begin
     Invalidate;
   Inherited;
 end;
+
+{$IFDEF VER180UP}
+{ TEsBaseLayout }
+
+procedure TEsBaseLayout.AdjustClientRect(var Rect: TRect);
+begin
+  inherited AdjustClientRect(Rect);
+  if BorderWidth <> 0 then
+  begin
+    InflateRect(Rect, -Integer(BorderWidth), -Integer(BorderWidth));
+  end;
+end;
+
+procedure TEsBaseLayout.AlignControls(AControl: TControl; var Rect: TRect);
+begin
+  inherited AlignControls(AControl, Rect);
+  if (csDesigning in ComponentState) and IsDrawHelper then
+    Invalidate;
+end;
+
+procedure TEsBaseLayout.CalcContentMargins(var Margins: TContentMargins);
+begin
+  Margins.Create(Padding.Left, Padding.Top, Padding.Right, Padding.Bottom);
+  if BorderWidth <> 0 then
+    Margins.Inflate(Integer(BorderWidth), Integer(BorderWidth));
+end;
+
+function TEsBaseLayout.ContentMargins: TContentMargins;
+begin
+  Result.Reset;
+  CalcContentMargins(Result);
+end;
+
+function TEsBaseLayout.ContentRect: TRect;
+var
+  ContentMargins: TContentMargins;
+begin
+  Result := ClientRect;
+
+  ContentMargins.Reset;
+  CalcContentMargins(ContentMargins);
+
+  Inc(Result.Left, ContentMargins.Left);
+  Inc(Result.Top, ContentMargins.Top);
+  Dec(Result.Right, ContentMargins.Right);
+  Dec(Result.Bottom, ContentMargins.Bottom);
+
+  {$ifdef TEST_CONTROL_CONTENT_RECT}
+  if Result.Left > Result.Right then
+    Result.Right := Result.Left;
+  if Result.Top > Result.Bottom then
+    Result.Bottom := Result.Top;
+  {$endif}
+end;
+
+procedure TEsBaseLayout.Paint;
+begin
+  if (csDesigning in ComponentState) and IsDrawHelper then
+    DrawControlHelper(Self, [hoBorder, hoPadding, hoClientRect]);
+end;
+
+procedure TEsBaseLayout.SetBorderWidth(const Value: TBorderWidth);
+begin
+  if Value <> FBorderWidth then
+  begin
+    FBorderWidth := Value;
+    Realign;
+    Invalidate;
+  end;
+end;
+
+{ TEsGraphicControl }
+
+procedure TEsGraphicControl.CalcContentMargins(var Margins: TContentMargins);
+begin
+  if FPadding <> nil then
+    Margins.Create(Padding.Left, Padding.Top, Padding.Right, Padding.Bottom)
+  else
+    Margins.Reset;
+end;
+
+function TEsGraphicControl.ContentMargins: TContentMargins;
+begin
+  Result.Reset;
+  CalcContentMargins(Result);
+end;
+
+function TEsGraphicControl.ContentRect: TRect;
+var
+  ContentMargins: TContentMargins;
+begin
+  Result := ClientRect;
+
+  ContentMargins.Reset;
+  CalcContentMargins(ContentMargins);
+
+  Inc(Result.Left, ContentMargins.Left);
+  Inc(Result.Top, ContentMargins.Top);
+  Dec(Result.Right, ContentMargins.Right);
+  Dec(Result.Bottom, ContentMargins.Bottom);
+
+  {$ifdef TEST_CONTROL_CONTENT_RECT}
+  if Result.Left > Result.Right then
+    Result.Right := Result.Left;
+  if Result.Top > Result.Bottom then
+    Result.Bottom := Result.Top;
+  {$endif}
+end;
+
+destructor TEsGraphicControl.Destroy;
+begin
+  FPadding.Free;
+  inherited;
+end;
+
+function TEsGraphicControl.GetPadding: TPadding;
+begin
+  if FPadding = nil then
+  begin
+    FPadding := TPadding.Create(nil);
+    FPadding.OnChange := PaddingChange;
+  end;
+  Result := FPadding;
+end;
+
+function TEsGraphicControl.HasPadding: Boolean;
+begin
+  Result := FPadding <> nil;
+end;
+
+procedure TEsGraphicControl.PaddingChange(Sender: TObject);
+begin
+  AdjustSize;
+  Invalidate;
+  if (FPadding.Left = 0) and (FPadding.Top = 0) and (FPadding.Right = 0) and (FPadding.Bottom = 0) then
+    FreeAndNil(FPadding);
+end;
+
+procedure TEsGraphicControl.Paint;
+begin
+  if (csDesigning in ComponentState) and IsDrawHelper then
+    DrawControlHelper(Self, [hoPadding, hoClientRect]);
+end;
+
+procedure TEsGraphicControl.SetIsDrawHelper(const Value: Boolean);
+begin
+  if FIsDrawHelper <> Value then
+  begin
+      FIsDrawHelper := Value;
+      if csDesigning in ComponentState then
+        Invalidate;
+  end;
+end;
+
+procedure TEsGraphicControl.SetPadding(const Value: TPadding);
+begin
+  Padding.Assign(Value);
+end;
+
+{ TContentMargins }
+
+constructor TContentMargins.Create(Left, Top, Right, Bottom: TMarginSize);
+begin
+  Self.Left := Left;
+  Self.Top := Top;
+  Self.Right := Right;
+  Self.Bottom := Bottom;
+end;
+
+procedure TContentMargins.Reset;
+begin
+  Left := 0;
+  Top := 0;
+  Right := 0;
+  Bottom := 0;
+end;
+
+function TContentMargins.Height: TMarginSize;
+begin
+  Result := Top + Bottom;
+end;
+
+procedure TContentMargins.Inflate(DX, DY: Integer);
+begin
+  Inc(Left, DX);
+  Inc(Right, DX);
+  Inc(Top, DY);
+  Inc(Bottom, DY);
+end;
+
+procedure TContentMargins.Inflate(DLeft, DTop, DRight, DBottom: Integer);
+begin
+  Inc(Left, DLeft);
+  Inc(Right, DRight);
+  Inc(Top, DTop);
+  Inc(Bottom, DBottom);
+end;
+
+function TContentMargins.Width: TMarginSize;
+begin
+  Result := Left + Right;
+end;
+{$ENDIF}
 
 end.
 

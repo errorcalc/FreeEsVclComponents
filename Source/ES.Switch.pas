@@ -3,103 +3,67 @@
 {                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.Switch;
+unit ES.Switch;
 
 interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls,
-  Winapi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls, System.UITypes, ES.Vcl.CfxClasses;
+  Winapi.Messages, ES.ExGraphics, ES.BaseControls, System.UITypes, ES.CfxClasses, Vcl.Graphics;
 
 type
-  // Only internal use
-  TSwitchColors = class(TPersistent)
+  // only interal use
+  TSwitchStyle = class(TPersistent)
   private
-    FOffNormalThumbColor: TAlphaColor;
-    FOffHotFrameColor: TAlphaColor;
-    FOnHotFillColor: TAlphaColor;
-    FDragThumbColor: TAlphaColor;
-    FOnNormalThumbColor: TAlphaColor;
-    FOffHotThumbColor: TAlphaColor;
-    FIsSystemColors: Boolean;
-    FOffNormalFrameColor: TAlphaColor;
-    FDragFillColor: TAlphaColor;
-    FOnNormalFillColor: TAlphaColor;
-    FOnHotThumbColor: TAlphaColor;
-    FOnChange: TNotifyEvent;
-    FOffNormalFillColor: TAlphaColor;
-    FOffHotFillColor: TAlphaColor;
-    FOnNormalFrameColor: TAlphaColor;
-    FOnHotFrameColor: TAlphaColor;
-    FDragFrameColor: TAlphaColor;
-    FOnDisableThumbColor: TAlphaColor;
-    FOffDisableFillColor: TAlphaColor;
-    FOffDisableFrameColor: TAlphaColor;
-    FOnDisableFillColor: TAlphaColor;
-    FOffDisableThumbColor: TAlphaColor;
-    FOnDisableFrameColor: TAlphaColor;
     FControl: TWinControl;
-    procedure SetDragFillColor(const Value: TAlphaColor);
-    procedure SetDragThumbColor(const Value: TAlphaColor);
-    procedure SetIsSystemColors(const Value: Boolean);
-    procedure SetOffHotFrameColor(const Value: TAlphaColor);
-    procedure SetOffHotThumbColor(const Value: TAlphaColor);
-    procedure SetOffNormalFrameColor(const Value: TAlphaColor);
-    procedure SetOffNormalThumbColor(const Value: TAlphaColor);
-    procedure SetOnHotFillColor(const Value: TAlphaColor);
-    procedure SetOnHotThumbColor(const Value: TAlphaColor);
-    procedure SetOnNormalFillColor(const Value: TAlphaColor);
-    procedure SetOnNormalThumbColor(const Value: TAlphaColor);
-    function IsStroredColors: Boolean;
-    procedure SetOffNormalFillColor(const Value: TAlphaColor);
-    procedure SetOffHotFillColor(const Value: TAlphaColor);
-    procedure SetOnNormalFrameColor(const Value: TAlphaColor);
-    procedure SetOnHotFrameColor(const Value: TAlphaColor);
-    procedure SetDragFrameColor(const Value: TAlphaColor);
-    procedure SetOffDisableFillColor(const Value: TAlphaColor);
-    procedure SetOffDisableFrameColor(const Value: TAlphaColor);
-    procedure SetOffDisableThumbColor(const Value: TAlphaColor);
-    procedure SetOnDisableFillColor(const Value: TAlphaColor);
-    procedure SetOnDisableFrameColor(const Value: TAlphaColor);
-    procedure SetOnDisableThumbColor(const Value: TAlphaColor);
-    procedure SetControl(const Value: TWinControl);
+    FOnChange: TNotifyEvent;
+    FMainColor: TColor;
+    FFrameColor: TColor;
+    FThumbColor: TColor;
+    procedure SetMainColor(const Value: TColor);
+    procedure SetFrameColor(const Value: TColor);
+    procedure SetThumbColor(const Value: TColor);
   protected
     procedure AssignTo(Dest: TPersistent); override;
     procedure Change; virtual;
+    function GetColor(const Index: Integer): TAlphaColor; virtual;
   public
     constructor Create;
-    procedure InitSysColors; dynamic;
-    procedure InitDefaultColors; dynamic;
-    procedure UpdateColors;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    property Control: TWinControl read FControl write SetControl;
+    property Control: TWinControl read FControl write FControl;
+  public
+    property OffNormalFillColor: TAlphaColor Index 0 read GetColor;
+    property OffNormalFrameColor: TAlphaColor Index 1 read GetColor;
+    property OffNormalThumbColor: TAlphaColor Index 2 read GetColor;
+    property OffHotFillColor: TAlphaColor Index 3 read GetColor;
+    property OffHotFrameColor: TAlphaColor Index 4 read GetColor;
+    property OffHotThumbColor: TAlphaColor Index 5 read GetColor;
+    property OffDisableFillColor: TAlphaColor Index 6 read GetColor;
+    property OffDisableFrameColor: TAlphaColor Index 7 read GetColor;
+    property OffDisableThumbColor: TAlphaColor Index 8 read GetColor;
+    property OnNormalFillColor: TAlphaColor Index 9 read GetColor;
+    property OnNormalFrameColor: TAlphaColor Index 10 read GetColor;
+    property OnNormalThumbColor: TAlphaColor Index 11 read GetColor;
+    property OnHotFillColor: TAlphaColor Index 12 read GetColor;
+    property OnHotFrameColor: TAlphaColor Index 13 read GetColor;
+    property OnHotThumbColor: TAlphaColor Index 14 read GetColor;
+    property OnDisableFillColor: TAlphaColor Index 15 read GetColor;
+    property OnDisableFrameColor: TAlphaColor Index 16 read GetColor;
+    property OnDisableThumbColor: TAlphaColor Index 17 read GetColor;
+    property DragFillColor: TAlphaColor Index 18 read GetColor;
+    property DragFrameColor: TAlphaColor Index 19 read GetColor;
+    property DragThumbColor: TAlphaColor Index 20 read GetColor;
   published
-    property IsSystemColors: Boolean read FIsSystemColors write SetIsSystemColors default True;
-    property OffNormalFillColor: TAlphaColor read FOffNormalFillColor write SetOffNormalFillColor stored IsStroredColors;
-    property OffNormalFrameColor: TAlphaColor read FOffNormalFrameColor write SetOffNormalFrameColor stored IsStroredColors;
-    property OffNormalThumbColor: TAlphaColor read FOffNormalThumbColor write SetOffNormalThumbColor stored IsStroredColors;
-    property OffHotFillColor: TAlphaColor read FOffHotFillColor write SetOffHotFillColor stored IsStroredColors;
-    property OffHotFrameColor: TAlphaColor read FOffHotFrameColor write SetOffHotFrameColor stored IsStroredColors;
-    property OffHotThumbColor: TAlphaColor read FOffHotThumbColor write SetOffHotThumbColor stored IsStroredColors;
-    property OffDisableFillColor: TAlphaColor read FOffDisableFillColor write SetOffDisableFillColor stored IsStroredColors;
-    property OffDisableFrameColor: TAlphaColor read FOffDisableFrameColor write SetOffDisableFrameColor stored IsStroredColors;
-    property OffDisableThumbColor: TAlphaColor read FOffDisableThumbColor write SetOffDisableThumbColor stored IsStroredColors;
-    property OnNormalFillColor: TAlphaColor read FOnNormalFillColor write SetOnNormalFillColor stored IsStroredColors;
-    property OnNormalFrameColor: TAlphaColor read FOnNormalFrameColor write SetOnNormalFrameColor stored IsStroredColors;
-    property OnNormalThumbColor: TAlphaColor read FOnNormalThumbColor write SetOnNormalThumbColor stored IsStroredColors;
-    property OnHotFillColor: TAlphaColor read FOnHotFillColor write SetOnHotFillColor stored IsStroredColors;
-    property OnHotFrameColor: TAlphaColor read FOnHotFrameColor write SetOnHotFrameColor stored IsStroredColors;
-    property OnHotThumbColor: TAlphaColor read FOnHotThumbColor write SetOnHotThumbColor stored IsStroredColors;
-    property OnDisableFillColor: TAlphaColor read FOnDisableFillColor write SetOnDisableFillColor stored IsStroredColors;
-    property OnDisableFrameColor: TAlphaColor read FOnDisableFrameColor write SetOnDisableFrameColor stored IsStroredColors;
-    property OnDisableThumbColor: TAlphaColor read FOnDisableThumbColor write SetOnDisableThumbColor stored IsStroredColors;
-    property DragFillColor: TAlphaColor read FDragFillColor write SetDragFillColor stored IsStroredColors;
-    property DragFrameColor: TAlphaColor read FDragFrameColor write SetDragFrameColor stored IsStroredColors;
-    property DragThumbColor: TAlphaColor read FDragThumbColor write SetDragThumbColor stored IsStroredColors;
+    property FrameColor: TColor read FFrameColor write SetFrameColor default clDefault;
+    property ThumbColor: TColor read FThumbColor write SetThumbColor default clDefault;
+    property MainColor: TColor read FMainColor write SetMainColor default clDefault;
   end;
 
   TEsCustomSwitch = class;
@@ -118,7 +82,7 @@ type
 
   // now: only interal use, this class can be too refactored!
   TEsCustomSwitch = class(TEsCustomControl)
-  type
+  private type
     TSwitchState = (ssOffNormal, ssOffHot, ssDrag, ssOnNormal, ssOnHot);
   const
     sDefaultSwitchOn = 'On';
@@ -130,7 +94,7 @@ type
     DefaultHeight = 20;
     SwitchSizeFactor = 2.2;
   private
-    FColors: TSwitchColors;
+    FStyle: TSwitchStyle;
     FChecked: Boolean;
     FThumbBorder: TThumbBorder;
     FTextOn: string;
@@ -165,7 +129,7 @@ type
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     // Setters and getters
-    procedure SetColors(const Value: TSwitchColors);
+    procedure SetStyle(const Value: TSwitchStyle);
     procedure ColorsChange(Sender: TObject);
     procedure SetChecked(const Value: Boolean);
     procedure SetThumbBorder(const Value: TThumbBorder);
@@ -200,7 +164,7 @@ type
     procedure CreateWnd; override;
     procedure ChangeScale(M, D: Integer); override;
     // for external styles
-    function CreateColors: TSwitchColors; dynamic;
+    function CreateStyle: TSwitchStyle; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
     function FillColorForState(State: TSwitchState): TAlphaColor; virtual;
     function ThumbColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -218,7 +182,7 @@ type
     property ThumbPos: Integer read GetThumbPos;
     // to published...
     property Alignment: TSwitchAlignment read FAlignment write SetAlignment default saRight;
-    property Colors: TSwitchColors read FColors write SetColors;
+    property Style: TSwitchStyle read FStyle write SetStyle;
     property Checked: Boolean read FChecked write SetChecked default False;
     property ThumbBorder: TThumbBorder read FThumbBorder write SetThumbBorder default 3;
     property SwitchBorder: TSwitchBorder read FSwitchBorder write SetSwitchBorder default 2;
@@ -242,7 +206,7 @@ type
   TEsSwitch = class(TEsCustomSwitch)
   published
     property Alignment;
-    property Colors;
+    property Style;
     property Checked;
     property ThumbBorder;
     property TextOn;
@@ -271,7 +235,6 @@ type
     property IsCachedBackground;// TEsCustomControl
     property IsDrawHelper;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
-    property IsTransparentMouse;// TEsCustomControl
     property Height;
     property HelpContext;
     property Hint;
@@ -318,8 +281,8 @@ type
 implementation
 
 uses
-  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.Vcl.ExGdiPlus, WinApi.DwmApi,
-  Vcl.Graphics, ES.Vcl.Utils, Vcl.ActnList;
+  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.ExGdiPlus, WinApi.DwmApi,
+  ES.Utils, Vcl.ActnList;
 
 { TEsCustomSwitch }
 
@@ -454,7 +417,7 @@ end;
 
 procedure TEsCustomSwitch.CMStyleChanged(var Message: TMessage);
 begin
-  FColors.UpdateColors;
+  // FColors.UpdateColors;
 end;
 
 procedure TEsCustomSwitch.ColorsChange(Sender: TObject);
@@ -470,9 +433,9 @@ begin
   Width := DefaultWidth;
   Height := DefaultHeight;
 
-  FColors := CreateColors;
-  FColors.OnChange := ColorsChange;
-  FColors.Control := Self;
+  FStyle := CreateStyle;
+  FStyle.OnChange := ColorsChange;
+  FStyle.Control := Self;
   State := ssOffNormal;
 
   IsFullSizeBuffer := True;
@@ -489,9 +452,9 @@ begin
   FAlignment := saRight;
 end;
 
-function TEsCustomSwitch.CreateColors: TSwitchColors;
+function TEsCustomSwitch.CreateStyle: TSwitchStyle;
 begin
-  Result := TSwitchColors.Create;
+  Result := TSwitchStyle.Create;
 end;
 
 procedure TEsCustomSwitch.CreateWnd;
@@ -502,7 +465,7 @@ end;
 
 destructor TEsCustomSwitch.Destroy;
 begin
-  FColors.Free;
+  FStyle.Free;
   inherited;
 end;
 
@@ -510,36 +473,36 @@ function TEsCustomSwitch.FillColorForState(State: TSwitchState): TAlphaColor;
 begin
   if Enabled then
     case State of
-      ssOffNormal: Result := Colors.OffNormalFillColor;
-      ssOffHot: Result := Colors.OffHotFillColor;
-      ssDrag: Result := Colors.DragFillColor;
-      ssOnNormal: Result := Colors.OnNormalFillColor;
-      ssOnHot: Result := Colors.OnHotFillColor;
+      ssOffNormal: Result := Style.OffNormalFillColor;
+      ssOffHot: Result := Style.OffHotFillColor;
+      ssDrag: Result := Style.DragFillColor;
+      ssOnNormal: Result := Style.OnNormalFillColor;
+      ssOnHot: Result := Style.OnHotFillColor;
       else Result := 0;// for compiler paranoia
     end
   else
     if Checked then
-      Result := Colors.OnDisableFillColor
+      Result := Style.OnDisableFillColor
     else
-      Result := Colors.OffDisableFillColor;
+      Result := Style.OffDisableFillColor;
 end;
 
 function TEsCustomSwitch.FrameColorForState(State: TSwitchState): TAlphaColor;
 begin
   if Enabled then
     case State of
-      ssOffNormal: Result := Colors.OffNormalFrameColor;
-      ssOffHot: Result := Colors.OffHotFrameColor;
-      ssDrag: Result := Colors.DragFrameColor;
-      ssOnNormal: Result := Colors.OnNormalFrameColor;
-      ssOnHot: Result := Colors.OnHotFrameColor;
+      ssOffNormal: Result := Style.OffNormalFrameColor;
+      ssOffHot: Result := Style.OffHotFrameColor;
+      ssDrag: Result := Style.DragFrameColor;
+      ssOnNormal: Result := Style.OnNormalFrameColor;
+      ssOnHot: Result := Style.OnHotFrameColor;
       else Result := 0;// for compiler paranoia
     end
   else
     if Checked then
-      Result := Colors.OnDisableFrameColor
+      Result := Style.OnDisableFrameColor
     else
-      Result := Colors.OffDisableFrameColor;
+      Result := Style.OffDisableFrameColor;
 end;
 
 function TEsCustomSwitch.GetActionLinkClass: TControlActionLinkClass;
@@ -857,9 +820,9 @@ begin
   end;
 end;
 
-procedure TEsCustomSwitch.SetColors(const Value: TSwitchColors);
+procedure TEsCustomSwitch.SetStyle(const Value: TSwitchStyle);
 begin
-  FColors.Assign(Value);
+  FStyle.Assign(Value);
 end;
 
 procedure TEsCustomSwitch.SetShowCaption(const Value: Boolean);
@@ -969,18 +932,18 @@ function TEsCustomSwitch.ThumbColorForState(State: TSwitchState): TAlphaColor;
 begin
   if Enabled then
     case State of
-      ssOffNormal: Result := Colors.OffNormalThumbColor;
-      ssOffHot: Result := Colors.OffHotThumbColor;
-      ssDrag: Result := Colors.DragThumbColor;
-      ssOnNormal: Result := Colors.OnNormalThumbColor;
-      ssOnHot: Result := Colors.OnHotThumbColor;
+      ssOffNormal: Result := Style.OffNormalThumbColor;
+      ssOffHot: Result := Style.OffHotThumbColor;
+      ssDrag: Result := Style.DragThumbColor;
+      ssOnNormal: Result := Style.OnNormalThumbColor;
+      ssOnHot: Result := Style.OnHotThumbColor;
       else Result := 0;// for compiler paranoia
     end
   else
     if Checked then
-      Result := Colors.OnDisableThumbColor
+      Result := Style.OnDisableThumbColor
     else
-      Result := Colors.OffDisableThumbColor;
+      Result := Style.OffDisableThumbColor;
 end;
 
 function TEsCustomSwitch.ThumbPosForState(IsChacked: Boolean): Integer;
@@ -995,7 +958,7 @@ end;
 procedure TEsCustomSwitch.UpdateStyleElements;
 begin
   inherited;
-  Colors.UpdateColors;
+  // Colors.UpdateColors;
   Invalidate;
 end;
 {$ifend}
@@ -1012,330 +975,6 @@ begin
   Inherited;
   IsDrawFocusRect := True;
   Invalidate;
-end;
-
-{ TSwitchStyle }
-
-procedure TSwitchColors.AssignTo(Dest: TPersistent);
-var
-  SwitchStyle: TSwitchColors;
-begin
-  if Dest is TSwitchColors then
-  begin
-    SwitchStyle := TSwitchColors(Dest);
-    SwitchStyle.FOffNormalThumbColor := FOffNormalThumbColor;
-    SwitchStyle.FOffHotFrameColor := FOffHotFrameColor;
-    SwitchStyle.FOnHotFillColor := FOnHotFillColor;
-    SwitchStyle.FDragThumbColor := FDragThumbColor;
-    SwitchStyle.FOnNormalThumbColor := FOnNormalThumbColor;
-    SwitchStyle.FOffHotThumbColor := FOffHotThumbColor;
-    SwitchStyle.FIsSystemColors := FIsSystemColors;
-    SwitchStyle.FOffNormalFrameColor := FOffNormalFrameColor;
-    SwitchStyle.FDragFillColor := FDragFillColor;
-    SwitchStyle.FOnNormalFillColor := FOnNormalFillColor;
-    SwitchStyle.FOnHotThumbColor := FOnHotThumbColor;
-    Change;
-  end
-  else
-    inherited;
-end;
-
-procedure TSwitchColors.Change;
-begin
-  if Assigned(FOnChange) then
-    FOnChange(Self);
-end;
-
-constructor TSwitchColors.Create;
-begin
-  Inherited Create;
-  FIsSystemColors := True;
-  InitSysColors;
-end;
-
-procedure TSwitchColors.InitDefaultColors;
-begin
-  FOffNormalThumbColor := $CC000000;
-  FOffNormalFillColor := 0;
-  FOffNormalFrameColor := $CC000000;
-  FOffHotThumbColor := $FF000000;
-  FOffHotFillColor := 0;
-  FOffHotFrameColor := $FF000000;
-  FOffDisableThumbColor := $33000000;
-  FOffDisableFillColor := 0;
-  FOffDisableFrameColor := $33000000;
-  // drag
-  FDragThumbColor := $FFFFFFFF;
-  FDragFillColor := $99000000;
-  FDragFrameColor := 0;
-  // on
-  FOnNormalThumbColor := $FFFFFFFF;
-  FOnNormalFillColor := $FF6362C7;
-  FOnNormalFrameColor := 0;
-  FOnHotThumbColor := $FFFFFFFF;
-  FOnHotFillColor := $CC6362C7;
-  FOnHotFrameColor := 0;
-  FOnDisableThumbColor := $FFFFFFFF;
-  FOnDisableFillColor := $99000000;
-  FOnDisableFrameColor := 0;
-end;
-
-procedure TSwitchColors.InitSysColors;
-var
-  DwmColor: DWORD;
-  DwnOpaqueBlend: BOOL;
-begin
-  if FIsSystemColors then
-  begin
-    if IsStyledClientControl(FControl) then
-      DwmColor := RgbToArgb(StyleServices.GetSystemColor(clHighlight))
-    else
-      if (not CheckWin32Version(6, 0)) or (DwmGetColorizationColor(DwmColor, DwnOpaqueBlend) <> S_OK) then
-        DwmColor := RgbToArgb(ColorToRGB(clHighlight));//$00D6696B;
-    // off
-    FOffNormalThumbColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0) or $CC000000;
-    FOffNormalFillColor := 0;
-    FOffNormalFrameColor := RgbToArgb(BorderColorToRGB(clBtnText, FControl), 0) or $CC000000;
-    FOffHotThumbColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0) or $FF000000;
-    FOffHotFillColor := 0;
-    FOffHotFrameColor := RgbToArgb(BorderColorToRGB(clBtnText, FControl), 0) or $FF000000;
-    FOffDisableThumbColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0) or $33000000;
-    FOffDisableFillColor := 0;
-    FOffDisableFrameColor := RgbToArgb(BorderColorToRGB(clBtnText, FControl), 0) or $33000000;
-    // drag
-    FDragThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0) or $FF000000;
-    FDragFillColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0) or $99000000;
-    FDragFrameColor := 0;
-    // on
-    FOnNormalThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0) or $FF000000;
-    FOnNormalFillColor := (DwmColor and $00FFFFFF) or $FF000000;
-    FOnNormalFrameColor := 0;
-    FOnHotThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0) or $FF000000;
-    FOnHotFillColor := (DwmColor and $00FFFFFF) or $CC000000;
-    FOnHotFrameColor := 0;
-    FOnDisableThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0) or $FF000000;
-    FOnDisableFillColor := $99000000;
-    FOnDisableFrameColor := 0;
-  end;
-end;
-
-function TSwitchColors.IsStroredColors: Boolean;
-begin
-  Result := not IsSystemColors;
-end;
-
-procedure TSwitchColors.SetControl(const Value: TWinControl);
-begin
-  FControl := Value;
-  if FIsSystemColors then
-    InitSysColors;
-end;
-
-procedure TSwitchColors.SetDragFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FDragFillColor) then
-  begin
-    FDragFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetDragFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FDragFrameColor) then
-  begin
-    FDragFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetDragThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FDragThumbColor) then
-  begin
-    FDragThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetIsSystemColors(const Value: Boolean);
-begin
-  if Value <> FIsSystemColors then
-  begin
-    FIsSystemColors := Value;
-    if Value then
-      InitSysColors
-    else
-      InitDefaultColors;
-  end;
-end;
-
-procedure TSwitchColors.SetOffDisableFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffDisableFillColor) then
-  begin
-    FOffDisableFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffDisableFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffDisableFrameColor) then
-  begin
-    FOffDisableFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffDisableThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffDisableThumbColor) then
-  begin
-    FOffDisableThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffHotFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffHotFillColor) then
-  begin
-    FOffHotFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffHotFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffHotFrameColor) then
-  begin
-    FOffHotFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffHotThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffHotThumbColor) then
-  begin
-    FOffHotThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffNormalFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffNormalFillColor) then
-  begin
-    FOffNormalFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffNormalFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffNormalFrameColor) then
-  begin
-    FOffNormalFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOffNormalThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOffNormalThumbColor) then
-  begin
-    FOffNormalThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnDisableFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnDisableFillColor) then
-  begin
-    FOnDisableFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnDisableFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnDisableFrameColor) then
-  begin
-    FOnDisableFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnDisableThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnDisableThumbColor) then
-  begin
-    FOnDisableThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnHotFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnHotFillColor) then
-  begin
-    FOnHotFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnHotFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnHotFrameColor) then
-  begin
-    FOnHotFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnHotThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnHotThumbColor) then
-  begin
-    FOnHotThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnNormalFillColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnNormalFillColor) then
-  begin
-    FOnNormalFillColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnNormalFrameColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnNormalFrameColor) then
-  begin
-    FOnNormalFrameColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.SetOnNormalThumbColor(const Value: TAlphaColor);
-begin
-  if (not FIsSystemColors) and (Value <> FOnNormalThumbColor) then
-  begin
-    FOnNormalThumbColor := Value;
-    Change;
-  end;
-end;
-
-procedure TSwitchColors.UpdateColors;
-begin
-  if FIsSystemColors then
-    InitSysColors;
 end;
 
 { TEsCustomSwitchActionLinkClass }
@@ -1363,6 +1002,127 @@ begin
     finally
       TEsCustomSwitch(FClient).ClicksDisabled := False;
     end;
+  end;
+end;
+
+{ TSwitchColorsProxy }
+
+procedure TSwitchStyle.AssignTo(Dest: TPersistent);
+begin
+  if Dest is TSwitchStyle then
+  begin
+    TSwitchStyle(Dest).FMainColor := MainColor;
+    TSwitchStyle(Dest).FFrameColor := FrameColor;
+    TSwitchStyle(Dest).FThumbColor := ThumbColor;
+    TSwitchStyle(Dest).Change;
+  end
+  else
+    inherited;
+end;
+
+procedure TSwitchStyle.Change;
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+constructor TSwitchStyle.Create;
+begin
+  FFrameColor := clDefault;
+  FThumbColor := clDefault;
+  FMainColor := clDefault;
+end;
+
+// TODO: refactor me PLEASE!!!
+function TSwitchStyle.GetColor(const Index: Integer): TAlphaColor;
+var
+  LMainColor: TAlphaColor;
+  LFrameColor: TAlphaColor;
+  LThumbColor: TAlphaColor;
+begin
+  Result := 0; LMainColor := 0; LFrameColor := 0; LThumbColor := 0;// compiler paranoia
+
+  case Index of
+    1, 2, 4, 5, 7, 8, 15, 18:
+    begin
+      if FFrameColor = clDefault then
+        LFrameColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0)
+      else
+        LFrameColor := RgbToArgb(ClientColorToRGB(FFrameColor, FControl), 0);
+    end;
+
+    9, 12:
+    begin
+      if FMainColor = clDefault then
+      begin
+        if IsStyledClientControl(FControl) then
+          LMainColor := RgbToArgb(StyleServices.GetSystemColor(clHighlight))
+        else
+          if not GetMainColor(Cardinal(LMainColor)) then
+            LMainColor := RgbToArgb(ColorToRGB(clHighlight));
+      end else
+        LMainColor := RgbToArgb(ClientColorToRGB(FMainColor, FControl), 0);
+      LMainColor := LMainColor and $00FFFFFF;
+    end;
+
+    else
+    begin
+      if FThumbColor = clDefault then
+        LThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0)
+      else
+        LThumbColor := RgbToArgb(ClientColorToRGB(FThumbColor, FControl), 0);
+    end;
+  end;
+
+  case Index of
+    0: Result := 0;
+    1: Result := LFrameColor or $CC000000;
+    2: Result := LFrameColor or $CC000000;
+    3: Result := 0;
+    4: Result := LFrameColor or $FF000000;
+    5: Result := LFrameColor or $FF000000;
+    6: Result := 0;
+    7: Result := LFrameColor or $33000000;
+    8: Result := LFrameColor or $33000000;
+    9: Result := LMainColor or $FF000000;
+    10: Result := 0;
+    11: Result := LThumbColor or $FF000000;
+    12: Result := LMainColor or $CC000000;
+    13: Result := 0;
+    14: Result := LThumbColor or $FF000000;
+    15: Result := LFrameColor or $99000000;
+    16: Result := 0;
+    17: Result := LThumbColor or $FF000000;
+    18: Result := LFrameColor or $99000000;
+    19: Result := 0;
+    20: Result := LThumbColor or $FF000000;
+  end;
+end;
+
+procedure TSwitchStyle.SetMainColor(const Value: TColor);
+begin
+  if FMainColor <> Value then
+  begin
+    FMainColor := Value;
+    Change;
+  end;
+end;
+
+procedure TSwitchStyle.SetFrameColor(const Value: TColor);
+begin
+  if FFrameColor <> Value then
+  begin
+    FFrameColor := Value;
+    Change;
+  end;
+end;
+
+procedure TSwitchStyle.SetThumbColor(const Value: TColor);
+begin
+  if FThumbColor <> Value then
+  begin
+    FThumbColor := Value;
+    Change;
   end;
 end;
 

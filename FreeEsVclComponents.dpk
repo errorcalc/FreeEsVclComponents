@@ -36,9 +36,10 @@ requires
   EsVclCore;
 
 contains
-  ES.Vcl.Switch in 'Source\ES.Vcl.Switch.pas',
-  ES.Vcl.NinePatch in 'Source\ES.Vcl.NinePatch.pas',
-  ES.Vcl.Layouts in 'Source\ES.Vcl.Layouts.pas',
-  ES.Vcl.Indicators in 'Source\ES.Vcl.Indicators.pas';
+  ES.Switch in 'Source\ES.Switch.pas',
+  ES.NinePatch in 'Source\ES.NinePatch.pas',
+  ES.Layouts in 'Source\ES.Layouts.pas',
+  ES.Indicators in 'Source\ES.Indicators.pas',
+  ES.Images in 'Source\ES.Images.pas';
 
 end.

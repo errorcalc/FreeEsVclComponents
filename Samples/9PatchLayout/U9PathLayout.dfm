@@ -693,9 +693,10 @@ object Form2: TForm2
         C3AA16535262C2890DC0AD28301A159BB3F50B73C3950DAB4A487CB86C3FA42A
         D74A40DCA3E4727932B69F98C64C4253D70275EC17340C21BECF30BE91F23B5F
         1C5BF803B4137BED2568B6FA0000000049454E44AE426082}
-      Alpha = 90
+      Opacity = 90
+      IsDrawHelper = True
       Align = alTop
-      Caption = 'EsNinePatchControls'
+      Caption = 'FreeEsVclComponents'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -32
@@ -728,6 +729,7 @@ object Form2: TForm2
         9A5B01383B825A2DAEE10910886FC7D90334A484F447A4D064740BCDC3769A5B
         03346410BE6A32D291327D1D0134641FDE29127ED1A5765EAE5D4011E9A9C96B
         80A72C7F502EED36E7E30FD002610D15FBC4270000000049454E44AE426082}
+      IsDrawHelper = True
       TextAlignment = taLeftJustify
       TextDistance = 10
       Caption = 'Fast'
@@ -760,6 +762,7 @@ object Form2: TForm2
         9A5B01383B825A2DAEE10910886FC7D90334A484F447A4D064740BCDC3769A5B
         03346410BE6A32D291327D1D0134641FDE29127ED1A5765EAE5D4011E9A9C96B
         80A72C7F502EED36E7E30FD002610D15FBC4270000000049454E44AE426082}
+      IsDrawHelper = True
       TextAlignment = taLeftJustify
       TextDistance = 10
       Caption = 'Free'
@@ -792,6 +795,7 @@ object Form2: TForm2
         9A5B01383B825A2DAEE10910886FC7D90334A484F447A4D064740BCDC3769A5B
         03346410BE6A32D291327D1D0134641FDE29127ED1A5765EAE5D4011E9A9C96B
         80A72C7F502EED36E7E30FD002610D15FBC4270000000049454E44AE426082}
+      IsDrawHelper = True
       TextAlignment = taLeftJustify
       TextDistance = 10
       Caption = 'No flicker'
@@ -824,6 +828,7 @@ object Form2: TForm2
         9A5B01383B825A2DAEE10910886FC7D90334A484F447A4D064740BCDC3769A5B
         03346410BE6A32D291327D1D0134641FDE29127ED1A5765EAE5D4011E9A9C96B
         80A72C7F502EED36E7E30FD002610D15FBC4270000000049454E44AE426082}
+      IsDrawHelper = True
       TextAlignment = taLeftJustify
       TextDistance = 10
       Caption = 'Open source'
@@ -834,10 +839,10 @@ object Form2: TForm2
       Font.Style = []
       ParentFont = False
     end
-    object EsLabelLayout1: TEsLabelLayout
-      Left = 570
+    object EsImageStaticText1: TEsImageStaticText
+      Left = 544
       Top = 74
-      Width = 137
+      Width = 163
       Height = 368
       Anchors = [akLeft, akTop, akRight, akBottom]
       Font.Charset = DEFAULT_CHARSET
@@ -850,9 +855,10 @@ object Form2: TForm2
       TabOrder = 0
       TextMultiline = True
       Caption = 
-        'This is EsLabelLayout! This is EsLabelLayout! This is EsLabelLay' +
-        'out! This is EsLabelLayout! This is EsLabelLayout! This is EsLab' +
-        'elLayout!'
+        'This is EsImageStaticText! This is EsImageStaticText!'#13#10'*** This ' +
+        'control has rich aligning text! ***'#13#10'This is EsImageStaticText! ' +
+        'This is EsImageStaticText! This is EsImageStaticText! This is Es' +
+        'ImageStaticText!'
     end
   end
 end

@@ -38,7 +38,7 @@ object MainForm: TMainForm
       ParentBufferedChildrens = False
       ParentDoubleBuffered = True
       TabOrder = 0
-      object EsLabelLayout1: TEsLabelLayout
+      object EsImageStaticText1: TEsImageStaticText
         Left = 3
         Top = 3
         Width = 201
@@ -189,7 +189,7 @@ object MainForm: TMainForm
           OnChange = cbStyleChange
         end
       end
-      object EsLabelLayout2: TEsLabelLayout
+      object EsImageStaticText2: TEsImageStaticText
         Left = 210
         Top = 3
         Width = 201
@@ -341,7 +341,7 @@ object MainForm: TMainForm
           OnClick = udPointCountClick
         end
       end
-      object EsLabelLayout3: TEsLabelLayout
+      object EsImageStaticText3: TEsImageStaticText
         Left = 417
         Top = 3
         Width = 201

@@ -1,13 +1,16 @@
 {******************************************************************************}
-{                             FreeEsVclComponents                              }
-{                           ErrorSoft(c) 2012-2016                             }
+{                          FreeEsVclComponents/Core                            }
+{                           ErrorSoft(c) 2011-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.CfxClasses;
+unit Es.CfxClasses;
 
 interface
 
@@ -20,13 +23,22 @@ interface
 
 uses
   Windows, Classes, Controls, Graphics, PngImage,
-  ES.Vcl.ExGraphics, Messages, Generics.Collections, Dialogs, StdCtrls;
+  ES.ExGraphics, Messages, Generics.Collections, Dialogs, StdCtrls;
 
 type
 //  {$scopedenums on}
   TVertLayout = (vlTop, vlCenter, vlBottom);
   THorzLayout = (hlLeft, hlCenter, hlRight);
   TImageAlign = (iaTopLeft, iaTopRight, iaBottomRight, iaBottomLeft, iaCenter, iaLeft, iaRight, iaTop, iaBottom);
+  //                -  size+color size  size    win        win
+  TExFrameStyle = (fsNone, fsFlat, fsUp, fsDown, fsLowered, fsRaised, fsBump, fsEtched, fsChess,
+    fsLoweredColor, fsRaisedColor, fsBumpColor, fsEtchedColor, fsChessColor);
+  {$ifndef VER230UP}
+  TFrameStyle = fsNone..fsChess;
+  {$else}
+  TFrameStyle = TExFrameStyle.fsNone..TExFrameStyle.fsChess;
+  {$endif}
+  TFrameWidth = 1..MaxInt;
 //  {$scopedenums off}
 
   TImageMargins = class(TMargins)
@@ -59,7 +71,7 @@ type
     property Bottom nodefault;
   end;
 
-  // Internal use only
+  /// <summary> ONLY INTERNAL USE! </summary>
   TNinePatchObject = class
   private
     FBitmap: TBitmap;
@@ -95,14 +107,14 @@ type
     property Margins: TImageMargins read FMargins write SetMargins;
     property OnNeedRepaint: TNotifyEvent read FOnNeedRepaint write FOnNeedRepaint;
     // property OnMarginsChange: TNotifyEvent read FOnMarginsChange write FOnMarginsChange;
-    procedure Draw(Canvas: TCanvas; Rect: TRect; Alpha: byte); virtual;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte); virtual;
     procedure AssignImage(G: TGraphic);
     procedure AssignOverlay(G: TGraphic);
     constructor Create; virtual;
     destructor Destroy; override;
   end;
 
-  // Internal use only
+  /// <summary> ONLY INTERNAL USE! </summary>
   TTextNinePatchObject = class(TNinePatchObject)
   private
     FShowCaption: Boolean;
@@ -123,10 +135,10 @@ type
     property TextLayout: TVertLayout read FTextLayout write SetTextLayout;
     property TextDistance: Integer read FTextDistance write SetTextDistance;
     property TextMultiline: Boolean read FTextMultiline write SetTextMultiline;
-    procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte); reintroduce; overload;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: Byte); reintroduce; overload;
   end;
 
-  // Internal use only
+  /// <summary> Improved version TPngImage which causes OnChange </summary>
   TFixPngImage = class(TPngImage)
   protected
     procedure SetWidth(Value: Integer); override;
@@ -138,7 +150,7 @@ type
     procedure Assign(Source: TPersistent); override;
   end;
 
-  // Internal use only
+  /// <summary> ONLY INTERNAL USE! </summary>
   TStyleNinePatch = class(TPersistent)
   private
     ImageList: TList<TPngImage>;
@@ -180,7 +192,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     //
     procedure DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
-      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255); virtual;
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255); virtual;
     //----------------------------------------------------------------------------------------------
     // Indexed properties:
     function GetImage(const Index: Integer): TPngImage;
@@ -199,7 +211,7 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255); virtual;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255); virtual;
     procedure Clear; dynamic;
     procedure UpdateImages; dynamic;
     //
@@ -225,8 +237,8 @@ type
     property IsDefaultImages: Boolean read FIsDefaultImages write SetIsDefaultImages default True;
   end;
 
-  // Internal use only
   // TODO: need rewrite for use CreateTimerQueueTimer...
+  /// <summary> Improved timer </summary>
   TEsTimer = class
   private
     HidenWindow: HWND;
@@ -269,7 +281,6 @@ type
     procedure SetMode(const Value: TAnimationMode);
     procedure SetReverseMode(const Value: Boolean);
   protected
-    function GetCurrentTime: Single; virtual;
     procedure TimerProc(Sender: TObject); virtual;
     procedure Process; virtual;
   public
@@ -280,7 +291,7 @@ type
     property Duration: Cardinal read FDuration write SetDuration;
     property Mode: TAnimationMode read FMode write SetMode;
     property ReverseMode: Boolean read FReverseMode write SetReverseMode;
-    property CurrentTime: Single read GetCurrentTime;// 0..1
+    function CurrentTime: Single; virtual;// 0..1
     property OnProcess: TNotifyEvent read FOnProcess write FOnProcess;
     property OnFinish: TNotifyEvent read FOnFinish write FOnFinish;
   end;
@@ -300,10 +311,14 @@ type
     property Value: Integer read GetValue;
   end;
 
+  function DrawFrame(Canvas: TCanvas; Rect: TRect; Style: TExFrameStyle; FrameWidth: TFrameWidth;
+    FrameColor: TColor; TopColor, BottomColor: TColor; BaseColor: TColor = clNone): TRect;
+  function GetFrameWidth(Style: TExFrameStyle; FrameWidth: TFrameWidth = 1): Integer;
+
 implementation
 
 uses
-  Themes, ES.Vcl.BaseControls, ES.Vcl.Utils, SysUtils, TypInfo;
+  Themes, ES.BaseControls, ES.Utils, SysUtils, TypInfo, GraphUtil, UIConsts;
 
 {$REGION 'Delphi 2010/XE support'}
 {$ifndef VER230UP}
@@ -393,6 +408,195 @@ end;
 {$endif}
 {$ENDREGION}
 
+procedure Draw3dFrame(Handle: HDC; Rect: TRect; Width: Integer; TopColor, BottomColor: TColor);
+  procedure OnePixel3d(Handle: HDC; Rect: TRect; TopColor, BottomColor: TColor);
+  var
+    SavePen: HPEN;
+    Points: array [1..3] of TPoint;
+  begin
+    SavePen := SelectObject(Handle, GetStockObject(DC_PEN));
+
+    try
+      // TopLeft
+      Points[1] := Point(Rect.Left, Rect.Bottom - 1);
+      Points[2] := Point(Rect.Left, Rect.Top);
+      Points[3] := Point(Rect.Right, Rect.Top);
+      SetDCPenColor(Handle, TopColor);
+      PolyLine(Handle, Points[1], 3);
+      // BottomRight
+      Points[1] := Point(Rect.Right, Rect.Top);
+      Points[2] := Point(Rect.Right, Rect.Bottom);
+      Points[3] := Point(Rect.Left - 1, Rect.Bottom);
+      SetDCPenColor(Handle, BottomColor);
+      PolyLine(Handle, Points[1], 3);
+    finally
+      if SavePen <> 0 then
+        SelectObject(Handle, SavePen);
+    end;
+  end;
+begin
+  Dec(Rect.Right);
+  Dec(Rect.Bottom);
+  while Width > 0 do
+  begin
+    OnePixel3d(Handle, Rect, TopColor, BottomColor);
+    Dec(Width);
+    InflateRect(Rect, -1, -1);
+  end;
+end;
+
+// todo: NOW THIS FUNCTION IS HELL, REFACTOR ME PLEASE!!!
+function DrawFrame(Canvas: TCanvas; Rect: TRect; Style: TExFrameStyle; FrameWidth: TFrameWidth;
+  FrameColor: TColor; TopColor, BottomColor: TColor; BaseColor: TColor = clNone): TRect;
+var
+  HighlightColor, ShadowColor: TColor;
+  {$ifdef VER230UP}
+  Elements: TElementEdges;
+  {$endif}
+begin
+  {$ifdef VER230UP}
+  if TStyleManager.IsCustomStyleActive then
+  begin
+    FrameColor := StyleServices.GetSystemColor(FrameColor);
+    TopColor := StyleServices.GetSystemColor(TopColor);
+    BottomColor := StyleServices.GetSystemColor(BottomColor);
+  end else
+  {$endif}
+  begin
+    FrameColor := ColorToRGB(FrameColor);
+    TopColor := ColorToRGB(TopColor);
+    BottomColor := ColorToRGB(BottomColor);
+  end;
+
+  if BaseColor <> clNone then
+    {$ifdef VER230UP}
+    if TStyleManager.IsCustomStyleActive then
+      BaseColor := StyleServices.GetSystemColor(BaseColor)
+    else
+    {$endif}
+      BaseColor := ColorToRgb(BaseColor);
+
+  case Style of
+    TExFrameStyle.fsNone:;
+
+    TExFrameStyle.fsFlat:
+    begin
+      Canvas.DrawInsideFrame(Rect, FrameWidth, FrameColor);
+      InflateRect(Rect, -FrameWidth, -FrameWidth);
+    end;
+
+    TExFrameStyle.fsUp, TExFrameStyle.fsDown:
+    begin
+      if Style = TExFrameStyle.fsUp then
+        Draw3dFrame(Canvas.Handle, Rect, FrameWidth, TopColor, BottomColor)
+      else
+        Draw3dFrame(Canvas.Handle, Rect, FrameWidth, BottomColor, TopColor);
+
+      InflateRect(Rect, -FrameWidth, -FrameWidth);
+    end;
+
+    TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump, TExFrameStyle.fsEtched,
+    TExFrameStyle.fsChess, TExFrameStyle.fsLoweredColor, TExFrameStyle.fsRaisedColor,
+    TExFrameStyle.fsBumpColor, TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChessColor:
+    begin
+//      if Style in [TFrameStyle.fsLowered, TFrameStyle.fsRaised] and (BaseColor = clNone) then
+//      begin
+//        if Style = TFrameStyle.fsRaised then
+//          DrawEdge(Canvas.Handle, Rect, EDGE_RAISED, BF_SOFT or BF_RECT or BF_ADJUST)
+//        else
+//          DrawEdge(Canvas.Handle, Rect, EDGE_SUNKEN, BF_SOFT or BF_RECT or BF_ADJUST);
+//        InflateRect(Rect, -2, -2);
+//      end else
+//      begin
+      {$ifdef VER230UP}
+      if (TStyleManager.IsCustomStyleActive) and
+        (Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump, TExFrameStyle.fsEtched]) then
+      begin
+        case Style of
+          fsLowered: Elements := [eeSunken];
+          fsRaised: Elements := [eeRaised];
+          fsBump: Elements := [eeBump];
+          fsEtched: Elements := [eeEtched];
+        end;
+        DrawStyleEdge(Canvas.Handle, Rect, Elements, [efRect, efSoft]);
+
+        InflateRect(Rect, -2, -2);
+      end else
+      {$endif}
+      begin
+        if (Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump,
+          TExFrameStyle.fsEtched, TExFrameStyle.fsChess]) or (BaseColor = clNone) then
+        begin
+          {$ifdef VER230UP}
+          if TStyleManager.IsCustomStyleActive then
+            BaseColor := StyleServices.GetSystemColor(clBtnFace)
+          else
+          {$endif}
+            BaseColor := ColorToRgb(clBtnFace)
+        end;
+
+        // out
+        if Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised,
+          TExFrameStyle.fsBump, TExFrameStyle.fsEtched, TExFrameStyle.fsChess]
+        then
+          HighlightColor := LuminanceColor(BaseColor, 255)
+        else
+          HighlightColor := LuminanceColor(BaseColor, 240);
+
+        if not (Style in [TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor,
+          TExFrameStyle.fsEtched, TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChess, TExFrameStyle.fsChessColor])
+        then
+          ShadowColor := LuminanceColor(BaseColor, 99)
+        else
+          ShadowColor := LuminanceColor(BaseColor, 151);
+
+        if Style in [TExFrameStyle.fsChess, TExFrameStyle.fsChessColor] then
+          Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
+        else
+        if Style in [TExFrameStyle.fsRaised, TExFrameStyle.fsRaisedColor,
+          TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor]
+        then
+          Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
+        else
+          Draw3dFrame(Canvas.Handle, Rect, 1, ShadowColor, HighlightColor);
+        InflateRect(Rect, -1, -1);
+
+        // In
+        if not (Style in [TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor, TExFrameStyle.fsEtched,
+        TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChess, TExFrameStyle.fsChessColor]) then
+        begin
+          HighlightColor := LuminanceColor(BaseColor, 214);
+          ShadowColor := LuminanceColor(BaseColor, 151);
+        end;
+
+        if Style in [TExFrameStyle.fsChess, TExFrameStyle.fsChessColor] then
+          Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
+        else
+        if Style in [TExFrameStyle.fsRaised, TExFrameStyle.fsRaisedColor,
+          TExFrameStyle.fsEtched, TExFrameStyle.fsEtchedColor]
+        then
+          Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
+        else
+          Draw3dFrame(Canvas.Handle, Rect, 1, ShadowColor, HighlightColor);
+        InflateRect(Rect, -1, -1);
+      end;
+    end;
+  end;
+
+  Result := Rect;
+end;
+
+function GetFrameWidth(Style: TExFrameStyle; FrameWidth: TFrameWidth = 1): Integer;
+begin
+  case Style of
+    TExFrameStyle.fsNone: Result := 0;
+    TExFrameStyle.fsFlat, TExFrameStyle.fsUp, TExFrameStyle.fsDown:
+      Result := FrameWidth;
+    else
+      Result := 2;
+  end;
+end;
+
 { TImageMargins }
 
 function TImageMargins.GetRect: TRect;
@@ -441,11 +645,11 @@ begin
   inherited;
 end;
 
-procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Alpha: byte);
+procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Opacity: byte);
 var
   R: TRect;
 begin
-  Canvas.DrawNinePatch(Rect, FMargins.Rect, FBitmap, Alpha);
+  Canvas.DrawNinePatch(Rect, FMargins.Rect, FBitmap, Opacity);
 
   // for painting child class
   if (Self.ClassType <> TNinePatchObject) and ContentSpace then
@@ -475,31 +679,31 @@ begin
 
     case FOverlayAlign of
       TImageAlign.iaTopLeft:
-        Canvas.Draw(R.Left, R.Top, FOverlay, Alpha);
+        Canvas.Draw(R.Left, R.Top, FOverlay, Opacity);
 
       TImageAlign.iaTopRight:
-        Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, Alpha);
+        Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, Opacity);
 
       TImageAlign.iaBottomRight:
-        Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, Alpha);
+        Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, Opacity);
 
       TImageAlign.iaBottomLeft:
-        Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, Alpha);
+        Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, Opacity);
 
       TImageAlign.iaCenter:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
       TImageAlign.iaLeft:
-        Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
+        Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
       TImageAlign.iaRight:
-        Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Alpha);
+        Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
       TImageAlign.iaTop:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, Opacity);
 
       TImageAlign.iaBottom:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, Opacity);
     end;
 
     case FOverlayAlign of
@@ -614,7 +818,7 @@ begin
   OverlayAlign := TImageAlign.iaLeft;
 end;
 
-procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Alpha: byte);
+procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: byte);
 {$ifdef VER230UP}
 const
   D: array[Boolean] of TThemedTextLabel = (ttlTextLabelDisabled, ttlTextLabelNormal);//TStyleFont = (sfPanelTextDisabled, sfPanelTextNormal);
@@ -638,7 +842,7 @@ var
       Canvas.TextRect(Rect, Text, T);
   end;
 begin
-  inherited Draw(Canvas, Rect, Alpha);
+  inherited Draw(Canvas, Rect, Opacity);
 
   if (not ShowCaption) or (Control = nil) then
     exit;
@@ -909,9 +1113,9 @@ begin
   inherited;
 end;
 
-procedure TStyleNinePatch.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Alpha: Byte = 255);
+procedure TStyleNinePatch.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255);
 begin
-  DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Alpha);
+  DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Opacity);
 end;
 
 procedure TStyleNinePatch.EndUpdate;
@@ -1044,13 +1248,13 @@ begin
 end;
 
 procedure TStyleNinePatch.DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
-      OverlayBitmap: TBitmap; Mode: TStretchMode; Alpha: Byte = 255);
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255);
 var
   R: TRect;
   ContentRect: TRect;
 begin
   if Assigned(Bitmap) then
-    Canvas.DrawNinePatch(Rect, FImageMargins.Rect, Bitmap, Mode, Alpha);
+    Canvas.DrawNinePatch(Rect, FImageMargins.Rect, Bitmap, Mode, Opacity);
 
 //  // for painting child class
 //  if (Self.ClassType <> TNinePatchObject) and ContentSpace then
@@ -1080,31 +1284,31 @@ begin
 
     case FOverlayAlign of
       TImageAlign.iaTopLeft:
-        Canvas.Draw(R.Left, R.Top, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left, R.Top, OverlayBitmap, Opacity);
 
       TImageAlign.iaTopRight:
-        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Top, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Top, OverlayBitmap, Opacity);
 
       TImageAlign.iaBottomRight:
-        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Right - OverlayBitmap.Width, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Opacity);
 
       TImageAlign.iaBottomLeft:
-        Canvas.Draw(R.Left, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Opacity);
 
       TImageAlign.iaCenter:
-        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
       TImageAlign.iaLeft:
-        Canvas.Draw(R.Left, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
       TImageAlign.iaRight:
-        Canvas.Draw(R.Left + R.Width - OverlayBitmap.Width, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left + R.Width - OverlayBitmap.Width, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
       TImageAlign.iaTop:
-        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top, OverlayBitmap, Opacity);
 
       TImageAlign.iaBottom:
-        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height - OverlayBitmap.Height, OverlayBitmap, Alpha);
+        Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height - OverlayBitmap.Height, OverlayBitmap, Opacity);
     end;
 
 //    case FOverlayAlign of
@@ -1458,7 +1662,7 @@ begin
   inherited;
 end;
 
-function TCustomAnimation.GetCurrentTime: Single;
+function TCustomAnimation.CurrentTime: Single;
 var
   t: Single;
 begin

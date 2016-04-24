@@ -3,11 +3,14 @@
 {                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
 { Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{                                                                              }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
+{ You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
-unit ES.Vcl.Indicators;
+unit ES.Indicators;
 
 {$IF CompilerVersion >= 24}
 {$DEFINE VER240UP}
@@ -17,12 +20,12 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.ExtCtrls,
-  Winapi.Messages, ES.Vcl.ExGraphics, ES.Vcl.BaseControls;
+  Winapi.Messages, ES.ExGraphics, ES.BaseControls;
 
 type
   TPointType = (ptBox, ptCircle);
   TActivityPlacement = (apNone, apTop, apBottom);
-  TAnimationType = (atWindowsX, atBar, atSin, atProgress);
+  TActivityAnimationType = (atWindowsX, atBar, atSin, atProgress);
   TActivityDisplayMode = (admOverlay, admDocked);
   TPointCount = 1..30;
   TAnimationEnergy = 1..200;
@@ -45,7 +48,7 @@ type
     FPointSpace: Word;
     FPointCount: TPointCount;
     Pos: Double;
-    FAnimationType: TAnimationType;
+    FAnimationType: TActivityAnimationType;
     FAnimationTime: TAnimationTime;
     FTimerInterval: TTimerInterval;
     FAnimationDelay: TAnimationDelay;
@@ -55,7 +58,6 @@ type
     FPosition: Integer;
     FHorizontalSpace: Word;
     FDisplayMode: TActivityDisplayMode;
-    //FEnergy: TEnergyCut;
     procedure SetVerticalSpace(const Value: Word);
     procedure SetPointColor(const Value: TColor);
     procedure SetAutoHide(const Value: Boolean);
@@ -63,7 +65,7 @@ type
     procedure SetPlacement(const Value: TActivityPlacement);
     procedure SetPointSpace(const Value: Word);
     procedure SetPointCount(const Value: TPointCount);
-    procedure SetAnimationType(const Value: TAnimationType);
+    procedure SetAnimationType(const Value: TActivityAnimationType);
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
     procedure SetAnimationEnergy(const Value: TAnimationEnergy);
     function GetAnimationEnergy: TAnimationEnergy;
@@ -76,7 +78,6 @@ type
     procedure SetHorizontalSpace(const Value: Word);
     procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure SetDisplayMode(const Value: TActivityDisplayMode);
-    // function IsAlignAndAnchorsStored: Boolean;
     function GetAlign: TAlign;
     function GetAnchors: TAnchors;
     procedure SetAlign(const Value: TAlign);
@@ -120,7 +121,7 @@ type
     property Position: Integer read FPosition write SetPosition default 0;
     property AnimationTime: TAnimationTime read FAnimationTime write FAnimationTime default 4000;
     property AnimationDelay: TAnimationDelay read FAnimationDelay write SetAnimationDelay default 500;
-    property AnimationType: TAnimationType read FAnimationType write SetAnimationType default atWindowsX;
+    property AnimationType: TActivityAnimationType read FAnimationType write SetAnimationType default atWindowsX;
     property AnimationEnergy: TAnimationEnergy read GetAnimationEnergy write SetAnimationEnergy default DefaultEnegry;
     property VerticalSpace: Word read FVerticalSpace write SetVerticalSpace default 0;
     property HorizontalSpace: Word read FHorizontalSpace write SetHorizontalSpace default 0;
@@ -139,8 +140,7 @@ type
     property IsCachedBackground;// TEsCustomControl
     property IsDrawHelper;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
-    property IsTransparentMouse;// TEsCustomControl
-    // property IsFullSizeBuffer;// TEsCustomControl
+    //
     property BorderWidth;
     property DragCursor;
     property DragKind;
@@ -182,17 +182,10 @@ type
     property OnStartDrag;
   end;
 
-//procedure Register;
-
 implementation
 
 uses
-  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.Vcl.ExGdiPlus, ES.Vcl.Utils;
-
-//procedure Register;
-//begin
-//  RegisterComponents('ErrorSoft', [TEsActivityBar]);
-//end;
+  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.ExGdiPlus, ES.Utils;
 
 { TEsActivityBar }
 
@@ -408,11 +401,6 @@ begin
   Result := Inherited Visible;
 end;
 
-//function TEsActivityBar.IsAlignAndAnchorsStored: Boolean;
-//begin
-//  Result := Placement = apNone;
-//end;
-
 function TEsActivityBar.IsVisibleStored: Boolean;
 begin
   Result := not FAutoHide;
@@ -602,7 +590,7 @@ begin
     Inherited Align := Value;
 end;
 
-procedure TEsActivityBar.SetAnimationType(const Value: TAnimationType);
+procedure TEsActivityBar.SetAnimationType(const Value: TActivityAnimationType);
 begin
   if FAnimationType <> Value then
   begin

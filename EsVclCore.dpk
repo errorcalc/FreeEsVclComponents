@@ -35,12 +35,13 @@ requires
   vclimg;
 
 contains
-  ES.Vcl.BaseControls in 'Source\ES.Vcl.BaseControls.pas',
-  ES.Vcl.CfxClasses in 'Source\ES.Vcl.CfxClasses.pas',
-  ES.Vcl.ExGdiPlus in 'Source\ES.Vcl.ExGdiPlus.pas',
-  ES.Vcl.ExGraphics in 'Source\ES.Vcl.ExGraphics.pas',
-  ES.Vcl.StyleHooks in 'Source\ES.Vcl.StyleHooks.pas',
-  ES.Vcl.Utils in 'Source\ES.Vcl.Utils.pas',
-  EsVclFix in 'Source\EsVclFix.pas';
+  Es.BaseControls in 'Source\Es.BaseControls.pas',
+  Es.CfxClasses in 'Source\Es.CfxClasses.pas',
+  ES.ExGdiPlus in 'Source\ES.ExGdiPlus.pas',
+  ES.ExGraphics in 'Source\ES.ExGraphics.pas',
+  ES.StyleHooks in 'Source\ES.StyleHooks.pas',
+  ES.Utils in 'Source\ES.Utils.pas',
+  Es.VclFix in 'Source\Es.VclFix.pas';
 
 end.
+
