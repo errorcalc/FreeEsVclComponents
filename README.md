@@ -1,6 +1,7 @@
 ![Logo](Source/icons/Logo.png)
 # FreeEsVCLComponents
 **Version 1.0**
+
 Free components for delphi & C++Builder (VCL)
 Attribution-ShareAlike 3.0
 
@@ -25,7 +26,9 @@ Attribution-ShareAlike 3.0
 #English ReadMe:
 
 ** FreeEsVCLComponents ** - a free library of VCL components for Delphi. All components has best support transparency, FreeEsVCLComponents not flicker, support Interesting possibility for double buffering for TGraphicControl heirs - BufferedChildens property.
+
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
+
 errorsoft(at)mail.ru
 
 **Units was renamed!(for C++Builder Support) Need rename in your project "ES.Vcl.xxx.pas -> ES.xxx.pas"**
@@ -144,6 +147,7 @@ Pluses:
 * Поддежка фокуса ввода
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
+
 errorsoft(at)mail.ru
 
 Более оперативно на вопросы я могу ответить здесь: http://vk.com/errorsoft
