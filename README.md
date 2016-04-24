@@ -148,21 +148,21 @@ Pluses:
 * Поддержка ActionList
 
 ![Icon](Source/icons/TESIMAGE32.bmp)
-**TEsImage** - Much better than the TImage, many other properties.
+**TEsImage** - Лучшая замена TImage, с большими возможностями.
 * Сглаживание, то чего всегда не хватало TImage
 * Поддержка ImageList
 * Поддержка полупрозрачности
 * Несколько режимов растягивания изображения
 
 ![Icon](Source/icons/TESIMAGECONTROL32.bmp)
-**TEsImageControl** - Much better than the TImage & absolitly no flicker!
+**TEsImageControl** - Лучшая замена TImage, с большими возможностями & и с отсутствием мерцания!
 * Отсутствие мерцания!
 * Сглаживание, то чего всегда не хватало TImage
 * Поддержка ImageList
 * Поддержка полупрозрачности
 * Несколько режимов растягивания изображения
 * Рисование границы, если необходимо
-* Поддежка фокуса ввода
+* Поддержка фокуса ввода
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 

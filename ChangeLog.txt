@@ -40,7 +40,7 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 3. Изменение в настройках цвета в TEsSwitch
 4. Переименование модулей, пример: "Es.Vcl.CfxClasses" на "Es.CfxClasses", для поддержки C++Builder
 5. Исправление багов и улучшения некоторых компонентов и классов
-6. Новый базовый класс TEsGraphicControl, поддержиивающий
-Padding, IsDrawHelper проперти, и ContentRect, ContentMargins функции
+6. Новый базовый класс TEsGraphicControl, поддерживающий
+свойства Padding, IsDrawHelper, и функции ContentRect, ContentMargins 
 7. улучшение TEsCustomLayot 
 8. TEsLabelLayout был переименован в TEsImageStaticText
