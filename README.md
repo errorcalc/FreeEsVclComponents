@@ -5,9 +5,9 @@
 Free components for delphi & C++Builder (VCL)
 Attribution-ShareAlike 3.0
 
-*** You can help, if you send me where you are using the component and attach a screenshot example of use ***
+**You can help, if you send me where you are using the component and attach a screenshot example of use**
 
-*** Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования ***
+**Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
 
 # List of components:
 * TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
@@ -29,7 +29,7 @@ Attribution-ShareAlike 3.0
 
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
 
-errorsoft(at)mail.ru
+**Email:** errorsoft(at)mail.ru
 
 **Units was renamed!(for C++Builder Support) Need rename in your project "ES.Vcl.xxx.pas -> ES.xxx.pas"**
 
@@ -148,7 +148,7 @@ Pluses:
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 
-errorsoft(at)mail.ru
+**Email:** errorsoft(at)mail.ru
 
 Более оперативно на вопросы я могу ответить здесь: http://vk.com/errorsoft
 
