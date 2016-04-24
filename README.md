@@ -42,16 +42,22 @@ Pluses:
 
 **TEsCustomControl** - The base class contains the anti-flicker magic and support transparency.
 
+![Icon](Source/icons/TESNINEPATCHIMAGE32.bmp)
 **TEsNinePatchImage** - TImage for 9-Patch images (raster image with the ability to zoom without loss of quality, almost all modern interfaces are built on them), as well as images - Overley
 
+![Icon](Source/icons/TESIMAGELABEL32.bmp)
 **TEsImageLabel** - The Label supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
 
+![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - The basic container. Interesting possibility for double buffering TGraphicControl heirs (TLabel, TGlyphButton, TImage, TBevel ...)
 
+![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
 **TEsImageLayot** - The Layout with support background 9-Patch images and image - Overley
 
+![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
 **TEsImageStaticText** - The StaticText supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
 
+![Icon](Source/icons/TESACTIVITYBAR32.bmp)
 **TEsActivityBar** - Component simulates XAML control Windows 10, designed to indicate or display the progress of employment (something TProgressBar type). It has a lot of settings.
 * Support for two display modes
 * Three types of animation and progress indication
@@ -59,6 +65,7 @@ Pluses:
 * Lack of Flicker
 * Full customization
 
+![Icon](Source/icons/TESSWITCH32.bmp)
 **TEsSwitch** - Component simulates the eponymous XAML control Windows 10. It has a lot of settings. 
 * Complete simulation XAML control 
 * Animation 
@@ -68,12 +75,14 @@ Pluses:
 * Multiple AutoSize-and modes 
 * Support ActionList
 
+![Icon](Source/icons/TESIMAGE32.bmp)
 **TEsImage** - Much better than the TImage, many other properties.
 * Smoothing(Interpolation) support, this is always lacked TImage
 * Support ImageList
 * Support Opacity
 * More Stretch modes
 
+![Icon](Source/icons/TESIMAGECONTROL32.bmp)
 **TEsImageControl** - Much better than the TImage & absolitly no flicker!
 * Absolitly no flicker!
 * Smoothing(Interpolation) support, this is always lacked TImage
@@ -102,17 +111,23 @@ Pluses:
 
 **TEsCustomControl** - Базовый класс, содержит в себе магию подавления мерцания и поддержки прозрачности.
 
+![Icon](Source/icons/TESNINEPATCHIMAGE32.bmp)
 **TEsNinePatchImage** - TImage для 9-Patch изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overley-a
 
+![Icon](Source/icons/TESIMAGELABEL32.bmp)
 **TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overley-a, расположение и выравнивание текста можно комбинировать по-разному
 
+![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - Базовый компонент - контейнер.
 Интересен возможностью двойной буферизации для наследников TGraphicControl (TLabel, TGlyphButton, TImage, TBevel...)
 
+![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
 **TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a
 
+![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
 **TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно по-разному комбинировать 
 
+![Icon](Source/icons/TESACTIVITYBAR32.bmp)
 **TEsActivityBar** - Компонент имитирует XAML контрол Windows 10, созданный для индикации занятости или отображения прогресса (что-то типа TProgressBar).
 Имеет множество настроек.
 * Поддержка двух режимов отображения
@@ -121,6 +136,7 @@ Pluses:
 * Отсутствие мерцания
 * Полная кастомизация
 
+![Icon](Source/icons/TESSWITCH32.bmp)
 **TEsSwitch** - Компонент имитирует одноименный XAML контрол Windows 10.
 Имеет множество настроек.
 * Полная имитация XAML контрола
@@ -131,12 +147,14 @@ Pluses:
 * Несколько режимов AutoSize-а
 * Поддержка ActionList
 
+![Icon](Source/icons/TESIMAGE32.bmp)
 **TEsImage** - Much better than the TImage, many other properties.
 * Сглаживание, то чего всегда не хватало TImage
 * Поддержка ImageList
 * Поддержка полупрозрачности
 * Несколько режимов растягивания изображения
 
+![Icon](Source/icons/TESIMAGECONTROL32.bmp)
 **TEsImageControl** - Much better than the TImage & absolitly no flicker!
 * Отсутствие мерцания!
 * Сглаживание, то чего всегда не хватало TImage
