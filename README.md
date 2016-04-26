@@ -25,7 +25,7 @@ Attribution-ShareAlike 3.0
 
 #English ReadMe:
 
-**FreeEsVCLComponents** - a free library of VCL components for Delphi. All components has best support transparency, FreeEsVCLComponents not flicker, support Interesting possibility for double buffering for TGraphicControl heirs - BufferedChildens property.
+**FreeEsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components has best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and has modern style. 
 
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
 
@@ -93,8 +93,7 @@ Pluses:
 * Support Focusing
 
 #Russian ReadMe:
-**FreeEsVCLComponents** - это бесплатная библиотека VCL компонентов для Delphi.
-Все компоненты FreeEsVCLComponents не мерцают, также не мерцают на них и наследники TGraphiControl при активации свойства BufferedChildens.
+**FreeEsVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
 
 **Полностью бесплатная лицензия (В том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
