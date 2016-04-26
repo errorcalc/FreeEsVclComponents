@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.BaseControls, ES.Switch, ES.Layouts,
   ES.NinePatch, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls,
-  Vcl.ComCtrls, System.Actions;
+  Vcl.ComCtrls {$ifndef VER230},System.Actions{$endif};
 
 type
   TMainForm = class(TForm)

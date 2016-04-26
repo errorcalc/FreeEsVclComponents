@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls,
-  Es.BaseControls, ES.Images, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.ImageList, Vcl.ImgList;
+  Es.BaseControls, ES.Images, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.ImgList
+  {$ifndef VER230 or VER240 or VER250 or VER260 or VER270 or VER280},System.ImageList{$endif};
 
 type
   TMainForm = class(TForm)

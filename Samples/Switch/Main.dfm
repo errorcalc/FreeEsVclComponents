@@ -1,7 +1,7 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'TEsSwitch - the best Delphi Swicth control!'
+  Caption = 'TEsSwitch - the best Delphi Switch control!'
   ClientHeight = 537
   ClientWidth = 643
   Color = clWhite
@@ -38,7 +38,7 @@ object MainForm: TMainForm
       Top = 9
       Width = 383
       Height = 24
-      Caption = 'TEsSwitch - the best Delphi Swicth control!'
+      Caption = 'TEsSwitch - the best Delphi Switch control!'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -20
