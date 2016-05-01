@@ -1081,8 +1081,12 @@ begin
     1, 2, 4, 5, 7, 8, 15, 18:
     begin
       if FFrameColor = clDefault then
-        LFrameColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0)
-      else
+      begin
+        if Assigned(FControl) and not (StyleServices.Enabled and IsStyledClientControl(FControl))  then
+          LFrameColor := RgbToArgb(ColorToRGB(TEsSwitch(FControl).Font.Color), 0)
+        else
+          LFrameColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0);
+      end else
         LFrameColor := RgbToArgb(ClientColorToRGB(FFrameColor, FControl), 0);
     end;
 
