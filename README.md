@@ -31,31 +31,30 @@ Free use for commercial and non-commercial projects, you need specify in About, 
 
 **Email:** errorsoft(at)mail.ru
 
-**Units was renamed!(for C++Builder Support) Need rename in your project "ES.Vcl.xxx.pas -> ES.xxx.pas"**
-
 Pluses:
-* Windows XP support
+* Excellent support for transparency!
+* No flicker!
 * Support for built-in VCL skins
 * Support Hight DPI (Seattle+)
 * Display convenient borders in DesignTime, activate properties IsDrawHelper
-* Excellent support for transparency!
+* Windows XP support
 
 **TEsCustomControl** - The base class contains the anti-flicker magic and support transparency.
 
 ![Icon](Source/icons/TESNINEPATCHIMAGE32.bmp)
-**TEsNinePatchImage** - TImage for 9-Patch images (raster image with the ability to zoom without loss of quality, almost all modern interfaces are built on them), as well as images - Overley
+**TEsNinePatchImage** - TImage for 9-Patch images (raster image with the ability to zoom without loss of quality, almost all modern interfaces are built on them), as well as images - Overlay
 
 ![Icon](Source/icons/TESIMAGELABEL32.bmp)
-**TEsImageLabel** - The Label supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
+**TEsImageLabel** - The Label supports 9-Patch background image, and image - Overlay, the location and alignment of the text can be combined in different ways
 
 ![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - The basic container. Interesting possibility for double buffering TGraphicControl heirs (TLabel, TGlyphButton, TImage, TBevel ...)
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
-**TEsImageLayot** - The Layout with support background 9-Patch images and image - Overley
+**TEsImageLayot** - The Layout with support background 9-Patch images and image - Overlay
 
 ![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
-**TEsImageStaticText** - The StaticText supports 9-Patch background image, and image - Overley, the location and alignment of the text can be combined in different ways
+**TEsImageStaticText** - The StaticText supports 9-Patch background image, and image - Overlay, the location and alignment of the text can be combined in different ways
 
 ![Icon](Source/icons/TESACTIVITYBAR32.bmp)
 **TEsActivityBar** - Component simulates XAML control Windows 10, designed to indicate or display the progress of employment (something TProgressBar type). It has a lot of settings.
@@ -99,32 +98,31 @@ Pluses:
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
 
-**Модули были переименованы!(Для поддержки C++Builder) Необходимо исправить названия "ES.Vcl.xxx -> ES.xxx"**
-
 Плюсы:
-* Поддержка Windows XP
+* Превосходная поддержка прозрачности
+* Отсутствие мерцания
 * Поддержка встроенного в VCL движка тем
 * Поддержка Hight DPI (Seattle+)
 * Удобное отображение границ в DesignTime, при активации свойства IsDrawHelper
-* Превосходная поддержка прозрачности
+* Поддержка Windows XP
 
 **TEsCustomControl** - Базовый класс, содержит в себе магию подавления мерцания и поддержки прозрачности.
 
 ![Icon](Source/icons/TESNINEPATCHIMAGE32.bmp)
-**TEsNinePatchImage** - TImage для 9-Patch изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overley-a
+**TEsNinePatchImage** - TImage для 9-Patch изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overlay-a
 
 ![Icon](Source/icons/TESIMAGELABEL32.bmp)
-**TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overley-a, расположение и выравнивание текста можно комбинировать по-разному
+**TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overlay-a, расположение и выравнивание текста можно комбинировать по-разному
 
 ![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - Базовый компонент - контейнер.
 Интересен возможностью двойной буферизации для наследников TGraphicControl (TLabel, TGlyphButton, TImage, TBevel...)
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
-**TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a
+**TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a
 
 ![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
-**TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overley-a, и текста расположение и выравнивание текста можно по-разному комбинировать 
+**TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a, и текста расположение и выравнивание текста можно по-разному комбинировать 
 
 ![Icon](Source/icons/TESACTIVITYBAR32.bmp)
 **TEsActivityBar** - Компонент имитирует XAML контрол Windows 10, созданный для индикации занятости или отображения прогресса (что-то типа TProgressBar).
