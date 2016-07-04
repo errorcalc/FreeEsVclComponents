@@ -38,7 +38,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 1.0;
+  EsVclCoreVersion = 1.1;
 
 type
   THelperOption = (hoPadding, hoBorder, hoClientRect);
