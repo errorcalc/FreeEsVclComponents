@@ -1,5 +1,5 @@
 {******************************************************************************}
-{                          FreeEsVclComponents/Core                            }
+{                        FreeEsVclComponents/Core v1.1                         }
 {                           ErrorSoft(c) 2009-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
@@ -24,7 +24,7 @@ interface
 {$I 'EsVclCore.inc'}
 
 uses
-  Windows, Graphics, Themes{$ifdef VER230UP}, PngImage{$endif};
+  Windows, Graphics, SysUtils, Themes{$ifdef VER230UP}, PngImage{$endif};
 
 type
 //  {$ifdef VER210UP} {$scopedenums on} {$endif}
@@ -61,14 +61,14 @@ type
   {$endif}
   public
     {$ifdef VER230UP}
-    procedure DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255); overload;
-    procedure DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255); overload;
+    procedure DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255; HighQuality: Boolean = False); overload;
+    procedure DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255; HighQuality: Boolean = False); overload;
     {$endif}
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap); overload;
+    /// <summary> Only for 32bit premultipled bitmaps!</summary>
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap; Opacity: Byte); overload;
     procedure StretchDraw(Rect: TRect; Graphic: TGraphic; Opacity: Byte); overload;
     procedure Draw(X, Y: Integer; Graphic: TGraphic; Opacity: Byte); overload;
-//    procedure StretchDraw(DestRect, ClipRect, SrcRect: TRect; Bitmap: TBitmap; Alpha: byte); overload;
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Opacity: Byte); overload;
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255); overload;
@@ -108,13 +108,19 @@ type
   function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; Inline;
   {$ifdef VER230UP}
   procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
-  HighQality: Boolean = False; IsPremultipledBitmap: Boolean = True);
+  HighQality: Boolean = False; EgdeFill: Boolean = False);
   {$endif}
   {$ifdef VER210UP}
   procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
   procedure BitmapAssignToPngImage(PngImage: TPngImage; Bitmap: TBitmap; IsPremultipledBitmap: Boolean = True);
   {$endif}
   procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); Inline;
+
+  procedure GaussianBlur(Bitmap: TBitmap; Radius: Real);
+  {$ifdef VER230UP}
+  /// <summary>A cool procedure for a really fast Blur!</summary>
+  procedure FastBlur(Bitmap: TBitmap; Radius: Real; BlurScale: Integer; HighQuality: Boolean = True);
+  {$endif}
 
   // Color spaces
   procedure ColorToHSL(Color: TColor; var H, S, L: Integer);
@@ -153,7 +159,7 @@ end;
 
 {$ifdef VER230UP}
 procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
-  HighQality: Boolean = False; IsPremultipledBitmap: Boolean = True);
+  HighQality: Boolean = False; EgdeFill: Boolean = False);
 var
   {$ifndef DISABLE_GDIPLUS}
   Graphics: TGPGraphics;
@@ -174,8 +180,8 @@ begin
     Graphics.SetSmoothingMode(SmoothingModeDefault);
     Graphics.SetPixelOffsetMode(PixelOffsetModeHalf);
 
-    if HighQality then
-      Graphics.SetInterpolationMode(InterpolationModeBilinear)
+    if not HighQality then
+      Graphics.SetInterpolationMode(InterpolationModeHighQualityBilinear)
     else
       Graphics.SetInterpolationMode(InterpolationModeHighQuality);
 
@@ -185,9 +191,15 @@ begin
       GdiPBitmap := TGPBitmap.Create(Bitmap.Width, Bitmap.Height, -Bitmap.Width * 4,
         PixelFormat32bppPARGB, Bitmap.ScanLine[0]);
     end else
+    if Bitmap.PixelFormat = pf24bit then
+    begin
+      Assert(Bitmap.HandleType = bmDIB);
+      GdiPBitmap := TGPBitmap.Create(Bitmap.Width, Bitmap.Height, -BytesPerScanline(Bitmap.Width, 24, 32),
+        PixelFormat24bppRGB, Bitmap.ScanLine[0]);
+    end else
       GdiPBitmap := TGPBitmap.Create(Bitmap.Handle, Bitmap.Palette);
 
-    if Opacity <> 255 then
+    if EgdeFill or (Opacity <> 255) then
     begin
       FillMemory(@M, SizeOf(TColorMatrix), 0);
       M[0, 0] := 1;
@@ -199,6 +211,7 @@ begin
       Attr := TGPImageAttributes.Create;
       try
         Attr.SetColorMatrix(M);
+        if EgdeFill then Attr.SetWrapMode(WrapModeTileFlipXY);
         Graphics.DrawImage(GdiPBitmap, MakeRect(ARect.Left, ARect.Top, ARect.Width, ARect.Height),
           0, 0, Bitmap.Width, Bitmap.Height, UnitPixel, Attr);
       finally
@@ -376,6 +389,202 @@ begin
   {$endif}
     Bitmap.Assign(Graphic);
 end;
+
+//--------------------------------------------------------------------------------------------------
+// *** Begin changed GBlur2.pas ***
+type
+  PRGBTriple = ^TRGBTriple;
+  TRGBTriple = packed record
+    b: Byte; {easier to type than rgbtBlue}
+    g: Byte;
+    r: Byte;
+  end;
+  PRow = ^TRow;
+  TRow = array[Word] of TRGBTriple;
+  PPRows = ^TPRows;
+  TPRows = array[Word] of PRow;
+
+const
+  MaxKernelSize = 50;
+
+type
+  TKernelSize = 1..MaxKernelSize;
+  TKernel = record
+    Size: TKernelSize;
+    Weights: array[-MaxKernelSize..MaxKernelSize] of Single;
+  end;
+  {the idea is that when using a TKernel you ignore the Weights except
+  for Weights in the range -Size..Size.}
+
+procedure MakeGaussianKernel(var K: TKernel; radius: Real; MaxData, DataGranularity: Real);
+{makes K into a gaussian kernel with standard deviation = radius. For the current application
+you set MaxData = 255 and DataGranularity = 1. Now the procedure sets the value of K.Size so
+that when we use K we will ignore the Weights that are so small they can't possibly matter. (Small
+Size is good because the execution time is going to be propertional to K.Size.)}
+var
+  j: Integer;
+  temp, delta: Real;
+  KernelSize: TKernelSize;
+begin
+  for j := Low(K.Weights) to High(K.Weights) do
+  begin
+    temp := j / radius;
+    K.Weights[j] := exp(-temp * temp / 2);
+  end;
+  {now divide by constant so sum(Weights) = 1:}
+  temp := 0;
+  for j := Low(K.Weights) to High(K.Weights) do
+    temp := temp + K.Weights[j];
+  for j := Low(K.Weights) to High(K.Weights) do
+    K.Weights[j] := K.Weights[j] / temp;
+  {now discard (or rather mark as ignorable by setting Size) the entries that are too small to matter.
+  This is important, otherwise a blur with a small radius will take as long as with a large radius...}
+  KernelSize := MaxKernelSize;
+  delta := DataGranularity / (2 * MaxData);
+  temp := 0;
+  while (temp < delta) and (KernelSize > 1) do
+  begin
+    temp := temp + 2 * K.Weights[KernelSize];
+    dec(KernelSize);
+  end;
+  K.Size := KernelSize;
+  {now just to be correct go back and jiggle again so the sum of the entries we'll be using is exactly 1}
+  temp := 0;
+  for j := -K.Size to K.Size do
+    temp := temp + K.Weights[j];
+  for j := -K.Size to K.Size do
+    K.Weights[j] := K.Weights[j] / temp;
+  // finally correct
+  K.Weights[0] := K.Weights[0] + (0.000001);// HACK
+end;
+
+function TrimInt(Lower, Upper, theInteger: Integer): integer;
+begin
+  if (theInteger <= Upper) and (theInteger >= Lower) then
+    result := theInteger
+  else if theInteger > Upper then
+    result := Upper
+  else
+    result := Lower;
+end;
+
+function TrimReal(Lower, Upper: Integer; x: Real): integer;
+begin
+  if (x < upper) and (x >= lower) then
+    result := trunc(x)
+  else if x > Upper then
+    result := Upper
+  else
+    result := Lower;
+end;
+
+procedure BlurRow(var theRow: array of TRGBTriple; K: TKernel; P: PRow);
+var
+  j, n: Integer;
+  tr, tg, tb: Real; {tempRed, etc}
+  w: Real;
+begin
+  for j := 0 to High(theRow) do
+  begin
+    tb := 0;
+    tg := 0;
+    tr := 0;
+    for n := -K.Size to K.Size do
+    begin
+      w := K.Weights[n];
+      {the TrimInt keeps us from running off the edge of the row...}
+      with theRow[TrimInt(0, High(theRow), j - n)] do
+      begin
+        tb := tb + w * b;
+        tg := tg + w * g;
+        tr := tr + w * r;
+      end;
+    end;
+    with P[j] do
+    begin
+      b := TrimReal(0, 255, tb);
+      g := TrimReal(0, 255, tg);
+      r := TrimReal(0, 255, tr);
+    end;
+  end;
+  Move(P[0], theRow[0], (High(theRow) + 1) * Sizeof(TRGBTriple));
+end;
+
+procedure GaussianBlur(Bitmap: TBitmap; Radius: Real);
+var
+  Row, Col: Integer;
+  theRows: PPRows;
+  K: TKernel;
+  ACol: PRow;
+  P: PRow;
+begin
+  if (Bitmap.HandleType <> bmDIB) or (Bitmap.PixelFormat <> pf24Bit) then
+    raise Exception.Create('GaussianBlur only works for 24-bit bitmaps');
+  MakeGaussianKernel(K, radius, 255, 1);
+  GetMem(theRows, Bitmap.Height * SizeOf(PRow));
+  GetMem(ACol, Bitmap.Height * SizeOf(TRGBTriple));
+  {record the location of the bitmap data:}
+  for Row := 0 to Bitmap.Height - 1 do
+    theRows[Row] := Bitmap.Scanline[Row];
+  {blur each row:}
+  P := AllocMem(Bitmap.Width * SizeOf(TRGBTriple));
+  for Row := 0 to Bitmap.Height - 1 do
+    BlurRow(Slice(theRows[Row]^, Bitmap.Width), K, P);
+  {now blur each column}
+  ReAllocMem(P, Bitmap.Height * SizeOf(TRGBTriple));
+  for Col := 0 to Bitmap.Width - 1 do
+  begin
+    {first read the column into a TRow:}
+    for Row := 0 to Bitmap.Height - 1 do
+      ACol[Row] := theRows[Row][Col];
+    BlurRow(Slice(ACol^, Bitmap.Height), K, P);
+    {now put that row, um, column back into the data:}
+    for Row := 0 to Bitmap.Height - 1 do
+      theRows[Row][Col] := ACol[Row];
+  end;
+  FreeMem(theRows);
+  FreeMem(ACol);
+  ReAllocMem(P, 0);
+end;
+
+// *** End changed GBlur2.pas ***
+
+{$ifdef VER230UP}
+procedure FastBlur(Bitmap: TBitmap; Radius: Real; BlurScale: Integer; HighQuality: Boolean = True);
+  function Max(A, B: Integer): Integer;
+  begin
+    if A > B then
+      Result := A
+    else
+      Result := B;
+  end;
+
+var
+  Mipmap: TBitmap;
+begin
+  BlurScale := Max(BlurScale, 1);
+
+  Mipmap := TBitmap.Create;
+  try
+    Mipmap.PixelFormat := pf24bit;
+    Mipmap.SetSize(Max(Bitmap.Width div BlurScale, 4), Max(Bitmap.Height div BlurScale, 4));
+
+    // create mipmap
+    if HighQuality then
+      DrawBitmapHighQuality(Mipmap.Canvas.Handle, Rect(0, 0, Mipmap.Width, Mipmap.Height), Bitmap, 255, False, True)
+    else
+      Mipmap.Canvas.StretchDraw(Rect(0, 0, Mipmap.Width, Mipmap.Height), Bitmap);
+
+    // gaussian blur
+    GaussianBlur(Mipmap, Radius);
+
+    // stretch to source bitmap
+    DrawBitmapHighQuality(Bitmap.Canvas.Handle, Rect(0, 0, Bitmap.Width, Bitmap.Height), Mipmap, 255, False, True);
+  finally
+    Mipmap.Free;
+  end;
+end;
+{$endif}
 
 //------------------------------------------------------------------------------
 // Color spaces
@@ -596,7 +805,11 @@ end;
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
   StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap);
 begin
-  StretchDraw(DestRect, SrcRect, BitMap, 255);
+  if Bitmap.PixelFormat = pf32bit then
+    StretchDraw(DestRect, SrcRect, BitMap, 255)
+  else
+    Windows.StretchBlt(Handle, DestRect.Left, DestRect.Top, RectWidth(DestRect), RectHeight(DestRect),
+      Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, RectWidth(SrcRect), RectHeight(SrcRect), SRCCOPY);
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
@@ -624,13 +837,13 @@ end;
 
 {$ifdef VER230UP}
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255);
+  DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255; HighQuality: Boolean = False);
 begin
-  DrawBitmapHighQuality(Handle, ARect, Bitmap, Opacity);
+  DrawBitmapHighQuality(Handle, ARect, Bitmap, Opacity, HighQuality);
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255);
+  DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255; HighQuality: Boolean = False);
 {$ifndef DISABLE_GDIPLUS}
 var
   Bitmap: TBitmap;
@@ -638,13 +851,13 @@ var
 begin
   {$ifndef DISABLE_GDIPLUS}
   if Graphic is TBitmap then
-    DrawHighQuality(ARect, TBitmap(Graphic), Opacity)
+    DrawHighQuality(ARect, TBitmap(Graphic), Opacity, HighQuality)
   else
   begin
     Bitmap := TBitmap.Create;
     try
       GraphicAssignToBitmap(Bitmap, Graphic);
-      DrawHighQuality(ARect, Bitmap, Opacity);
+      DrawHighQuality(ARect, Bitmap, Opacity, HighQuality);
     finally
       Bitmap.Free;
     end;

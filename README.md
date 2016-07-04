@@ -91,6 +91,8 @@ Pluses:
 * Draw frame if need
 * Support Focusing
 
+**Look at other projects on this GitHub perhaps you might be interested ...**
+
 #Russian ReadMe:
 **FreeEsVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
 
@@ -169,3 +171,5 @@ Pluses:
 
 Совместима с XE2-10.1
 (Хотя класс **TEsCustomControl** будет полезен и ценителям Delphi 7)
+
+**Посмотрите на другие проекты на этом GitHub, возможно, вы будите заинтересованы ...**

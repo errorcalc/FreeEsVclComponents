@@ -1,5 +1,5 @@
 {******************************************************************************}
-{                          FreeEsVclComponents/Core                            }
+{                        FreeEsVclComponents/Core v1.1                         }
 {                           ErrorSoft(c) 2011-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }

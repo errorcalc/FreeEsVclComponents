@@ -1,5 +1,5 @@
 {******************************************************************************}
-{                          FreeEsVclComponents/Core                            }
+{                        FreeEsVclComponents/Core v1.1                         }
 {                           ErrorSoft(c) 2011-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
@@ -101,6 +101,7 @@ type
     procedure EndCachedBackground;{$IFDEF VER210UP}inline;{$ENDIF}
     procedure PaintWindow(DC: HDC); override;
     procedure PaintHandler(var Message: TWMPaint);
+    procedure DrawBackground(DC: HDC); virtual;
     // other
     procedure UpdateText; dynamic;
     //
@@ -109,7 +110,6 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure PaintTo(DC: HDC; X, Y: Integer);
     procedure UpdateBackground(Repaint: Boolean); overload;
     procedure UpdateBackground; overload;
     // ------------------ Properties for published -------------------------------------------------
@@ -195,6 +195,8 @@ type
   {$ENDIF}
 
   function CalcClientRect(Control: TControl): TRect;
+
+  procedure DrawParentImage(Control: TControl; DC: HDC; InvalidateParent: Boolean = False);
 
 implementation
 
@@ -519,6 +521,11 @@ begin
   inherited;
 end;
 
+procedure TEsCustomControl.DrawBackground(DC: HDC);
+begin
+  DrawParentImage(Self, DC, False);
+end;
+
 procedure TEsCustomControl.DrawBackgroundForOpaqueControls(DC: HDC);
 var
   i: integer;
@@ -712,13 +719,6 @@ begin
   // end paint, if need
   if IsBeginPaint then
     EndPaint(Handle, PS);
-end;
-
-procedure TEsCustomControl.PaintTo(DC: HDC; X, Y: Integer);
-begin
-//  if DoubleBuffered then
-//    FillRect(DC, Rect(X, Y, X + Width, Y + Height), Brush.Handle);
-  inherited PaintTo(DC, X, Y);
 end;
 
 {$ifdef VER210UP} {$REGION 'BACKUP'}
@@ -917,20 +917,21 @@ begin
           TempDC := CreateCompatibleDC(DC);
           CacheBackground := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
           SelectObject(TempDC, CacheBackground);
-          DrawParentImage(Self, TempDC, False);
+          DrawBackground(TempDC); //DrawParentImage(Self, TempDC, False);
           DeleteDC(TempDC);
         end;
         TempDC := CreateCompatibleDC(BufferDC);
         SelectObject(TempDC, CacheBackground);
         if not FIsCachedBuffer then
-          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC, 0, 0, SRCCOPY)
+          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
+            UpdateRect.Left, UpdateRect.Top, SRCCOPY)
         else
           BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
             UpdateRect.Left, UpdateRect.Top, SRCCOPY);
         DeleteDC(TempDC);
       end
       else
-        DrawParentImage(Self, BufferDC, False);
+        DrawBackground(BufferDC); //DrawParentImage(Self, BufferDC, False);
     end else
       if (not DoubleBuffered or (DC <> 0)) then
         if not IsStyledClientControl(Self) then
@@ -1072,7 +1073,7 @@ end;
 
 procedure TEsCustomControl.UpdateBackground;
 begin
-  UpdateBackground(true);
+  UpdateBackground(True);
 end;
 
 procedure TEsCustomControl.UpdateText;
