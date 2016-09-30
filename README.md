@@ -2,8 +2,11 @@
 # FreeEsVCLComponents
 **Version 1.0**
 
-Free components for delphi & C++Builder (VCL)
-Attribution-ShareAlike 3.0
+Free Open Source components for delphi & C++Builder (VCL)
+
+This library licensed at two license: GNU GPL v2 and Modified MIT License (MIT)
+You can chose one of two license.
+See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
