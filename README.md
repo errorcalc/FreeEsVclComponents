@@ -4,6 +4,7 @@
 
 Free Open Source components for delphi & C++Builder (VCL)
 
+**This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
 You can chose one of two license. See "LICENSE.txt"
 
@@ -33,7 +34,7 @@ Free use for commercial and non-commercial projects, you need specify in About, 
 
 **Email:** errorsoft(at)mail.ru
 
-Pluses:
+Features:
 * Excellent support for transparency!
 * No flicker!
 * Support for built-in VCL skins
@@ -102,7 +103,7 @@ Pluses:
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
 
-Плюсы:
+Возможности:
 * Превосходная поддержка прозрачности
 * Отсутствие мерцания
 * Поддержка встроенного в VCL движка тем
