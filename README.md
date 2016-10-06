@@ -30,7 +30,9 @@ You can chose one of two license. See "LICENSE.txt"
 
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
 
-**Email:** errorsoft(at)mail.ru
+You can order develop vcl/fmx components, please submit requests to mail.
+
+**Email:** errorsoft(at)mail.ru or dr.enter256@gmail.com
 
 Features:
 * Excellent support for transparency!
