@@ -6,7 +6,7 @@ Free Open Source components for Delphi & C++Builder (VCL)
 
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
-You can chose one of two license. See "LICENSE.txt"
+You can choose one of two license. See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
@@ -29,6 +29,9 @@ You can chose one of two license. See "LICENSE.txt"
 **FreeEsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components has best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and has modern style. 
 
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
+
+If you'd like to support the FreeEsVclComponents or EsVclCore lib, you can do so at this link: 
+##[Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 You can order develop vcl/fmx components, please submit requests to mail.
 
