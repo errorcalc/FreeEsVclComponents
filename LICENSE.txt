@@ -1,7 +1,7 @@
 This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.
 ===
 This library licensed at two license: GNU GPL v2 and Modified MIT License (MIT)
-You can chose one of two license.
+You can choose one of two license.
 1. GNU GPL v2: https://www.gnu.org/licenses/gpl2.html
 2. Modified MIT License (MIT):
 ===
