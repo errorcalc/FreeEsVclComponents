@@ -1,6 +1,6 @@
 ![Logo](Source/icons/Logo.png)
 # FreeEsVCLComponents
-**Version 1.0**
+**Version 1.1**
 
 Free Open Source components for Delphi & C++Builder (VCL)
 
