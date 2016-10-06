@@ -2,7 +2,7 @@
 # FreeEsVCLComponents
 **Version 1.0**
 
-Free Open Source components for delphi & C++Builder (VCL)
+Free Open Source components for Delphi & C++Builder (VCL)
 
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
