@@ -1,14 +1,14 @@
 {******************************************************************************}
-{                             FreeEsVclComponents                              }
+{                          FreeEsVclComponents v1.1                            }
 {                           ErrorSoft(c) 2015-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
 {                                                                              }
-{ Open this on github: github.com/errorcalc/FreeEsVclComponents                }
+{         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ                    }
-{ You can order the development of VCL/FMX components to order                 }
+{ You can order developing vcl/fmx components, please submit requests to mail. }
+{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
 {******************************************************************************}
 unit ES.FreeReg;
 

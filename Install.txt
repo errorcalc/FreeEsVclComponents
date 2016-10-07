@@ -1,8 +1,6 @@
+п»ї[ENG]
 *** You can help, if you send me where you are using the component and attach a screenshot example of use ***
 
-*** Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования ***
-
-[ENG]
 1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
 2. Open "FreeEsVclComponents.groupproj" project group
 3. Build "EsVclCore.bpl"
@@ -16,13 +14,15 @@ Activate FixLoadPng in "Source/FreeEsVclComponents.inc" if you are having proble
 because of some installed packages (ex: AlphaSkins)
 
 [RUS]
-1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path)
-2. Откройте группу проектов "FreeEsVclComponents.groupproj"
-3. Сделайте билд(Build) "EsVclCore.bpl"
-3. Сделайте билд(Build) "FreeEsVclComponents.bpl"
-5. Проинсталлируйте(Install) "FreeEsVclComponentsDesign.bpl"
-6. Пользуйтесь :) и пишите отзывы.
+*** Р’С‹ РјРѕР¶РµС‚Рµ РїРѕРјРѕС‡СЊ, РµСЃР»Рё РІС‹ РЅР°РїРёС€РµС‚Рµ РјРЅРµ, РіРґРµ РІС‹ РёСЃРїРѕР»СЊР·СѓРµС‚Рµ РєРѕРјРїРѕРЅРµРЅС‚ Рё РїСЂРёР»РѕР¶РёС‚Рµ СЃРєСЂРёРЅС€РѕС‚ СЃ РїСЂРёРјРµСЂРѕРј РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ ***
 
-ВНИМАНИЕ:
+1. Р”РѕР±Р°РІСЊС‚Рµ РїСѓС‚СЊ Рє РїР°РїРєРµ "Source" РІ search path (Tools->Options->Delphi Options->Library->Library path)
+2. РћС‚РєСЂРѕР№С‚Рµ РіСЂСѓРїРїСѓ РїСЂРѕРµРєС‚РѕРІ "FreeEsVclComponents.groupproj"
+3. РЎРґРµР»Р°Р№С‚Рµ Р±РёР»Рґ(Build) "EsVclCore.bpl"
+3. РЎРґРµР»Р°Р№С‚Рµ Р±РёР»Рґ(Build) "FreeEsVclComponents.bpl"
+5. РџСЂРѕРёРЅСЃС‚Р°Р»Р»РёСЂСѓР№С‚Рµ(Install) "FreeEsVclComponentsDesign.bpl"
+6. РџРѕР»СЊР·СѓР№С‚РµСЃСЊ :) Рё РїРёС€РёС‚Рµ РѕС‚Р·С‹РІС‹.
+
+Р’РќРРњРђРќРР•:
 1)
-Активируйте FixLoadPng в "Source/FreeEsVclComponents.inc", если у вас возникли проблемы с загрузкой изображений в формате PNG в Design Time, из-за некоторых установленных пакетов (к примеру AlphaSkins)
+РђРєС‚РёРІРёСЂСѓР№С‚Рµ FixLoadPng РІ "Source/FreeEsVclComponents.inc", РµСЃР»Рё Сѓ РІР°СЃ РІРѕР·РЅРёРєР»Рё РїСЂРѕР±Р»РµРјС‹ СЃ Р·Р°РіСЂСѓР·РєРѕР№ РёР·РѕР±СЂР°Р¶РµРЅРёР№ РІ С„РѕСЂРјР°С‚Рµ PNG РІ Design Time, РёР·-Р·Р° РЅРµРєРѕС‚РѕСЂС‹С… СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РїР°РєРµС‚РѕРІ (Рє РїСЂРёРјРµСЂСѓ AlphaSkins)

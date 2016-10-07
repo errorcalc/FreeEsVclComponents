@@ -21,8 +21,9 @@ You can choose one of two license. See "LICENSE.txt"
 * TEsImage (much better than the TImage)
 * TEsImageControl (much better than the TImage & absolitly no flicker!)
 
-# XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin) - compatibility
-# Now: And support C++Builder
+## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin) - compatibility
+
+## Now: And support C++Builder
 
 #English ReadMe:
 
@@ -33,7 +34,7 @@ Free use for commercial and non-commercial projects, you need specify in About, 
 If you'd like to support the FreeEsVclComponents or EsVclCore lib, you can do so at this link: 
 ### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
-You can order develop vcl/fmx components, please submit requests to mail.
+You can order developing vcl/fmx components, please submit requests to mail.
 
 **Email:** errorsoft(at)mail.ru or dr.enter256@gmail.com
 

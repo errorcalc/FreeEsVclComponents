@@ -96,10 +96,18 @@ type
     EsImageControl10: TEsImageControl;
     EsImageControl11: TEsImageControl;
     EsImageControl12: TEsImageControl;
+    TabSheet5: TTabSheet;
+    EsImageControl13: TEsImageControl;
+    TrackBar1: TTrackBar;
+    Timer2: TTimer;
+    EsImage22: TEsImage;
     procedure Timer1Timer(Sender: TObject);
     procedure EsImageControl14Click(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
+    procedure TrackBar1Change(Sender: TObject);
   private
     { Private declarations }
+    IsAdd: Boolean;
   public
     { Public declarations }
   end;
@@ -121,6 +129,28 @@ begin
   ImageListTestImage.ImageIndex := ImageListTestImage.ImageIndex + 1;
   if ImageListTestImage.ImageIndex >= ImageList.Count then
     ImageListTestImage.ImageIndex := 0;
+end;
+
+procedure TMainForm.Timer2Timer(Sender: TObject);
+begin
+  if IsAdd then
+  begin
+    if TrackBar1.Position = TrackBar1.Max then
+      IsAdd := False
+    else
+      TrackBar1.Position := TrackBar1.Position + 4;
+  end else
+  begin
+    if TrackBar1.Position = TrackBar1.Min then
+      IsAdd := True
+    else
+      TrackBar1.Position := TrackBar1.Position - 4;
+  end;
+end;
+
+procedure TMainForm.TrackBar1Change(Sender: TObject);
+begin
+  EsImageControl13.Opacity := TrackBar1.Position;
 end;
 
 end.

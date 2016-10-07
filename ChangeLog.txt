@@ -1,12 +1,12 @@
-[26.02.2016]
-Поддержка BevelKind в TEsCustomControl
+п»ї[26.02.2016]
+РџРѕРґРґРµСЂР¶РєР° BevelKind РІ TEsCustomControl
 
 [15.02.2016]
 [ENG]
 Support Hight DPI (Seattle+)
 
 [RUS]
-Поддержка Hight DPI (Seattle+)
+РџРѕРґРґРµСЂР¶РєР° Hight DPI (Seattle+)
 
 [13.02.2016]
 [ENG]
@@ -14,9 +14,9 @@ Name of TNinePatchImage component was a typo, I fixed it.
 To correct this error in your projects need replaced in uses "Es.Vcl.NinePath" to "Es.Vcl.NinePatch", and replace in files forms (dfm) TNinePathImage to TNinePatchImage.
 
 [RUS]
-В названии компонента TNinePatchImage была опечатка, я исправил это.
-Для исправления этой ошибки в ваших проектах необходимо заменить в uses "Es.Vcl.NinePath" на "Es.Vcl.NinePatch",
-а также заменить в файлах форм (dfm) TNinePathImage на TNinePatchImage. 
+Р’ РЅР°Р·РІР°РЅРёРё РєРѕРјРїРѕРЅРµРЅС‚Р° TNinePatchImage Р±С‹Р»Р° РѕРїРµС‡Р°С‚РєР°, СЏ РёСЃРїСЂР°РІРёР» СЌС‚Рѕ.
+Р”Р»СЏ РёСЃРїСЂР°РІР»РµРЅРёСЏ СЌС‚РѕР№ РѕС€РёР±РєРё РІ РІР°С€РёС… РїСЂРѕРµРєС‚Р°С… РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°РјРµРЅРёС‚СЊ РІ uses "Es.Vcl.NinePath" РЅР° "Es.Vcl.NinePatch",
+Р° С‚Р°РєР¶Рµ Р·Р°РјРµРЅРёС‚СЊ РІ С„Р°Р№Р»Р°С… С„РѕСЂРј (dfm) TNinePathImage РЅР° TNinePatchImage. 
 
 [21.04.2016]
 // Big release, first release! Version 1.0!
@@ -34,13 +34,24 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 8. TEsLabelLayout was renamed to TEsImageStaticText
 
 [RUS]
-1. Два новых компонента!
-Список новых компонентов: TEsImage, TEsImageControl 
-2. Поддежка C++Builder!
-3. Изменение в настройках цвета в TEsSwitch
-4. Переименование модулей, пример: "Es.Vcl.CfxClasses" на "Es.CfxClasses", для поддержки C++Builder
-5. Исправление багов и улучшения некоторых компонентов и классов
-6. Новый базовый класс TEsGraphicControl, поддерживающий
-свойства Padding, IsDrawHelper, и функции ContentRect, ContentMargins 
-7. улучшение TEsCustomLayot 
-8. TEsLabelLayout был переименован в TEsImageStaticText
+1. Р”РІР° РЅРѕРІС‹С… РєРѕРјРїРѕРЅРµРЅС‚Р°!
+РЎРїРёСЃРѕРє РЅРѕРІС‹С… РєРѕРјРїРѕРЅРµРЅС‚РѕРІ: TEsImage, TEsImageControl 
+2. РџРѕРґРґРµР¶РєР° C++Builder!
+3. РР·РјРµРЅРµРЅРёРµ РІ РЅР°СЃС‚СЂРѕР№РєР°С… С†РІРµС‚Р° РІ TEsSwitch
+4. РџРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ РјРѕРґСѓР»РµР№, РїСЂРёРјРµСЂ: "Es.Vcl.CfxClasses" РЅР° "Es.CfxClasses", РґР»СЏ РїРѕРґРґРµСЂР¶РєРё C++Builder
+5. РСЃРїСЂР°РІР»РµРЅРёРµ Р±Р°РіРѕРІ Рё СѓР»СѓС‡С€РµРЅРёСЏ РЅРµРєРѕС‚РѕСЂС‹С… РєРѕРјРїРѕРЅРµРЅС‚РѕРІ Рё РєР»Р°СЃСЃРѕРІ
+6. РќРѕРІС‹Р№ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ TEsGraphicControl, РїРѕРґРґРµСЂР¶РёРІР°СЋС‰РёР№
+СЃРІРѕР№СЃС‚РІР° Padding, IsDrawHelper, Рё С„СѓРЅРєС†РёРё ContentRect, ContentMargins 
+7. СѓР»СѓС‡С€РµРЅРёРµ TEsCustomLayot 
+8. TEsLabelLayout Р±С‹Р» РїРµСЂРµРёРјРµРЅРѕРІР°РЅ РІ TEsImageStaticText
+
+[07.10.2016]
+[ENG]
+1. Preparation for publication in GetIt Package Manager!
+2. Add one new sample in ImagesTest
+3. Release Version 1.1
+
+[RUS]
+1. РџРѕРґРіРѕС‚РѕРІРєР° Рє РїСѓР±Р»РёРєР°С†РёРё РІ РїР°РєРµС‚РЅРѕРј РјРµРЅРµРґР¶РµСЂРµ GetIt
+2. Р”РѕР±Р°РІР»РµРЅ РѕРґРёРЅ РЅРѕРІС‹Р№ РїСЂРёРјРµСЂ РІ ImagesTest
+3. Р РµР»РёР· РІРµСЂСЃРёРё 1.1
