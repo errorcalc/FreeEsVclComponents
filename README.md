@@ -1,16 +1,14 @@
 ![Logo](Source/icons/Logo.png)
 # FreeEsVCLComponents
-**Version 1.0**
+**Version 1.1**
 
-Free Open Source components for delphi & C++Builder (VCL)
+Free Open Source components for Delphi & C++Builder (VCL)
 
-This library licensed at two license: GNU GPL v2 and Modified MIT License (MIT)
-You can chose one of two license.
-See "LICENSE.txt"
+**This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
+This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
+You can choose one of two license. See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
-
-**Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
 
 # List of components:
 * TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
@@ -32,9 +30,14 @@ See "LICENSE.txt"
 
 Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
 
-**Email:** errorsoft(at)mail.ru
+If you'd like to support the FreeEsVclComponents or EsVclCore lib, you can do so at this link: 
+### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
-Pluses:
+You can order develop vcl/fmx components, please submit requests to mail.
+
+**Email:** errorsoft(at)mail.ru or dr.enter256@gmail.com
+
+Features:
 * Excellent support for transparency!
 * No flicker!
 * Support for built-in VCL skins
@@ -99,11 +102,13 @@ Pluses:
 #Russian ReadMe:
 **FreeEsVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
 
-**Полностью бесплатная лицензия (В том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
+**Полностью бесплатная лицензия (в том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
 
-Плюсы:
+**Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
+
+Возможности:
 * Превосходная поддержка прозрачности
 * Отсутствие мерцания
 * Поддержка встроенного в VCL движка тем
