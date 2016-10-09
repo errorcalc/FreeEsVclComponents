@@ -59,7 +59,7 @@ uses
 function IsShowFocusRect(Control: TWinControl): Boolean;
 begin
   if Control.Focused then
-    Result := ((Control.Perform(WM_QUERYUISTATE, 0, 0) and UISF_HIDEFOCUS) = 0)
+    Result := (Control.Perform(WM_QUERYUISTATE, 0, 0) and UISF_HIDEFOCUS) = 0
   else
     Result := False;
 end;

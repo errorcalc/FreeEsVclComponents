@@ -55,3 +55,6 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 1. Подготовка к публикации в пакетном менеджере GetIt
 2. Добавлен один новый пример в ImagesTest
 3. Релиз версии 1.1
+
+09.10.2016
+1. Fixed memory leak in TEsSwitch animator

@@ -325,6 +325,7 @@ end;
 
 procedure TEsCustomSwitch.AnimateThumbTo(CurrentPos: Integer; IsChacked: Boolean);
 begin
+  FreeAndNil(Animation);
   IsAnimating := True;
   Animation := TIntegerAnimation.Create;
   Animation.Mode := amCubic;
@@ -339,8 +340,7 @@ end;
 
 procedure TEsCustomSwitch.AnimationFinish(Sender: TObject);
 begin
-  Animation.Free;
-  Animation := nil;
+  FreeAndNil(Animation);
   IsAnimating := False;
   Invalidate;
 end;
@@ -611,7 +611,7 @@ end;
 procedure TEsCustomSwitch.KeyUp(var Key: Word; Shift: TShiftState);
 begin
   inherited;
-  if Key = VK_SPACE then
+  if (Key = VK_SPACE) or (Key = VK_RETURN) then
   begin
     FChecked := not FChecked;
 
