@@ -476,6 +476,7 @@ end;
 destructor TEsCustomSwitch.Destroy;
 begin
   Style.Free;
+  Animation.Free;
   inherited;
 end;
 
