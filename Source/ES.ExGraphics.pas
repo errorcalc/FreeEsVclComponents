@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
+{                       EsVclComponents/EsVclCore v2.0                         }
 {                           ErrorSoft(c) 2009-2016                             }
 {                                                                              }
+{                     More beautiful things: errorsoft.org                     }
+{                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -14,25 +16,39 @@ unit ES.ExGraphics;
 
 interface
 
-{$if CompilerVersion >= 21}
-{$define VER210UP}
-{$ifend}
-{$IF CompilerVersion >= 23}
-{$DEFINE VER230UP}
-{$IFEND}
+{$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
+{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
+{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 {$I 'EsVclCore.inc'}
 
 uses
-  Windows, SysUtils, Graphics, Themes{$ifdef VER230UP}, PngImage{$endif};
+  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes{$ifdef VER230UP}, Vcl.Imaging.PngImage{$endif};
 
 type
-//  {$ifdef VER210UP} {$scopedenums on} {$endif}
-  TStretchMode = (smNormal, smTile, smHorzFit, smVertFit, smHorzTile, smVertTile, smHorzTileFit, smVertTileFit);
-//  {$ifdef VER210UP} {$scopedenums off} {$endif}
+  {$scopedenums on}
+  TStretchMode = (Normal, Tile, HorzFit, VertFit, HorzTile, VertTile, HorzTileFit, VertTileFit);
+
+  {$REGION 'deprecated names'}
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  TStretchModeHelper = record helper for TStretchMode
+  const
+    smNormal = TStretchMode.Normal deprecated 'Use TStretchMode.Normal';
+    smTile = TStretchMode.Tile deprecated 'Use TStretchMode.Tile';
+    smHorzFit = TStretchMode.HorzFit deprecated 'Use TStretchMode.HorzFit';
+    smVertFit = TStretchMode.VertFit deprecated 'Use TStretchMode.VertFit';
+    smHorzTile = TStretchMode.HorzTile deprecated 'Use TStretchMode.HorzTile';
+    smVertTile = TStretchMode.VertTile deprecated 'Use TStretchMode.VertTile';
+    smHorzTileFit = TStretchMode.HorzTileFit deprecated 'Use TStretchMode.HorzTileFit';
+    smVertTileFit = TStretchMode.VertTileFit deprecated 'Use TStretchMode.VertTileFit';
+  end;
+  {$ENDIF}
+  {$ENDREGION}
 
   /// <summary> Class for save canvas state </summary>
-  TCanvasSaver = class(TInterfacedObject)
+  TGraphicsClass = class of TGraphicsObject;
+  ICanvasSaver = interface end;
+  TCanvasSaver = class(TInterfacedObject, ICanvasSaver)
   private
     FPen: TPen;
     FBrush: TBrush;
@@ -58,6 +74,8 @@ type
   TEsCanvasHelper = class helper for TCanvas
   {$else}
   TEsCanvas = class(TCanvas)
+  private
+    procedure Line(X1, Y1, X2, Y2);
   {$endif}
   public
     {$ifdef VER230UP}
@@ -75,15 +93,14 @@ type
     {$ifdef VER230UP}
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
     {$endif}
+    procedure Line(X1, Y1, X2, Y2: Integer);
     procedure DrawChessFrame(R: TRect; Color1, Color2: TColor); overload;
     procedure DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
     procedure DrawInsideFrame(R: TRect; Width: Integer; Color: TColor = clNone);
     // support save/restore state
-    function SaveAll: TCanvasSaver;
-    function SavePen: TCanvasSaver;
-    function SaveBrush: TCanvasSaver;
-    function SaveFont: TCanvasSaver;
-    procedure Restore(var State: TCanvasSaver);
+    function SaveState(const Objects: array of TGraphicsClass): ICanvasSaver; overload;
+    function SaveState: ICanvasSaver; overload;
+    procedure RestoreState(var State: ICanvasSaver);
   end;
 
   TEsBitMap = class(TBitmap)
@@ -127,11 +144,13 @@ type
   function HSLToColor(Hue, Saturation, Lightness: Integer): TColor;
   //---
   function LuminanceColor(Color: TColor; Value: Integer): TColor;
+  function GetLuminanceColor(Color: TColor): Byte;
 
 implementation
 
 uses
-  Classes, Types {$ifdef VER230UP},GdipObj, GdipApi{$endif}, GraphUtil, UITypes;
+  System.Classes, System.Types {$ifdef VER230UP},WinApi.GdipObj, WinApi.GdipApi{$endif}, Vcl.GraphUtil, System.UITypes,
+  System.TypInfo;
 
 //------------------------------------------------------------------------------
 // Utils
@@ -734,6 +753,11 @@ begin
   Result := HSLToColor(H, S, Value);
 end;
 
+function GetLuminanceColor(Color: TColor): Byte;
+begin
+  Result := Trunc((GetRValue(Color) + GetGValue(Color) + GetBValue(Color)) * (240/255) / 3);
+end;
+
 //------------------------------------------------------------------------------
 // Classes
 //------------------------------------------------------------------------------
@@ -808,7 +832,7 @@ begin
   if Bitmap.PixelFormat = pf32bit then
     StretchDraw(DestRect, SrcRect, BitMap, 255)
   else
-    Windows.StretchBlt(Handle, DestRect.Left, DestRect.Top, RectWidth(DestRect), RectHeight(DestRect),
+    WinApi.Windows.StretchBlt(Handle, DestRect.Left, DestRect.Top, RectWidth(DestRect), RectHeight(DestRect),
       Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, RectWidth(SrcRect), RectHeight(SrcRect), SRCCOPY);
 end;
 
@@ -910,7 +934,7 @@ begin
 
     Brush := CreatePatternBrush(Bitmap.Handle);
 
-    Windows.FrameRect(Handle, R, Brush);
+    WinApi.Windows.FrameRect(Handle, R, Brush);
   finally
     DeleteObject(Brush);
     Bitmap.Free;
@@ -1090,7 +1114,7 @@ begin
   SelectObject(Handle, ColorPen);
   SelectObject(Handle, GetStockObject(NULL_BRUSH));
 
-  Windows.Rectangle(Handle, R.Left, R.Top, R.Right, R.Bottom);
+  WinApi.Windows.Rectangle(Handle, R.Left, R.Top, R.Right, R.Bottom);
 
   SelectObject(Handle, GetStockObject(NULL_PEN));
   DeleteObject(ColorPen);
@@ -1148,20 +1172,20 @@ begin
   if (Dest.Left >= Dest.Right)or(Dest.Top >= Dest.Bottom) then
     exit;
 
-  if (Mode = TStretchMode.smHorzTileFit) or (Mode = TStretchMode.smHorzFit) then
+  if (Mode = TStretchMode.HorzTileFit) or (Mode = TStretchMode.HorzFit) then
   begin
     H := Bitmap.Height;
     Y := (Dest.Top + Dest.Bottom) div 2;
     Dest := Rect(Dest.Left, Y - H div 2, Dest.Right, Y + H - (H div 2));
   end else
-  if (Mode = TStretchMode.smVertTileFit) or (Mode = TStretchMode.smVertFit) then
+  if (Mode = TStretchMode.VertTileFit) or (Mode = TStretchMode.VertFit) then
   begin
     W := Bitmap.Width;
     X := (Dest.Left + Dest.Right) div 2;
     Dest := Rect(X - W div 2, Dest.Top, X + W - (W div 2), Dest.Bottom);
   end;
 
-  if (Mode = TStretchMode.smNormal) or (Mode = TStretchMode.smHorzFit) or (Mode = TStretchMode.smVertFit) then
+  if (Mode = TStretchMode.Normal) or (Mode = TStretchMode.HorzFit) or (Mode = TStretchMode.VertFit) then
   begin
     DrawNinePatch(Dest, Bounds, Bitmap, Opacity);
     Exit;
@@ -1215,7 +1239,7 @@ begin
 //  if IntD.Bottom < Dest.Top then
 //    IntD.Bottom := Dest.Top;
 
-  if (Mode = TStretchMode.smHorzTile) or (Mode = TStretchMode.smHorzTileFit) then
+  if (Mode = TStretchMode.HorzTile) or (Mode = TStretchMode.HorzTileFit) then
   begin
     // Left Top
     D := Rect(Dest.Left, Dest.Top, IntD.Left, IntD.Top);
@@ -1282,7 +1306,7 @@ begin
     if ValidRect(D) then
       StretchDraw(D, S, Bitmap, Opacity);
   end else
-  if (Mode = TStretchMode.smVertTile) or (Mode = TStretchMode.smVertTileFit) then
+  if (Mode = TStretchMode.VertTile) or (Mode = TStretchMode.VertTileFit) then
   begin
     // Top Left
     D := Rect(Dest.Left, Dest.Top, IntD.Left, IntD.Top);
@@ -1349,7 +1373,7 @@ begin
     if ValidRect(D) then
       StretchDraw(D, S, Bitmap, Opacity);
   end else
-  if (Mode = TStretchMode.smTile) then
+  if (Mode = TStretchMode.Tile) then
   begin
     if (Bitmap.Width <> 0)and(Bitmap.Height <> 0) then
     begin
@@ -1506,40 +1530,44 @@ begin
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .Restore(var State: TCanvasSaver);
+  .Line(X1, Y1, X2, Y2: Integer);
 begin
-  State.Free;
+  MoveTo(X1, Y1);
+  LineTo(X2, Y2);
+end;
+
+procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
+  .RestoreState(var State: ICanvasSaver);
+begin
   State := nil;
 end;
 
 function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SaveAll: TCanvasSaver;
+  .SaveState(const Objects: array of TGraphicsClass): ICanvasSaver;
+var
+  Saver: TCanvasSaver;
+  I: Integer;
 begin
-  Result := TCanvasSaver.Create(Self);
-  Result.Font := Font;
-  Result.Brush := Brush;
-  Result.Pen := Pen;
+  Saver := TCanvasSaver.Create(Self);
+
+  for I := 0 to High(Objects) do
+    if Objects[I] <> nil then
+      if Objects[I].InheritsFrom(TPen) then
+        Saver.Pen := Pen
+      else
+      if Objects[I].InheritsFrom(TBrush) then
+        Saver.Brush := Brush
+      else
+      if Objects[I].InheritsFrom(TFont) then
+        Saver.Font := Font;
+
+  Result := Saver;
 end;
 
 function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SaveBrush: TCanvasSaver;
+  .SaveState: ICanvasSaver;
 begin
-  Result := TCanvasSaver.Create(Self);
-  Result.Brush := Brush;
-end;
-
-function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SaveFont: TCanvasSaver;
-begin
-  Result := TCanvasSaver.Create(Self);
-  Result.Font := Font;
-end;
-
-function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SavePen: TCanvasSaver;
-begin
-  Result := TCanvasSaver.Create(Self);
-  Result.Pen := Pen;
+  SaveState([TPen, TBrush, TFont]);
 end;
 
 type
@@ -1649,4 +1677,16 @@ begin
   end;
 end;
 
+initialization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  AddEnumElementAliases(TypeInfo(TStretchMode), ['smNormal', 'smTile', 'smHorzFit', 'smVertFit', 'smHorzTile', 'smVertTile',
+    'smHorzTileFit', 'smVertTileFit']);
+  {$ENDIF}
+
+finalization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  RemoveEnumElementAliases(TypeInfo(TStretchMode));
+  {$ENDIF}
+
 end.
+

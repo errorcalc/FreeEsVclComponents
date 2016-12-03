@@ -134,12 +134,12 @@ procedure TMainForm.rgAnimationTypeClick(Sender: TObject);
 begin
   tbProgress.Visible := False;
   case TRadioGroup(Sender).ItemIndex of
-    0: EsActivityBar.AnimationType := atWindowsX;
-    1: EsActivityBar.AnimationType := atSin;
-    2: EsActivityBar.AnimationType := atBar;
+    0: EsActivityBar.AnimationType := TActivityAnimationType.WindowsX;
+    1: EsActivityBar.AnimationType := TActivityAnimationType.Sin;
+    2: EsActivityBar.AnimationType := TActivityAnimationType.Bar;
     3:
       begin
-        EsActivityBar.AnimationType := atProgress;
+        EsActivityBar.AnimationType := TActivityAnimationType.Progress;
         tbProgress.Visible := True;
       end;
   end;
@@ -148,24 +148,24 @@ end;
 procedure TMainForm.rgDisplayModeClick(Sender: TObject);
 begin
   case TRadioGroup(Sender).ItemIndex of
-    0: EsActivityBar.DisplayMode := admOverlay;
-    1: EsActivityBar.DisplayMode := admDocked;
+    0: EsActivityBar.DisplayMode := TActivityDisplayMode.Overlay;
+    1: EsActivityBar.DisplayMode := TActivityDisplayMode.Docked;
   end;
 end;
 
 procedure TMainForm.rgPlacementClick(Sender: TObject);
 begin
   case TRadioGroup(Sender).ItemIndex of
-    0: EsActivityBar.Placement := apTop;
-    1: EsActivityBar.Placement := apBottom;
+    0: EsActivityBar.Placement := TActivityPlacement.Top;
+    1: EsActivityBar.Placement := TActivityPlacement.Bottom;
   end;
 end;
 
 procedure TMainForm.rgPointTypeClick(Sender: TObject);
 begin
   case TRadioGroup(Sender).ItemIndex of
-    0: EsActivityBar.PointType := ptBox;
-    1: EsActivityBar.PointType := ptCircle;
+    0: EsActivityBar.PointType := TActivityPointType.Box;
+    1: EsActivityBar.PointType := TActivityPointType.Circle;
   end;
 end;
 

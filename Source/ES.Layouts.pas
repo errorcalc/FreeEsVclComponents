@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2015-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }

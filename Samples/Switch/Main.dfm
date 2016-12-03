@@ -65,14 +65,14 @@ object MainForm: TMainForm
       Top = 126
       Width = 418
       Height = 18
-      Caption = '- TEsSwitch && ShowCaption = True && SwitchLayout = slAutoSize'
+      Caption = '- TEsSwitch && ShowCaption = True && SwitchLayout = AutoSize'
     end
     object Label5: TLabel
       Left = 152
       Top = 167
       Width = 397
       Height = 18
-      Caption = '- TEsSwitch && ShowCaption = True && SwitchLayout = slClient'
+      Caption = '- TEsSwitch && ShowCaption = True && SwitchLayout = Client'
     end
     object Label6: TLabel
       Left = 152
@@ -140,7 +140,7 @@ object MainForm: TMainForm
       Width = 77
       Height = 24
       ShowCaption = True
-      SwitchLayout = slAutoSize
+      SwitchLayout = AutoSize
       TabOrder = 3
     end
     object EsSwitch4: TEsSwitch
@@ -149,7 +149,7 @@ object MainForm: TMainForm
       Width = 77
       Height = 32
       ShowCaption = True
-      SwitchLayout = slClient
+      SwitchLayout = Client
       TabOrder = 4
     end
     object EsSwitch5: TEsSwitch

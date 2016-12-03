@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2015-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -12,9 +14,9 @@
 {******************************************************************************}
 unit ES.Indicators;
 
-{$IF CompilerVersion >= 24}
-{$DEFINE VER240UP}
-{$IFEND}
+{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
+{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
+{$SCOPEDENUMS ON}
 
 interface
 
@@ -23,10 +25,37 @@ uses
   Winapi.Messages, ES.ExGraphics, ES.BaseControls;
 
 type
-  TPointType = (ptBox, ptCircle);
-  TActivityPlacement = (apNone, apTop, apBottom);
-  TActivityAnimationType = (atWindowsX, atBar, atSin, atProgress);
-  TActivityDisplayMode = (admOverlay, admDocked);
+  TActivityPointType = (Box, Circle);
+  TActivityPlacement = (None, Top, Bottom);
+  TActivityAnimationType = (WindowsX, Bar, Sin, Progress);
+  TActivityDisplayMode = (Overlay, Docked);
+  {$REGION 'deprecated names'}
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  TActivityPointTypeHelper = record helper for TActivityPointType
+  const
+    ptBox = TActivityPointType.Box deprecated 'Use TActivityPointType.Box';
+    ptCircle = TActivityPointType.Circle deprecated 'Use TActivityPointType.Circle';
+  end;
+  TActivityPlacementHelper = record helper for TActivityPlacement
+  const
+    apNone = TActivityPlacement.None deprecated 'Use TActivityPlacement.None';
+    apTop = TActivityPlacement.Top deprecated 'Use TActivityPlacement.Top';
+    apBottom = TActivityPlacement.Bottom deprecated 'Use TActivityPlacement.Bottom';
+  end;
+  TActivityAnimationTypeHelper = record helper for TActivityAnimationType
+  const
+    atWindowsX = TActivityAnimationType.WindowsX deprecated 'Use TActivityPoint.WindowsX';
+    atBar = TActivityAnimationType.Bar deprecated 'Use TActivityPoint.Bar';
+    atSin = TActivityAnimationType.Sin deprecated 'Use TActivityPoint.Sin';
+    atProgress = TActivityAnimationType.Progress deprecated 'Use TActivityPoint.Progress';
+  end;
+  TActivityDisplayModeHelper = record helper for TActivityDisplayMode
+  const
+    admOverlay = TActivityDisplayMode.Overlay deprecated 'Use TActivityDisplayMode.Overlay';
+    admDocked = TActivityDisplayMode.Docked deprecated 'Use TActivityDisplayMode.Docked';
+  end;
+  {$ENDIF}
+  {$ENDREGION}
   TPointCount = 1..30;
   TAnimationEnergy = 1..200;
   TAnimationTime = 1..100000;
@@ -52,7 +81,7 @@ type
     FAnimationTime: TAnimationTime;
     FTimerInterval: TTimerInterval;
     FAnimationDelay: TAnimationDelay;
-    FPointType: TPointType;
+    FPointType: TActivityPointType;
     FMax: Integer;
     FMin: Integer;
     FPosition: Integer;
@@ -71,7 +100,7 @@ type
     function GetAnimationEnergy: TAnimationEnergy;
     procedure SetTimerInterval(const Value: TTimerInterval);
     procedure SetAnimationDelay(const Value: TAnimationDelay);
-    procedure SetPointType(const Value: TPointType);
+    procedure SetPointType(const Value: TActivityPointType);
     procedure SetMax(const Value: Integer);
     procedure SetMin(const Value: Integer);
     procedure SetPosition(const Value: Integer);
@@ -121,19 +150,19 @@ type
     property Position: Integer read FPosition write SetPosition default 0;
     property AnimationTime: TAnimationTime read FAnimationTime write FAnimationTime default 4000;
     property AnimationDelay: TAnimationDelay read FAnimationDelay write SetAnimationDelay default 500;
-    property AnimationType: TActivityAnimationType read FAnimationType write SetAnimationType default atWindowsX;
+    property AnimationType: TActivityAnimationType read FAnimationType write SetAnimationType default TActivityAnimationType.WindowsX;
     property AnimationEnergy: TAnimationEnergy read GetAnimationEnergy write SetAnimationEnergy default DefaultEnegry;
     property VerticalSpace: Word read FVerticalSpace write SetVerticalSpace default 0;
     property HorizontalSpace: Word read FHorizontalSpace write SetHorizontalSpace default 0;
     property PointSpace: Word read FPointSpace write SetPointSpace default 12;
     property PointCount: TPointCount read FPointCount write SetPointCount default 5;
     property PointColor: TColor read FPointColor write SetPointColor default clHighlight;
-    property PointType: TPointType read FPointType write SetPointType default ptBox;
+    property PointType: TActivityPointType read FPointType write SetPointType default TActivityPointType.Box;
     property TimerInterval: TTimerInterval read FTimerInterval write SetTimerInterval default 10;
     property AutoHide: Boolean read FAutoHide write SetAutoHide default False;
     property Active: Boolean read FActive write SetActive default False;
-    property Placement: TActivityPlacement read FPlacement write SetPlacement default apNone;
-    property DisplayMode: TActivityDisplayMode read FDisplayMode write SetDisplayMode default admOverlay;
+    property Placement: TActivityPlacement read FPlacement write SetPlacement default TActivityPlacement.None;
+    property DisplayMode: TActivityDisplayMode read FDisplayMode write SetDisplayMode default TActivityDisplayMode.Overlay;
     property Color;
     //
     property IsCachedBuffer;// TEsCustomControl
@@ -185,7 +214,7 @@ type
 implementation
 
 uses
-  System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.ExGdiPlus, ES.Utils;
+  System.Math, System.TypInfo, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.ExGdiPlus, ES.Utils;
 
 { TEsActivityBar }
 
@@ -228,7 +257,7 @@ begin
   if Pos > EndPos then
   begin
     Pos := StartPos;
-    if (FAnimationDelay  <> 0) and (AnimationType <> atSin) then
+    if (FAnimationDelay  <> 0) and (AnimationType <> TActivityAnimationType.Sin) then
     begin
       TTimer(Sender).Enabled := False;
       TTimer(Sender).OnTimer := DelayExecuteHandler;
@@ -263,11 +292,11 @@ begin
   FPointColor := clHighlight;
   FAutoHide := False;
   FActive := False;
-  FPlacement := apNone;
+  FPlacement := TActivityPlacement.None;
   FPointSpace := 12;
   FPointCount := 5;
   NormEnergy := DefaultEnegry / 10;
-  FAnimationType := atWindowsX;
+  FAnimationType := TActivityAnimationType.WindowsX;
   FTimerInterval := 10;
   FAnimationTime := 4000;
   FAnimationDelay := 500;
@@ -310,15 +339,15 @@ begin
   if (Parent = nil) or (csLoading in ComponentState) then
     Exit;
 
-  if Placement = apNone then
+  if Placement = TActivityPlacement.None then
   begin
     Align := alNone;
     Inherited Anchors := [akTop, akLeft];
   end else
-    if FDisplayMode = admOverlay then
+    if FDisplayMode = TActivityDisplayMode.Overlay then
     begin
       Inherited Align := alNone;
-      if Placement = apTop then
+      if Placement = TActivityPlacement.Top then
       begin
         Top := 0;
         Left := 0;
@@ -334,7 +363,7 @@ begin
       end;
     end else
     begin
-      if Placement = apTop then
+      if Placement = TActivityPlacement.Top then
       begin
         Inherited Align := alTop;
         Top := 0;
@@ -355,11 +384,11 @@ var
   f, d: Double;
 begin
   case AnimationType of
-    atBar:
+    TActivityAnimationType.Bar:
       Result := (FillWidth * -0.5) / ClientWidth;
-    atSin:
+    TActivityAnimationType.Sin:
       Result := -pi * 1;
-    atWindowsX:
+    TActivityAnimationType.WindowsX:
       begin
         f := 1;
         d := 0.5;
@@ -385,11 +414,11 @@ end;
 function TEsActivityBar.GetEndPos: double;
 begin
   case AnimationType of
-    atBar:
+    TActivityAnimationType.Bar:
       Result := 1 - GetStartPos;
-    atSin:
+    TActivityAnimationType.Sin:
       Result := -GetStartPos;
-    atWindowsX:
+    TActivityAnimationType.WindowsX:
       Result := 1 - GetStartPos;
     else
       Result := 0;
@@ -432,7 +461,7 @@ function TEsActivityBar.GetScreenPos(X: Double; Number: Integer): Integer;
 var
   k: Integer;
 begin
-  if AnimationType = atSin then
+  if AnimationType = TActivityAnimationType.Sin then
     k := 4
   else
     k := 1;
@@ -463,11 +492,11 @@ var
   r: Double;
 begin
   case AnimationType of
-    atBar:
+    TActivityAnimationType.Bar:
       Result := Trunc(RealX * Lenght);
-    atSin:
+    TActivityAnimationType.Sin:
       Result := Trunc((((1 + cos((RealX))))) * Lenght * 1 * 0.5);
-    atWindowsX:
+    TActivityAnimationType.WindowsX:
       begin
         if RealX < StartNorm then
         begin
@@ -506,7 +535,7 @@ begin
       else
         CurrentColor := PointColor;
 
-      if AnimationType = atProgress then
+      if AnimationType = TActivityAnimationType.Progress then
       begin
         if FMax <> FMin then
           x := Trunc((FPosition - FMin) / Abs(FMax - FMin) * (ClientWidth - FHorizontalSpace * 2))
@@ -526,7 +555,7 @@ begin
         end;
       end else
       begin
-        if PointType = ptCircle then
+        if PointType = TActivityPointType.Circle then
         begin
           Graphics := TGPGraphics.Create(Canvas.Handle);
           Graphics.SetSmoothingMode(SmoothingModeHighQuality);
@@ -546,7 +575,7 @@ begin
           R.Width := PointWidth;
           R.Height := PointWidth;
 
-          if PointType = ptCircle then
+          if PointType = TActivityPointType.Circle then
             Graphics.FillEllipse(Brush, R.Left - 0.5, R.Top - 0.5, R.Width, R.Height)
           else
             Canvas.FillRect(R);
@@ -586,7 +615,7 @@ end;
 
 procedure TEsActivityBar.SetAlign(const Value: TAlign);
 begin
-  if (Placement = apNone) or (csLoading in ComponentState) then
+  if (Placement = TActivityPlacement.None) or (csLoading in ComponentState) then
     Inherited Align := Value;
 end;
 
@@ -648,7 +677,7 @@ end;
 
 procedure TEsActivityBar.SetAnchors(const Value: TAnchors);
 begin
-  if (Placement = apNone) or (csLoading in ComponentState) then
+  if (Placement = TActivityPlacement.None) or (csLoading in ComponentState) then
     Inherited Anchors := Value
 end;
 
@@ -731,7 +760,7 @@ begin
   end;
 end;
 
-procedure TEsActivityBar.SetPointType(const Value: TPointType);
+procedure TEsActivityBar.SetPointType(const Value: TActivityPointType);
 begin
   if FPointType <> Value then
   begin
@@ -796,5 +825,21 @@ begin
   Inherited;
   CalcPos;
 end;
+
+initialization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  AddEnumElementAliases(TypeInfo(TActivityPointType), ['ptBox', 'ptCircle']);
+  AddEnumElementAliases(TypeInfo(TActivityPlacement), ['apNone', 'apTop', 'apBottom']);
+  AddEnumElementAliases(TypeInfo(TActivityAnimationType), ['atWindowsX', 'atBar', 'atSin', 'atProgress']);
+  AddEnumElementAliases(TypeInfo(TActivityDisplayMode), ['admOverlay', 'admDocked']);
+  {$ENDIF}
+
+finalization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  RemoveEnumElementAliases(TypeInfo(TActivityPointType));
+  RemoveEnumElementAliases(TypeInfo(TActivityPlacement));
+  RemoveEnumElementAliases(TypeInfo(TActivityAnimationType));
+  RemoveEnumElementAliases(TypeInfo(TActivityDisplayMode));
+  {$ENDIF}
 
 end.

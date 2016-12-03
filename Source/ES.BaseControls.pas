@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
-{                           ErrorSoft(c) 2011-2016                             }
+{                       EsVclComponents/EsVclCore v2.0                         }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -16,7 +18,7 @@
   be dependent on any other units!
 }
 
-unit Es.BaseControls;
+unit ES.BaseControls;
 
 {$IF CompilerVersion >= 18} {$DEFINE VER180UP} {$IFEND}
 {$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
@@ -32,14 +34,14 @@ unit Es.BaseControls;
 interface
 
 uses
-  Windows, Types, Classes, Controls,
-  Graphics, {$IFDEF VER230UP}Themes,{$ENDIF} Messages, Uxtheme, Forms;
+  WinApi.Windows, System.Types, System.Classes, Vcl.Controls,
+  Vcl.Graphics, {$IFDEF VER230UP}Vcl.Themes,{$ENDIF} WinApi.Messages, WinApi.Uxtheme, Vcl.Forms;
 
 const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 1.1;
+  EsVclCoreVersion = 2.0;
 
 type
   THelperOption = (hoPadding, hoBorder, hoClientRect);
@@ -202,7 +204,7 @@ type
 implementation
 
 uses
-  SysUtils, TypInfo;
+  System.SysUtils, System.TypInfo;
 
 type
   TOpenCtrl = class(TWinControl)

@@ -1,45 +1,91 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
-{                           ErrorSoft(c) 2011-2016                             }
+{                       EsVclComponents/EsVclCore v2.0                         }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
 { You can order developing vcl/fmx components, please submit requests to mail. }
 { Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
 {******************************************************************************}
-unit Es.CfxClasses;
+unit ES.CfxClasses;
 
 interface
 
-{$IF CompilerVersion >= 23}
-{$DEFINE VER230UP}
-{$IFEND}
-{$IF CompilerVersion >= 24}
-{$DEFINE VER240UP}
-{$IFEND}
+{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
+{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
+{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 uses
-  Windows, Classes, Controls, Graphics, PngImage,
-  ES.ExGraphics, Messages, Generics.Collections, Dialogs, StdCtrls;
+  WinApi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
+  ES.ExGraphics, WinApi.Messages, System.Generics.Collections, Vcl.Dialogs, Vcl.StdCtrls;
 
 type
-//  {$scopedenums on}
-  TVertLayout = (vlTop, vlCenter, vlBottom);
-  THorzLayout = (hlLeft, hlCenter, hlRight);
-  TImageAlign = (iaTopLeft, iaTopRight, iaBottomRight, iaBottomLeft, iaCenter, iaLeft, iaRight, iaTop, iaBottom);
+  {$scopedenums on}
+  TVertLayout = (Top, Center, Bottom);
+  THorzLayout = (Left, Center, Right);
+  TImageAlign = (TopLeft, TopRight, BottomRight, BottomLeft, Center, Left, Right, Top, Bottom);
   //                -  size+color size  size    win        win
-  TExFrameStyle = (fsNone, fsFlat, fsUp, fsDown, fsLowered, fsRaised, fsBump, fsEtched, fsChess,
-    fsLoweredColor, fsRaisedColor, fsBumpColor, fsEtchedColor, fsChessColor);
-  {$ifndef VER230UP}
-  TFrameStyle = fsNone..fsChess;
-  {$else}
-  TFrameStyle = TExFrameStyle.fsNone..TExFrameStyle.fsChess;
-  {$endif}
+  TExFrameStyle = (None, Flat, Up, Down, Lowered, Raised, Bump, Etched, Chess,
+    LoweredColor, RaisedColor, BumpColor, EtchedColor, ChessColor);
+
+  TFrameStyle = TExFrameStyle.None..TExFrameStyle.Chess;
   TFrameWidth = 1..MaxInt;
-//  {$scopedenums off}
+
+  {$REGION 'deprecated names'}
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  TVertLayoutHelper = record helper for TVertLayout
+  const
+    vlTop = TVertLayout.Top deprecated 'Use TVertLayout.Top';
+    vlCenter = TVertLayout.Center deprecated 'Use TVertLayout.Center';
+    vlBottom = TVertLayout.Bottom deprecated 'Use TVertLayout.Bottom';
+  end;
+
+  THorzLayoutHelper = record helper for THorzLayout
+  const
+    hlLeft = THorzLayout.Left deprecated 'Use THorzLayout.Left';
+    hlCenter = THorzLayout.Center deprecated 'Use THorzLayout.Center';
+    hlRight = THorzLayout.Right deprecated 'Use THorzLayout.Right';
+  end;
+
+  TImageAlignHelper = record helper for TImageAlign
+  const
+    iaTopLeft = TImageAlign.TopLeft deprecated 'Use TImageAlign.TopLeft';
+    iaTopRight = TImageAlign.TopRight deprecated 'Use TImageAlign.TopRight';
+    iaBottomRight = TImageAlign.BottomRight deprecated 'Use TImageAlign.BottomRight';
+    iaBottomLeft = TImageAlign.BottomLeft deprecated 'Use TImageAlign.BottomLeft';
+    iaCenter = TImageAlign.Center deprecated 'Use TImageAlign.Center';
+    iaLeft = TImageAlign.Left deprecated 'Use TImageAlign.Left';
+    iaRight = TImageAlign.Right deprecated 'Use TImageAlign.Right';
+    iaTop = TImageAlign.Top deprecated 'Use TImageAlign.Top';
+    iaBottom = TImageAlign.Bottom deprecated 'Use TImageAlign.Bottom';
+  end;
+
+  TExFrameStyleHelper = record helper for TExFrameStyle
+  const
+    fsNone = TExFrameStyle.None deprecated 'Use TExFrameStyle.None';
+    fsFlat = TExFrameStyle.Flat deprecated 'Use TExFrameStyle.Flat';
+    fsUp = TExFrameStyle.Up deprecated 'Use TExFrameStyle.Up';
+    fsDown = TExFrameStyle.Down deprecated 'Use TExFrameStyle.Down';
+    fsLowered = TExFrameStyle.Lowered deprecated 'Use TExFrameStyle.Lowered';
+    fsRaised = TExFrameStyle.Raised deprecated 'Use TExFrameStyle.Raised';
+    fsBump = TExFrameStyle.Bump deprecated 'Use TExFrameStyle.Bump';
+    fsEtched = TExFrameStyle.Etched deprecated 'Use TExFrameStyle.Etched';
+    fsChess = TExFrameStyle.Chess deprecated 'Use TExFrameStyle.Chess';
+    fsLoweredColor = TExFrameStyle.LoweredColor deprecated 'Use TExFrameStyle.LoweredColor';
+    fsRaisedColor = TExFrameStyle.RaisedColor deprecated 'Use TExFrameStyle.RaisedColor';
+    fsBumpColor = TExFrameStyle.BumpColor deprecated 'Use TExFrameStyle.BumpColor';
+    fsEtchedColor = TExFrameStyle.EtchedColor deprecated 'Use TExFrameStyle.EtchedColor';
+    fsChessColor = TExFrameStyle.ChessColor deprecated 'Use TExFrameStyle.ChessColor';
+  end;
+  {$ENDIF}
+  {$ENDREGION}
+
+  {$scopedenums off}
 
   TImageMargins = class(TMargins)
   private
@@ -177,8 +223,6 @@ type
     procedure SetIsDefaultImages(const Value: Boolean);
     //
     procedure ChangeNotify;
-    procedure SetIsDefaultStyle(const Value: Boolean);
-    function GetIsDefaultStyle: Boolean;
   protected
     procedure Change;
     procedure ChangeMargins(Sender: TObject);// use for XXXMargins.OnChange
@@ -204,7 +248,7 @@ type
     function GetStylePrefix: string; dynamic;// if use IsDefaultStyle or LoadDefaultStyle
     // to published
     property ImageMargins: TStyleMargins read FImageMargins write SetImageMargins stored IsStyleStored;
-    property ImageMode: TStretchMode read FImageMode write SetImageMode stored IsStyleStored default TStretchMode.smNormal;
+    property ImageMode: TStretchMode read FImageMode write SetImageMode stored IsStyleStored default TStretchMode.Normal;
     property OverlayAlign: TImageAlign read FOverlayAlign write SetOverlayAlign stored IsStyleStored;
     property OverlayMargins: TStyleMargins read FOverlayMargins write SetOverlayMargins stored IsStyleStored;
     //----------------------------------------------------------------------------------------------
@@ -228,9 +272,6 @@ type
     property OverlayBitmap[Index: Integer]: TBitmap read GetOverlayBitmap;
     //
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    //
-    /// <summary>  This property is deprecated, please use IsDefaultValues/IsDefaultImages </summary>
-    property IsDefaultStyle: Boolean read GetIsDefaultStyle write SetIsDefaultStyle stored False;
   published
     // default res style
     property IsDefaultValues: Boolean read FIsDefaultValues write SetIsDefaultValues stored False default True;
@@ -318,7 +359,7 @@ type
 implementation
 
 uses
-  Themes, ES.BaseControls, ES.Utils, SysUtils, TypInfo, GraphUtil, UIConsts, Types;
+  Vcl.Themes, ES.BaseControls, ES.Utils, System.SysUtils, System.TypInfo, Vcl.GraphUtil, System.UIConsts, System.Types;
 
 {$REGION 'Delphi 2010/XE support'}
 {$ifndef VER230UP}
@@ -477,17 +518,17 @@ begin
       BaseColor := ColorToRgb(BaseColor);
 
   case Style of
-    TExFrameStyle.fsNone:;
+    TExFrameStyle.None:;
 
-    TExFrameStyle.fsFlat:
+    TExFrameStyle.Flat:
     begin
       Canvas.DrawInsideFrame(Rect, FrameWidth, FrameColor);
       InflateRect(Rect, -FrameWidth, -FrameWidth);
     end;
 
-    TExFrameStyle.fsUp, TExFrameStyle.fsDown:
+    TExFrameStyle.Up, TExFrameStyle.Down:
     begin
-      if Style = TExFrameStyle.fsUp then
+      if Style = TExFrameStyle.Up then
         Draw3dFrame(Canvas.Handle, Rect, FrameWidth, TopColor, BottomColor)
       else
         Draw3dFrame(Canvas.Handle, Rect, FrameWidth, BottomColor, TopColor);
@@ -495,9 +536,9 @@ begin
       InflateRect(Rect, -FrameWidth, -FrameWidth);
     end;
 
-    TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump, TExFrameStyle.fsEtched,
-    TExFrameStyle.fsChess, TExFrameStyle.fsLoweredColor, TExFrameStyle.fsRaisedColor,
-    TExFrameStyle.fsBumpColor, TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChessColor:
+    TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump, TExFrameStyle.Etched,
+    TExFrameStyle.Chess, TExFrameStyle.LoweredColor, TExFrameStyle.RaisedColor,
+    TExFrameStyle.BumpColor, TExFrameStyle.EtchedColor, TExFrameStyle.ChessColor:
     begin
 //      if Style in [TFrameStyle.fsLowered, TFrameStyle.fsRaised] and (BaseColor = clNone) then
 //      begin
@@ -510,13 +551,13 @@ begin
 //      begin
       {$ifdef VER230UP}
       if (TStyleManager.IsCustomStyleActive) and
-        (Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump, TExFrameStyle.fsEtched]) then
+        (Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump, TExFrameStyle.Etched]) then
       begin
         case Style of
-          fsLowered: Elements := [eeSunken];
-          fsRaised: Elements := [eeRaised];
-          fsBump: Elements := [eeBump];
-          fsEtched: Elements := [eeEtched];
+          TExFrameStyle.Lowered: Elements := [eeSunken];
+          TExFrameStyle.Raised: Elements := [eeRaised];
+          TExFrameStyle.Bump: Elements := [eeBump];
+          TExFrameStyle.Etched: Elements := [eeEtched];
         end;
         DrawStyleEdge(Canvas.Handle, Rect, Elements, [efRect, efSoft]);
 
@@ -524,8 +565,8 @@ begin
       end else
       {$endif}
       begin
-        if (Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised, TExFrameStyle.fsBump,
-          TExFrameStyle.fsEtched, TExFrameStyle.fsChess]) or (BaseColor = clNone) then
+        if (Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump,
+          TExFrameStyle.Etched, TExFrameStyle.Chess]) or (BaseColor = clNone) then
         begin
           {$ifdef VER230UP}
           if TStyleManager.IsCustomStyleActive then
@@ -536,25 +577,25 @@ begin
         end;
 
         // out
-        if Style in [TExFrameStyle.fsLowered, TExFrameStyle.fsRaised,
-          TExFrameStyle.fsBump, TExFrameStyle.fsEtched, TExFrameStyle.fsChess]
+        if Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised,
+          TExFrameStyle.Bump, TExFrameStyle.Etched, TExFrameStyle.Chess]
         then
           HighlightColor := LuminanceColor(BaseColor, 255)
         else
           HighlightColor := LuminanceColor(BaseColor, 240);
 
-        if not (Style in [TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor,
-          TExFrameStyle.fsEtched, TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChess, TExFrameStyle.fsChessColor])
+        if not (Style in [TExFrameStyle.Bump, TExFrameStyle.BumpColor,
+          TExFrameStyle.Etched, TExFrameStyle.EtchedColor, TExFrameStyle.Chess, TExFrameStyle.ChessColor])
         then
           ShadowColor := LuminanceColor(BaseColor, 99)
         else
           ShadowColor := LuminanceColor(BaseColor, 151);
 
-        if Style in [TExFrameStyle.fsChess, TExFrameStyle.fsChessColor] then
+        if Style in [TExFrameStyle.Chess, TExFrameStyle.ChessColor] then
           Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
         else
-        if Style in [TExFrameStyle.fsRaised, TExFrameStyle.fsRaisedColor,
-          TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor]
+        if Style in [TExFrameStyle.Raised, TExFrameStyle.RaisedColor,
+          TExFrameStyle.Bump, TExFrameStyle.BumpColor]
         then
           Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
         else
@@ -562,18 +603,18 @@ begin
         InflateRect(Rect, -1, -1);
 
         // In
-        if not (Style in [TExFrameStyle.fsBump, TExFrameStyle.fsBumpColor, TExFrameStyle.fsEtched,
-        TExFrameStyle.fsEtchedColor, TExFrameStyle.fsChess, TExFrameStyle.fsChessColor]) then
+        if not (Style in [TExFrameStyle.Bump, TExFrameStyle.BumpColor, TExFrameStyle.Etched,
+        TExFrameStyle.EtchedColor, TExFrameStyle.Chess, TExFrameStyle.ChessColor]) then
         begin
           HighlightColor := LuminanceColor(BaseColor, 214);
           ShadowColor := LuminanceColor(BaseColor, 151);
         end;
 
-        if Style in [TExFrameStyle.fsChess, TExFrameStyle.fsChessColor] then
+        if Style in [TExFrameStyle.Chess, TExFrameStyle.ChessColor] then
           Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
         else
-        if Style in [TExFrameStyle.fsRaised, TExFrameStyle.fsRaisedColor,
-          TExFrameStyle.fsEtched, TExFrameStyle.fsEtchedColor]
+        if Style in [TExFrameStyle.Raised, TExFrameStyle.RaisedColor,
+          TExFrameStyle.Etched, TExFrameStyle.EtchedColor]
         then
           Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
         else
@@ -589,8 +630,8 @@ end;
 function GetFrameWidth(Style: TExFrameStyle; FrameWidth: TFrameWidth = 1): Integer;
 begin
   case Style of
-    TExFrameStyle.fsNone: Result := 0;
-    TExFrameStyle.fsFlat, TExFrameStyle.fsUp, TExFrameStyle.fsDown:
+    TExFrameStyle.None: Result := 0;
+    TExFrameStyle.Flat, TExFrameStyle.Up, TExFrameStyle.Down:
       Result := FrameWidth;
     else
       Result := 2;
@@ -601,7 +642,7 @@ end;
 
 function TImageMargins.GetRect: TRect;
 begin
-  Result := Classes.Rect(Left, Top, Right, Bottom);
+  Result := System.Classes.Rect(Left, Top, Right, Bottom);
 end;
 
 class procedure TImageMargins.InitDefaults(Margins: TMargins);
@@ -632,7 +673,7 @@ begin
   FOverlay := TBitMap.Create;
   FOverlay.PixelFormat := pf32bit;
   FOverlay.AlphaFormat := afPremultiplied;
-  FOverlayAlign := TImageAlign.iaTopLeft;
+  FOverlayAlign := TImageAlign.TopLeft;
   // FContentSpace := True;
 end;
 
@@ -678,39 +719,39 @@ begin
     R.BottomRight.Offset(-OverlayMargins.Rect.Right, -OverlayMargins.Rect.Bottom);
 
     case FOverlayAlign of
-      TImageAlign.iaTopLeft:
+      TImageAlign.TopLeft:
         Canvas.Draw(R.Left, R.Top, FOverlay, Opacity);
 
-      TImageAlign.iaTopRight:
+      TImageAlign.TopRight:
         Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, Opacity);
 
-      TImageAlign.iaBottomRight:
+      TImageAlign.BottomRight:
         Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, Opacity);
 
-      TImageAlign.iaBottomLeft:
+      TImageAlign.BottomLeft:
         Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, Opacity);
 
-      TImageAlign.iaCenter:
+      TImageAlign.Center:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
-      TImageAlign.iaLeft:
+      TImageAlign.Left:
         Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
-      TImageAlign.iaRight:
+      TImageAlign.Right:
         Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
 
-      TImageAlign.iaTop:
+      TImageAlign.Top:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, Opacity);
 
-      TImageAlign.iaBottom:
+      TImageAlign.Bottom:
         Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, Opacity);
     end;
 
     case FOverlayAlign of
-      TImageAlign.iaLeft: ContentRect.Left := R.Left + FOverlay.Width + OverlayMargins.Right;
-      TImageAlign.iaRight: ContentRect.Right := R.Right - FOverlay.Width - OverlayMargins.Left;
-      TImageAlign.iaTop: ContentRect.Top := R.Top + FOverlay.Height - OverlayMargins.Bottom;
-      TImageAlign.iaBottom: ContentRect.Bottom := R.Bottom - FOverlay.Height - OverlayMargins.Top;
+      TImageAlign.Left: ContentRect.Left := R.Left + FOverlay.Width + OverlayMargins.Right;
+      TImageAlign.Right: ContentRect.Right := R.Right - FOverlay.Width - OverlayMargins.Left;
+      TImageAlign.Top: ContentRect.Top := R.Top + FOverlay.Height - OverlayMargins.Bottom;
+      TImageAlign.Bottom: ContentRect.Bottom := R.Bottom - FOverlay.Height - OverlayMargins.Top;
     end;
   end
 
@@ -811,11 +852,11 @@ constructor TTextNinePatchObject.Create;
 begin
   inherited;
   FTextAlignment := taCenter;
-  FTextLayout := TVertLayout.vlCenter;
+  FTextLayout := TVertLayout.Center;
   FTextDistance := 0;
   OverlaySpace := True;
   ContentSpace := True;
-  OverlayAlign := TImageAlign.iaLeft;
+  OverlayAlign := TImageAlign.Left;
 end;
 
 procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: byte);
@@ -902,7 +943,7 @@ begin
   end;
 
   case TextLayout of
-    TVertLayout.vlCenter:
+    TVertLayout.Center:
       if not TextMultiline then
         Format := Format + [tfVerticalCenter]
       else
@@ -912,7 +953,7 @@ begin
         R.Top := R.Top + (R.Height div 2) - (Temp.Height div 2);
         R.Height := Temp.Height;
       end;
-    TVertLayout.vlBottom:
+    TVertLayout.Bottom:
       if not TextMultiline then
       begin
         Format := Format + [tfBottom];
@@ -923,7 +964,7 @@ begin
         CalcRect(Temp);
         R.Top := R.Top + (R.Height - Temp.Height) - FTextDistance;
       end;
-    TVertLayout.vlTop:
+    TVertLayout.Top:
       if not TextMultiline then
       begin
         R.Top := R.Top + FTextDistance;
@@ -1145,11 +1186,6 @@ begin
 //  end;
 end;
 
-function TStyleNinePatch.GetIsDefaultStyle: Boolean;
-begin
-  Result := IsDefaultValues and IsDefaultImages;
-end;
-
 function TStyleNinePatch.GetOverlayBitmap(Index: Integer): TBitmap;
 begin
   if (Index < StateCount) or (Index >= StateCount * 2) then
@@ -1283,31 +1319,31 @@ begin
     R.BottomRight.Offset(-OverlayMargins.Rect.Right, -OverlayMargins.Rect.Bottom);
 
     case FOverlayAlign of
-      TImageAlign.iaTopLeft:
+      TImageAlign.TopLeft:
         Canvas.Draw(R.Left, R.Top, OverlayBitmap, Opacity);
 
-      TImageAlign.iaTopRight:
+      TImageAlign.TopRight:
         Canvas.Draw(R.Right - OverlayBitmap.Width, R.Top, OverlayBitmap, Opacity);
 
-      TImageAlign.iaBottomRight:
+      TImageAlign.BottomRight:
         Canvas.Draw(R.Right - OverlayBitmap.Width, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Opacity);
 
-      TImageAlign.iaBottomLeft:
+      TImageAlign.BottomLeft:
         Canvas.Draw(R.Left, R.Bottom - OverlayBitmap.Height, OverlayBitmap, Opacity);
 
-      TImageAlign.iaCenter:
+      TImageAlign.Center:
         Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
-      TImageAlign.iaLeft:
+      TImageAlign.Left:
         Canvas.Draw(R.Left, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
-      TImageAlign.iaRight:
+      TImageAlign.Right:
         Canvas.Draw(R.Left + R.Width - OverlayBitmap.Width, R.Top + R.Height div 2 - OverlayBitmap.Height div 2, OverlayBitmap, Opacity);
 
-      TImageAlign.iaTop:
+      TImageAlign.Top:
         Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top, OverlayBitmap, Opacity);
 
-      TImageAlign.iaBottom:
+      TImageAlign.Bottom:
         Canvas.Draw(R.Left + R.Width div 2 - OverlayBitmap.Width div 2, R.Top + R.Height - OverlayBitmap.Height, OverlayBitmap, Opacity);
     end;
 
@@ -1499,12 +1535,6 @@ begin
       Clear;
     ChangeNotify;
   end;
-end;
-
-procedure TStyleNinePatch.SetIsDefaultStyle(const Value: Boolean);
-begin
-  IsDefaultImages := Value;
-  IsDefaultValues := Value;
 end;
 
 procedure TStyleNinePatch.SetOverlayAlign(const Value: TImageAlign);
@@ -1806,5 +1836,26 @@ begin
   inherited;
   Changed(Self);
 end;
+
+initialization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  AddEnumElementAliases(TypeInfo(TVertLayout), ['vlTop', 'vlCenter', 'vlBottom']);
+  AddEnumElementAliases(TypeInfo(THorzLayout), ['hlLeft', 'hlCenter', 'hlRight']);
+  AddEnumElementAliases(TypeInfo(TImageAlign), ['iaTopLeft', 'iaTopRight', 'iaBottomRight', 'iaBottomLeft', 'iaCenter',
+    'iaLeft', 'iaRight', 'iaTop', 'iaBottom']);
+  AddEnumElementAliases(TypeInfo(TExFrameStyle), ['fsNone', 'fsFlat', 'fsUp', 'fsDown', 'fsLowered', 'fsRaised', 'fsBump',
+    'fsEtched', 'fsChess', 'fsLoweredColor', 'fsRaisedColor', 'fsBumpColor', 'fsEtchedColor', 'fsChessColor']);
+  AddEnumElementAliases(TypeInfo(TFrameStyle), ['fsNone', 'fsFlat', 'fsUp', 'fsDown', 'fsLowered', 'fsRaised', 'fsBump',
+    'fsEtched', 'fsChess']);
+  {$ENDIF}
+
+finalization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  RemoveEnumElementAliases(TypeInfo(TVertLayout));
+  RemoveEnumElementAliases(TypeInfo(THorzLayout));
+  RemoveEnumElementAliases(TypeInfo(TImageAlign));
+  RemoveEnumElementAliases(TypeInfo(TExFrameStyle));
+  RemoveEnumElementAliases(TypeInfo(TFrameStyle));
+  {$ENDIF}
 
 end.

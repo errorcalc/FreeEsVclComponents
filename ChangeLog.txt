@@ -58,3 +58,10 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 
 09.10.2016
 1. Fixed memory leak in TEsSwitch animator
+
+02.12.2016
+1. Global refactoring
+2. Add three new components: TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit.
+3. Rename some packages
+4. Release version 2.0
+5. Add converter util

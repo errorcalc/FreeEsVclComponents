@@ -1,5 +1,5 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
+{                           ErrorSoft Core library                             }
 {                           ErrorSoft(c) 2016-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
@@ -13,23 +13,29 @@
 // WARNING!!!
 // This unit should not contain references to the VCL/FMX or API's.
 
+// *** ONLY INTERNAL USE THIS MODULE! (EsVclComponents and EsFmxComponents) ***
+// *** This api, this will never be stable, possible breaking changes       ***
+
+//--------------------------------------------------------------------------------------------------
+
 // Virtual control TBackendSelection is backend for visual controls such as NinePatch selector,
 // disagram object selector, photo selector, etc...
 //
 // WARNING: This module is not completed yet, you should not use it!!!!!
-
-// Task:
+// Tasks:
 // 1) realization Constraints and ProprtionalRange
 // 2) changes in Command
 // 3) testing
 // 4) general refactoring
+
+//--------------------------------------------------------------------------------------------------
 
 unit ES.Backend.Selection;
 
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, System.Types, ES.Core.Classes;
+  System.SysUtils, System.Variants, System.Classes, System.Types, ES.Core.Classes, ES.Backend.Controls;
 
 {$SCOPEDENUMS ON}
 
@@ -49,7 +55,7 @@ type
     property Kind: TProportionalKind read FKind write SetKind;
   end;
 
-  TBackendSelection = class
+  TBackendSelection = class(TBackendControl)
   private const
     DefaultGrips = [TGripKind.TopLeft, TGripKind.TopRight, TGripKind.BottomLeft, TGripKind.BottomRight,
       TGripKind.Left, TGripKind.Top, TGripKind.Right, TGripKind.Bottom];
@@ -72,15 +78,14 @@ type
     FLineWidth: Integer;
     FAllowGrips: TGripKinds;
     FOnChange: TNotifyEvent;
-    FZoom: TSelectionZoom;
     FOnUpdateView: TNotifyEvent;
     FOnChanging: TSelectionChangingEvent;
     FProportional: Boolean;
     FConstraints: TSizeConstraints;
     FProportionalRange: TProportionalRange;
+    FOnChanged: TNotifyEvent;
     procedure SetBounds(const Value: TBounds);
     procedure SetSelection(const Value: TBounds);
-    procedure SetZoom(const Value: TSelectionZoom);
     function GetFastMetrics(const Index: Integer): Integer;
     procedure SetFastMetrics(const Index, Value: Integer);
     procedure SetProportional(const Value: Boolean);
@@ -88,6 +93,9 @@ type
     procedure SetProportionalRange(const Value: TProportionalRange);
     function GetSelectionRect: TRect;
     procedure SetSelectionRect(const Value: TRect);
+    function GetProportionalRatio: Single;
+    function IsProportionalRatioStored: Boolean;
+    procedure SetProportionalRatio(const Value: Single);
   protected
     procedure NormalizeRect(var R: TRect);
     procedure DoProportionalContraction(var R: TRect; IsMainLine: Boolean);
@@ -96,11 +104,9 @@ type
     procedure Changing(var NewRect: TRect);
     procedure UpdateView;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
-    // ---
-    function ToScale(Value: Integer): Integer;
-    function ToReal(Value: Integer): Integer;
+
     function ScaleRect: TRect;
     // ---
     function GripKind(X, Y: Integer): TGripKind;
@@ -110,24 +116,28 @@ type
     procedure MouseMove(X, Y: Integer);
     procedure MouseUp(X, Y: Integer);
     procedure Command(Command: TSelectionCommand);
-    procedure Normalize; overload;
+    //procedure Normalize; overload;
+    property Zoom;
+    property Numerator;
+    property Denominator;
     // ---
     property Bounds: TBounds read FBounds write SetBounds;
 //    property UseBounds: Boolean read FUseBounds write SetUseBounds default True; // переименовать в "Bounds Constraints"
     property Constraints: TSizeConstraints read FConstraints write SetConstraints;
-    property ProportionalRange: TProportionalRange read FProportionalRange write SetProportionalRange;
     // свойство "привязка к краям"
     property Selection: TBounds read FSelection write SetSelection;
     property GripWidth: Integer read FGripWidth write FGripWidth default 7;
     property LineWidth: Integer read FLineWidth write FLineWidth default 5;
 //    property GripType: TGripType read FGripType write FGripType default TGripType.Square;
     property AllowGrips: TGripKinds read FAllowGrips write FAllowGrips default DefaultGrips;
-    property Zoom: TSelectionZoom read FZoom write SetZoom default 100;
 //    property Scale: Single read FScale write SetScale stored IsScaleStored;
     property Proportional: Boolean read FProportional write SetProportional default False;
+    property ProportionalRange: TProportionalRange read FProportionalRange write SetProportionalRange;
+    property ProportionalRatio: Single read GetProportionalRatio write SetProportionalRatio stored IsProportionalRatioStored;
     // ---
-    property OnChanging: TSelectionChangingEvent read FOnChanging write FOnChanging;
+    property OnSelectionChange: TSelectionChangingEvent read FOnChanging write FOnChanging;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     property OnUpdateView: TNotifyEvent read FOnUpdateView write FOnUpdateView;
     // fast access
     property Left: Integer Index 0 read GetFastMetrics write SetFastMetrics;
@@ -228,13 +238,34 @@ begin
       if R.Height > 0 then
         Dec(R.Bottom);
   end;
+
+  if Proportional then
+  begin
+    // proportional resize if need
+    if Command in [TSelectionCommand.IncWidth, TSelectionCommand.DecWidth] then
+      R.Bottom := Trunc(R.Top + R.Width * HW)
+    else if Command in [TSelectionCommand.IncHeight, TSelectionCommand.DecHeight] then
+      R.Right := Trunc(R.Left + R.Height / HW);
+
+    // propertional range if need
+    if not ProportionalRange.IsEmpty then
+      DoProportionalRange(R, True, True);
+
+    // proportional constraction if need
+    if not Bounds.IsEmpty then
+      DoProportionalContraction(R, True);
+  end;
+
+  // OnChanging
   Changing(R);
+  //
   Selection.Rect := R;
-  UpdateView;
 end;
 
 constructor TBackendSelection.Create;
 begin
+  inherited;
+
   FBounds := TBounds.Create;
   FConstraints := TSizeConstraints.Create;
   FProportionalRange := TProportionalRange.Create;
@@ -247,7 +278,7 @@ begin
 
   FGripWidth := 9;
   FLineWidth := 5;
-  FZoom := 100;
+  HW := 1.0;
 
   AllowGrips := DefaultGrips;
 end;
@@ -279,6 +310,11 @@ begin
   end;
 end;
 
+function TBackendSelection.IsProportionalRatioStored: Boolean;
+begin
+  Result := not SameValue(1.0, ProportionalRatio);
+end;
+
 function TBackendSelection.GetFastMetrics(const Index: Integer): Integer;
 begin
   case Index of
@@ -291,6 +327,11 @@ begin
     else
       Result := 0;
   end;
+end;
+
+function TBackendSelection.GetProportionalRatio: Single;
+begin
+  Result := HW;
 end;
 
 function TBackendSelection.GetSelectionRect: TRect;
@@ -385,7 +426,6 @@ var
   R: TRect;
   IsMainLine: Boolean;
 begin
-  Proportional := True;
   if Capture = TGripKind.None then
     Exit;
 
@@ -394,6 +434,7 @@ begin
 
   if Proportional and (Capture in ProportionalGrips) then
   begin
+    IsMainLine := False;// for compiler paranoia
     case Capture of
       TGripKind.TopLeft, TGripKind.Left, TGripKind.Top:
       begin
@@ -415,9 +456,6 @@ begin
         end;
         R.Left := Min(R.Left, R.Right);
         R.Top := Min(R.Top, R.Bottom);
-
-        if not ProportionalRange.IsEmpty then
-          DoProportionalRange(R, False, True);
 
         if (R.Right - R.Left) * HW > R.Bottom - R.Top then
           R.Top := Trunc(R.Bottom - R.Width * HW)
@@ -445,9 +483,6 @@ begin
         R.Right := Max(R.Right, R.Left);
         R.Bottom := Max(R.Bottom, R.Top);
 
-        if not ProportionalRange.IsEmpty then
-          DoProportionalRange(R, True, True);
-
         if (R.Right - R.Left) * HW > R.Bottom - R.Top then
           R.Bottom := Trunc(R.Top + R.Width * HW)
         else
@@ -458,6 +493,7 @@ begin
         IsMainLine := False;
         R := Selection.Rect;
         R.Right := Max(lx, R.Left); R.Top := Min(ly, R.Bottom);
+
         if (R.Right - R.Left) * HW > R.Bottom - R.Top then
           R.Top := Trunc(R.Bottom - R.Width * HW)
         else
@@ -468,6 +504,7 @@ begin
         IsMainLine := False;
         R := Selection.Rect;
         R.Left := Min(lx, R.Right); R.Bottom := Max(ly, R.Top);
+
         if (R.Right - R.Left) * HW > R.Bottom - R.Top then
           R.Bottom := Trunc(R.Top + R.Width * HW)
         else
@@ -475,9 +512,9 @@ begin
       end;
     end;
 
-    //if not ProportionalRange.IsEmpty then
-    //  DoProportionalRange(R, Capture in [TGripKind.Right, TGripKind.BottomRight, TGripKind.TopRight],
-    //    Capture in [TGripKind.Bottom, TGripKind.BottomLeft, TGripKind.BottomRight]);
+    if not ProportionalRange.IsEmpty then
+      DoProportionalRange(R, Capture in [TGripKind.Right, TGripKind.BottomRight, TGripKind.Bottom, TGripKind.TopRight],
+        Capture in [TGripKind.Right, TGripKind.BottomRight, TGripKind.Bottom, TGripKind.BottomLeft]);
 
     if not Bounds.IsEmpty then
       DoProportionalContraction(R, IsMainLine);
@@ -560,20 +597,20 @@ begin
   UpdateView;
 end;
 
-procedure TBackendSelection.Normalize;
-var
-  R: TRect;
-begin
-  if not Bounds.IsEmpty then
-  begin
-    R := Selection.Rect;
-    NormalizeRect(R);
-    if R <> Selection.Rect then
-    begin
-      Selection.Rect := R;
-    end;
-  end;
-end;
+//procedure TBackendSelection.Normalize;
+//var
+//  R: TRect;
+//begin
+//  if not Bounds.IsEmpty then
+//  begin
+//    R := Selection.Rect;
+//    NormalizeRect(R);
+//    if R <> Selection.Rect then
+//    begin
+//      Selection.Rect := R;
+//    end;
+//  end;
+//end;
 
 procedure TBackendSelection.NormalizeRect(var R: TRect);
 begin
@@ -618,7 +655,6 @@ procedure TBackendSelection.SetProportional(const Value: Boolean);
 begin
   if Value <> FProportional then
   begin
-    HW := 1.3;
     FProportional := Value;
   end;
 end;
@@ -626,6 +662,14 @@ end;
 procedure TBackendSelection.SetProportionalRange(const Value: TProportionalRange);
 begin
   FProportionalRange.Assign(Value);
+end;
+
+procedure TBackendSelection.SetProportionalRatio(const Value: Single);
+begin
+  HW := Value;
+  if SameValue(Value, 0.0) then
+    HW := 0.00001;
+  // FIXME
 end;
 
 procedure TBackendSelection.SetSelection(const Value: TBounds);
@@ -636,25 +680,6 @@ end;
 procedure TBackendSelection.SetSelectionRect(const Value: TRect);
 begin
   Selection.Rect := Value;
-end;
-
-function TBackendSelection.ToReal(Value: Integer): Integer;
-begin
-  Result := (Value * 100) div Zoom;
-end;
-
-function TBackendSelection.ToScale(Value: Integer): Integer;
-begin
-  Result := (Value * Zoom) div 100;
-end;
-
-procedure TBackendSelection.SetZoom(const Value: TSelectionZoom);
-begin
-  if Value <> FZoom then
-  begin
-    FZoom := Value;
-    UpdateView;
-  end;
 end;
 
 procedure TBackendSelection.UpdateView;
@@ -715,13 +740,40 @@ end;
 
 procedure TBackendSelection.DoProportionalRange(var R: TRect; DirectWidth, DirectHeight: Boolean);
 begin
-  if ProportionalRange.Min <> 0 then
+  if ProportionalRange.Kind = TProportionalKind.Width then
   begin
-    if ProportionalRange.Kind = TProportionalKind.Width then
-      if DirectWidth then
-        R.Width := ProportionalRange.ApplyEx(R.Width)
+    if DirectWidth then
+    begin
+      R.Width := ProportionalRange.Apply(R.Width);
+      if DirectHeight then
+        R.Height := Trunc(R.Width * HW)
       else
-        R.Left := R.Left + R.Width - ProportionalRange.ApplyEx(R.Width);
+        R.Top := R.Bottom - Trunc(R.Width * HW);
+    end else
+    begin
+      R.Left := R.Left + R.Width - ProportionalRange.Apply(R.Width);
+      if DirectHeight then
+        R.Height := Trunc(R.Width * HW)
+      else
+        R.Top := R.Bottom - Trunc(R.Width * HW);
+    end;
+  end else
+  begin
+    if DirectHeight then
+    begin
+      R.Height := ProportionalRange.Apply(R.Height);
+      if DirectWidth then
+        R.Width := Trunc(R.Height / HW)
+      else
+        R.Left := R.Right - Trunc(R.Height / HW);
+    end else
+    begin
+      R.Top := R.Top + R.Height - ProportionalRange.Apply(R.Height);
+      if DirectWidth then
+        R.Width := Trunc(R.Height / HW)
+      else
+        R.Left := R.Right - Trunc(R.Height / HW);
+    end;
   end;
 end;
 

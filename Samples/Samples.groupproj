@@ -18,6 +18,9 @@
         <Projects Include="Switch\Switch.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="RegexEdit\RegExTest.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +74,23 @@
     <Target Name="Switch:Make">
         <MSBuild Projects="Switch\Switch.dproj" Targets="Make"/>
     </Target>
+    <Target Name="RegExTest">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj"/>
+    </Target>
+    <Target Name="RegExTest:Clean">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RegExTest:Make">
+        <MSBuild Projects="RegexEdit\RegExTest.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Project9PatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch"/>
+        <CallTarget Targets="Project9PatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Project9PatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean"/>
+        <CallTarget Targets="Project9PatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Project9PatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make"/>
+        <CallTarget Targets="Project9PatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

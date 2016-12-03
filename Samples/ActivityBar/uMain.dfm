@@ -72,7 +72,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 0
-        TextLayout = vlTop
         Caption = 'Main'
         DesignSize = (
           201
@@ -107,8 +106,8 @@ object MainForm: TMainForm
           Caption = 'DisplayMode'
           ItemIndex = 0
           Items.Strings = (
-            'admOverlay'
-            'admDocked')
+            'Overlay'
+            'Docked')
           TabOrder = 0
           OnClick = rgDisplayModeClick
         end
@@ -121,8 +120,8 @@ object MainForm: TMainForm
           Caption = 'Placement'
           ItemIndex = 0
           Items.Strings = (
-            'apTop'
-            'apBottom')
+            'Top'
+            'Bottom')
           TabOrder = 1
           OnClick = rgPlacementClick
         end
@@ -223,7 +222,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 1
-        TextLayout = vlTop
         Caption = 'Visual'
         DesignSize = (
           201
@@ -297,8 +295,8 @@ object MainForm: TMainForm
           Caption = 'PointType'
           ItemIndex = 0
           Items.Strings = (
-            'ptBox'
-            'ptCircle')
+            'Box'
+            'Circle')
           TabOrder = 3
           OnClick = rgPointTypeClick
         end
@@ -375,7 +373,6 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 2
-        TextLayout = vlTop
         Caption = 'Animation'
         DesignSize = (
           201
@@ -417,10 +414,10 @@ object MainForm: TMainForm
           Caption = 'AnimationType'
           ItemIndex = 0
           Items.Strings = (
-            'atWindowsX'
-            'atSin'
-            'atBar'
-            'atProgress')
+            'WindowsX'
+            'Sin'
+            'Bar'
+            'Progress')
           TabOrder = 0
           OnClick = rgAnimationTypeClick
         end
@@ -507,7 +504,6 @@ object MainForm: TMainForm
     Anchors = [akLeft, akTop, akRight]
     AutoHide = True
     Active = True
-    Placement = apTop
     Color = clWhite
     ParentColor = False
     TabOrder = 0

@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2012-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -65,7 +67,7 @@ type
     {$endif}
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
-    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default vlCenter;
+    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default TVertLayout.Center;
     property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
@@ -117,7 +119,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
-    property OverlayAlign default iaLeft;
+    property OverlayAlign default TImageAlign.Left;
     property OverlaySpace default True;
     property TextAlignment;
     property TextLayout;
@@ -211,14 +213,14 @@ type
     property ImageMargins: TImageMargins read GetImageMargins write SetImageMargins;
     property Image: TPngImage read FImage write SetImage;
     property Overlay: TPngImage read FOverlay write SetOverlay;
-    property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign default iaTopLeft;
+    property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign default TImageAlign.TopLeft;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
     property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
     property Opacity: Byte read FOpacity write SetOpacity default 255;
     property Padding: TPadding read GetPadding write SetPadding stored IsPaddingStored;
     // Text
     property TextAlignment: TAlignment read GetTextAlignment write SetTextAlignment default taCenter;
-    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default vlCenter;
+    property TextLayout: TVertLayout read GetTextLayout write SetTextLayout default TVertLayout.Center;
     property TextDistance: Integer read GetTextDistance write SetTextDistance default 0;
     property TextMultiline: Boolean read GetTextMultiline write SetTextMultiline default False;
     property ShowCaption: Boolean read GetShowCaption write SetShowCaption default False;
@@ -310,7 +312,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
-    property OverlayAlign default iaLeft;
+    property OverlayAlign default TImageAlign.Left;
     property OverlaySpace default True;
     property TextAlignment;
     property TextLayout;
@@ -349,7 +351,7 @@ begin
   inherited Create(AOwner);
   NinePatch := TTextNinePatchObject.Create;
   NinePatch.OnNeedRepaint := NeedRepaint;
-  NinePatch.OverlayAlign := iaTopLeft;
+  NinePatch.OverlayAlign := TImageAlign.TopLeft;
   NinePatch.OverlaySpace := False;
   NinePatch.Control := Self;
   FImage := TPngImage.Create;
@@ -552,7 +554,7 @@ begin
   FImage.OnChange := PictureChange;
   FOverlay := TPngImage.Create;
   FOverlay.OnChange := PictureChange;
-  NinePatch.OverlayAlign := iaTopLeft;
+  NinePatch.OverlayAlign := TImageAlign.TopLeft;
   NinePatch.OverlaySpace := False;
   FOpacity := 255;
 end;
@@ -792,7 +794,7 @@ constructor TEsImageStaticText.Create(AOwner: TComponent);
 begin
   inherited;
   ControlStyle := ControlStyle + [csSetCaption];
-  OverlayAlign := iaLeft;
+  OverlayAlign := TImageAlign.Left;
   OverlaySpace := True;
   ShowCaption := True;
   NinePatch.Control := Self;
@@ -803,7 +805,7 @@ end;
 constructor TEsImageLabel.Create(AOwner: TComponent);
 begin
   inherited;
-  OverlayAlign := iaLeft;
+  OverlayAlign := TImageAlign.Left;
   OverlaySpace := True;
   ShowCaption := True;
 end;

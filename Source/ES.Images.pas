@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2015-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -13,6 +15,7 @@
 unit ES.Images;
 
 {$SCOPEDENUMS ON}
+{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 interface
 
@@ -21,7 +24,20 @@ uses
   WinApi.Messages, ES.ExGraphics, ES.BaseControls, ES.CfxClasses, Vcl.ImgList, System.UITypes;
 
 type
-  TImageStretch = (isNone, isCenter, isFit, isFill, isUniform, isMixed);
+  TImageStretch = (None, Center, Fit, Fill, Uniform, Mixed);
+  {$REGION 'deprecated names'}
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  TImageStretchHelper = record helper for TImageStretch
+  const
+    isNone = TImageStretch.None deprecated 'Use TImageStretch.None';
+    isCenter = TImageStretch.Center deprecated 'Use TImageStretch.Center';
+    isFit = TImageStretch.Fit deprecated 'Use TImageStretch.Fil';
+    isFill = TImageStretch.Fill deprecated 'Use TImageStretch.Fill';
+    isUniform = TImageStretch.Uniform deprecated 'Use TImageStretch.Uniform';
+    isMixed = TImageStretch.Mixed deprecated 'Use TImageStretch.Mixed';
+  end;
+  {$ENDIF}
+  {$ENDREGION}
 
   /// <summary> ONLY INTERNAL USE! </summary>
   TImageProxy = class(TComponent)
@@ -71,7 +87,7 @@ type
     property Picture: TPicture read FPicture write SetPicture;
     property Images: TCustomImageList read FImages write SetImages;
     property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
-    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.isNone;
+    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.None;
     property Smoth: Boolean read FSmoth write SetSmoth default True;
     property IncrementalDisplay: Boolean read FIncrementalDisplay write FIncrementalDisplay default False;
     property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor default clWhite;
@@ -128,6 +144,7 @@ type
     property Canvas: TCanvas read GetCanvas;
     procedure BeginDraw;
     procedure EndDraw;
+    procedure RecreateBitmap;
   published
     property Align;
     property Anchors;
@@ -141,7 +158,7 @@ type
     //
     property DoubleBuffered: Boolean read FDoubleBuffered write SetDoubleBuffered default False;
     property Picture: TPicture read GetPicture write SetPicture;
-    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.isNone;
+    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     property Images: TCustomImageList read GetImages write SetImages;
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     property Smoth: Boolean read GetSmoth write SetSmoth default True;
@@ -185,6 +202,7 @@ type
 
   TEsImageControl = class(TEsBaseLayout)
   private
+    Painting: Boolean;
     ImageProxy: TImageProxy;
     DrawCount: Integer;
     FFrameWidth: TFrameWidth;
@@ -221,12 +239,14 @@ type
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
     procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure PaintWindow(DC: HDC); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property Canvas: TCanvas read GetCanvas;
     procedure BeginDraw;
     procedure EndDraw;
+    procedure RecreateBitmap;
   published
     property Align;
     property Anchors;
@@ -249,12 +269,12 @@ type
     property IsCachedBackground;// TEsCustomControl
     property IsFullSizeBuffer;// TEsCustomControl
     //
-    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.fsNone;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
     property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
     property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
     //
     property Picture: TPicture read GetPicture write SetPicture;
-    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.isNone;
+    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     property Images: TCustomImageList read GetImages write SetImages;
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     property Smoth: Boolean read GetSmoth write SetSmoth default True;
@@ -305,7 +325,7 @@ type
 implementation
 
 uses
-  ES.ExGdiPlus, Math, ES.Utils, Themes;
+  ES.ExGdiPlus, System.Math, ES.Utils, Vcl.Themes, System.TypInfo;
 
 procedure DrawDesignImageFrame(Canvas: TCanvas; Rect: TRect);
 begin
@@ -432,8 +452,8 @@ begin
   dw := R.Width;
   dh := R.Height;
 
-  if ((Stretch in [TImageStretch.isFit, TImageStretch.isUniform]) or
-    ((Stretch = TImageStretch.isMixed) and ((dw < ImageWidth) or (dh < ImageHeight)))) and
+  if ((Stretch in [TImageStretch.Fit, TImageStretch.Uniform]) or
+    ((Stretch = TImageStretch.Mixed) and ((dw < ImageWidth) or (dh < ImageHeight)))) and
     ((ImageWidth <> 0) and (ImageHeight <> 0))  then
   begin
     WidthHeight := ImageWidth / ImageHeight;
@@ -448,7 +468,7 @@ begin
       w := Round(dh * WidthHeight);
     end;
   end else
-  if Stretch = TImageStretch.isFill then
+  if Stretch = TImageStretch.Fill then
   begin
     w := dw;
     h := dh;
@@ -460,7 +480,7 @@ begin
 
   Result := Rect(R.Left, R.Top, R.Left + w, R.Top + h);
 
-  if Stretch in [TImageStretch.isFit, TImageStretch.isMixed, TImageStretch.isCenter] then
+  if Stretch in [TImageStretch.Fit, TImageStretch.Mixed, TImageStretch.Center] then
   begin
     Result.Offset((dw - w) div 2, (dh - h) div 2);
   end;
@@ -765,7 +785,7 @@ begin
     else
       C := inherited Canvas;
 
-    if (csDesigning in ComponentState) and IsDrawHelper and (Stretch <> TImageStretch.isFill) and
+    if (csDesigning in ComponentState) and IsDrawHelper and (Stretch <> TImageStretch.Fill) and
       (ImageProxy.ImageWidth * ImageProxy.ImageHeight <> 0) and not AutoSize then
     begin
       // WTF? It is okey logic: DrawTransparentFrame is slowly procedure... (if use not space symbols)
@@ -787,6 +807,15 @@ begin
       inherited Canvas.Draw(0, 0, Bitmap);
   finally
     Bitmap.Free;
+  end;
+end;
+
+procedure TEsImage.RecreateBitmap;
+begin
+  if Picture.Bitmap <> nil then
+  begin
+    Picture.Assign(nil);
+    GetCanvas;
   end;
 end;
 
@@ -898,7 +927,7 @@ end;
 procedure TEsImageControl.CalcContentMargins(var Margins: TContentMargins);
 begin
   inherited;
-  if FrameStyle <> TExFrameStyle.fsNone then
+  if FrameStyle <> TExFrameStyle.None then
   begin
     Margins.Inflate(GetFrameWidth(FrameStyle, FrameWidth), GetFrameWidth(FrameStyle, FrameWidth));
   end;
@@ -997,7 +1026,8 @@ begin
     if (Width <> W) or (Height <> H) then
       AdjustSize;
   end;
-  Invalidate;
+  if not Painting then
+    Invalidate;
 end;
 
 procedure TEsImageControl.KeyUp(var Key: Word; Shift: TShiftState);
@@ -1028,7 +1058,7 @@ begin
         BorderWidth, Padding, [hoPadding, hoBorder]);
   end;
 
-  if (csDesigning in ComponentState) and IsDrawHelper and (Stretch <> TImageStretch.isFill) and
+  if (csDesigning in ComponentState) and IsDrawHelper and (Stretch <> TImageStretch.Fill) and
     (ImageProxy.ImageWidth * ImageProxy.ImageHeight <> 0) and not AutoSize then
   begin
     // WTF? It is okey logic: DrawTransparentFrame is slowly procedure... (if use not space symbols)
@@ -1040,7 +1070,7 @@ begin
 
   ImageProxy.Draw(inherited Canvas, ContentRect);
 
-  if FrameStyle <> TExFrameStyle.fsNone then
+  if FrameStyle <> TExFrameStyle.None then
     if IsStyledBorderControl(Self) then
       DrawFrame(inherited Canvas, ClientRect, FrameStyle, FrameWidth, StyleServices.GetSystemColor(FrameColor),
         StyleServices.GetSystemColor(clBtnHighlight), StyleServices.GetSystemColor(clBtnShadow))
@@ -1051,6 +1081,26 @@ begin
   begin
     (inherited Canvas).Brush.Color := TColor($FF000000);
     (inherited Canvas).DrawFocusRect(ContentRect);
+  end;
+end;
+
+procedure TEsImageControl.PaintWindow(DC: HDC);
+begin
+  Painting := True;
+  try
+    inherited;
+  finally
+    Painting := False;
+  end;
+end;
+
+procedure TEsImageControl.RecreateBitmap;
+begin
+  if Picture.Bitmap <> nil then
+  begin
+    Picture.Assign(nil);
+    GetCanvas;
+    Invalidate;
   end;
 end;
 
@@ -1139,5 +1189,15 @@ begin
   Inherited;
   Invalidate;
 end;
+
+initialization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  AddEnumElementAliases(TypeInfo(TImageStretch), ['isNone', 'isCenter', 'isFit', 'isFill', 'isUniform' , 'isMixed']);
+  {$ENDIF}
+
+finalization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  RemoveEnumElementAliases(TypeInfo(TImageStretch));
+  {$ENDIF}
 
 end.

@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
-{                           ErrorSoft(c) 2015-2016                             }
+{                       EsVclComponents/EsVclCore v2.0                         }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -15,7 +17,7 @@ unit ES.ExGdiPlus;
 interface
 
 uses
-  Windows, GDIPApi, GDIPObj, Graphics, Types;
+  WinApi.Windows, WinApi.GDIPApi, WinApi.GDIPObj, Vcl.Graphics, System.Types;
 
 function RectToGPRect(Rect: TRect): TGPRectF;
 procedure InflateGPRect(var Rect: TGPRectF; DX, DY: Single);

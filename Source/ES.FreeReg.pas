@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2015-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -23,8 +25,8 @@ implementation
 {$R 'Icons/Icons.res'}
 
 uses
-  System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images,
-  ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Graphics;
+  System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
+  ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics, ES.RegexEditor;
 
 procedure Register;
 begin
@@ -38,12 +40,19 @@ begin
     // Switch
     TEsSwitch,
     // Images
-    TEsImage, TEsImageControl
+    TEsImage, TEsImageControl,
+    // Regex Controls
+    TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit
   ]);
 
   // ImageList support
   RegisterPropertyEditor(TypeInfo(TImageIndex), TEsImage, '', TEsCustomImageIndexProperty);
   RegisterPropertyEditor(TypeInfo(TImageIndex), TEsImageControl, '', TEsCustomImageIndexProperty);
+
+  // Regex controls
+  RegisterComponentEditor(TEsRegexEdit, TEsRegexEditorEditor);
+  RegisterComponentEditor(TEsRegexButtonedEdit, TEsRegexEditorEditor);
+  RegisterComponentEditor(TEsRegexLabeledEdit, TEsRegexEditorEditor);
 
   {$ifdef FixLoadPng}
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsNinePatchImage, '', TEsPngPropertyFix);

@@ -1,4 +1,4 @@
-package FreeEsVclComponentsDesign;
+package EsCore;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,19 +25,16 @@ package FreeEsVclComponentsDesign;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESIGNONLY}
+{$RUNONLY}
 {$IMPLICITBUILD ON}
 
 requires
-  rtl,
-  designide,
-  vcl,
-  vclimg,
-  EsVclCore,
-  FreeEsVclComponents;
+  rtl;
 
 contains
-  ES.FreeReg in 'Source\ES.FreeReg.pas',
-  ES.FreeEditors in 'Source\ES.FreeEditors.pas';
+  ES.Backend.Controls in 'Source\ES.Backend.Controls.pas',
+  ES.Backend.Selection in 'Source\ES.Backend.Selection.pas',
+  ES.Core.Classes in 'Source\ES.Core.Classes.pas',
+  ES.Core.Utils in 'Source\ES.Core.Utils.pas';
 
 end.

@@ -657,7 +657,7 @@ object Form2: TForm2
       10EDF716C55E3A6992B0B200330CC3304C13B1687EE90821ACC3468C8D7F8A05
       98611886619A90253F1625805976FE7F4808CAE612FF837A0000000049454E44
       AE426082}
-    OverlayAlign = iaCenter
+    OverlayAlign = Center
     Anchors = [akLeft, akTop, akRight, akBottom]
     BufferedChildrens = True
     IsDrawHelper = True

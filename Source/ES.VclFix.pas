@@ -1,16 +1,18 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
-{                           ErrorSoft(c) 2015-2016                             }
+{                       EsVclComponents/EsVclCore v2.0                         }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
 { You can order developing vcl/fmx components, please submit requests to mail. }
 { Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
 {******************************************************************************}
-unit Es.VclFix;
+unit ES.VclFix;
 
 interface
 
@@ -22,17 +24,17 @@ interface
 {$IFEND}
 
 uses
-  ComCtrls, {$ifdef VER230UP}WinApi.Messages, WinApi.CommCtrl{$else}Messages, CommCtrl{$endif};
+  Vcl.ComCtrls, {$ifdef VER230UP}WinApi.Messages, WinApi.CommCtrl{$else}WinApi.Messages, Vcl.CommCtrl{$endif};
 
 type
-  TCustomListView = class(ComCtrls.TCustomListView)
+  TCustomListView = class(Vcl.ComCtrls.TCustomListView)
     // Fix D1: Selection blinking if used LVM_SETEXTENDEDLISTVIEWSTYLE (blue transparent selection rect)
     procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
     // Fix U2: Used style selection rectangle in Win3.1: inverted pixels, expected: blue transparent selection rect
     procedure LVMSetExtendedListViewStyle(var Message: TMessage); message LVM_SETEXTENDEDLISTVIEWSTYLE;
   end;
 
-  TListView = class(ComCtrls.TListView)
+  TListView = class(Vcl.ComCtrls.TListView)
     procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
     procedure LVMSetExtendedListViewStyle(var Message: TMessage); message LVM_SETEXTENDEDLISTVIEWSTYLE;
   end;
@@ -40,7 +42,7 @@ type
 implementation
 
 uses
-  Themes, Controls {$IFDEF VER230UP}, ES.StyleHooks{$ENDIF};
+  Vcl.Themes, Vcl.Controls {$IFDEF VER230UP}, ES.StyleHooks{$ENDIF};
 
 { TCustomListView }
 

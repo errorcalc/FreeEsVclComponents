@@ -1,4 +1,4 @@
-package FreeEsVclComponents;
+package EsVclComponents;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -40,6 +40,8 @@ contains
   ES.NinePatch in 'Source\ES.NinePatch.pas',
   ES.Layouts in 'Source\ES.Layouts.pas',
   ES.Indicators in 'Source\ES.Indicators.pas',
-  ES.Images in 'Source\ES.Images.pas';
+  ES.Images in 'Source\ES.Images.pas',
+  ES.RegExControls in 'Source\ES.RegExControls.pas',
+  ES.Hints in 'Source\ES.Hints.pas';
 
 end.

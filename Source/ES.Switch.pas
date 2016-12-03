@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                          FreeEsVclComponents v1.1                            }
-{                           ErrorSoft(c) 2015-2016                             }
+{                            EsVclComponents v2.0                              }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -11,6 +13,9 @@
 { Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
 {******************************************************************************}
 unit ES.Switch;
+
+{$SCOPEDENUMS ON}
+{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 interface
 
@@ -77,13 +82,30 @@ type
 
   TThumbBorder = 1..100;
   TSwitchBorder = 1..100;
-  TSwitchAlignment = (saLeft, saRight);
-  TSwitchLayout = (slFixed, slAutoSize, slClient);
+  TSwitchAlignment = (Left, Right);
+  TSwitchLayout = (Fixed, AutoSize, Client);
+  {$REGION 'deprecated names'}
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  TSwitchAlignmentHelper = record helper for TSwitchAlignment
+  const
+    saLeft = TSwitchAlignment.Left deprecated 'Use TSwitchAlignment.Left';
+    saRight = TSwitchAlignment.Right deprecated 'Use TSwitchAlignment.Right';
+  end;
+  TSwitchLayoutHelper = record helper for TSwitchLayout
+  const
+    slFixed = TSwitchLayout.Fixed deprecated 'Use TSwitchLayout.Fixed';
+    slAutoSize = TSwitchLayout.Autosize deprecated 'Use TSwitchLayout.Autosize';
+    slClient = TSwitchLayout.Client deprecated 'Use TSwitchLayout.Client';
+  end;
+  {$ENDIF}
+  {$ENDREGION}
 
   // now: only interal use, this class can be too refactored!
   TEsCustomSwitch = class(TEsCustomControl)
   private type
+    {$SCOPEDENUMS OFF}
     TSwitchState = (ssOffNormal, ssOffHot, ssDrag, ssOnNormal, ssOnHot);
+    {$SCOPEDENUMS ON}
   const
     sDefaultSwitchOn = 'On';
     sDefaultSwitchOff = 'Off';
@@ -190,7 +212,7 @@ type
     property ThumbColor: TColor read GetThumbColor write SetThumbColor default clDefault;
     property MainColor: TColor read GetMainColor write SetMainColor default clDefault;
     //
-    property Alignment: TSwitchAlignment read FAlignment write SetAlignment default saRight;
+    property Alignment: TSwitchAlignment read FAlignment write SetAlignment default TSwitchAlignment.Right;
     property Checked: Boolean read FChecked write SetChecked default False;
     property ThumbBorder: TThumbBorder read FThumbBorder write SetThumbBorder default 3;
     property SwitchBorder: TSwitchBorder read FSwitchBorder write SetSwitchBorder default 2;
@@ -200,7 +222,7 @@ type
     property Animated: Boolean read FAnimated write FAnimated default True;
     property SwitchWidth: Integer read FSwitchWidth write SetSwitchWidth default DefaultWidth;
     property SwitchHeight: Integer read FSwitchHeight write SetSwitchHeight default DefaultHeight;
-    property SwitchLayout: TSwitchLayout read FSwitchLayout write SetSwitchLayout default slFixed;
+    property SwitchLayout: TSwitchLayout read FSwitchLayout write SetSwitchLayout default TSwitchLayout.Fixed;
     property AutoSize: Boolean read FAutoSize write SetAutoSize default True;
     property VerticalSpace: Cardinal read FVerticalSpace write SetVerticalSpace default 0;
     //
@@ -292,7 +314,7 @@ implementation
 
 uses
   System.Math, WinApi.GdipObj, WinApi.GdipApi, Vcl.Consts, Vcl.Themes, ES.ExGdiPlus, WinApi.DwmApi,
-  ES.Utils, Vcl.ActnList;
+  ES.Utils, Vcl.ActnList, System.TypInfo;
 
 { TEsCustomSwitch }
 
@@ -312,7 +334,7 @@ procedure TEsCustomSwitch.AdjustBounds;
 var
   H: Cardinal;
 begin
-  if not(csLoading in ComponentState) and FAutoSize and (FSwitchLayout <> slCLient) then
+  if not(csLoading in ComponentState) and FAutoSize and (FSwitchLayout <> TSwitchLayout.Client) then
   begin
     CalcTextSize;
     if TextSize.Height > SwitchRect.Height then
@@ -453,13 +475,13 @@ begin
   FSwitchHeight := DefaultHeight;
   FAutoSize := True;
   FVerticalSpace := 0;
-  FSwitchLayout := slFixed;
+  FSwitchLayout := TSwitchLayout.Fixed;
   FThumbBorder := 3;
   FSwitchBorder := 2;
   FTextOn := sDefaultSwitchOn;
   FTextOff := sDefaultSwitchOff;
   FAnimated := True;
-  FAlignment := saRight;
+  FAlignment := TSwitchAlignment.Right;
 end;
 
 function TEsCustomSwitch.CreateStyle: TSwitchStyle;
@@ -536,9 +558,9 @@ var
   H, W: Integer;
 begin
   case FSwitchLayout of
-    slFixed:
+    TSwitchLayout.Fixed:
     begin
-      if FAlignment = saRight then
+      if FAlignment = TSwitchAlignment.Right then
         Result.Left := 0
       else
         Result.Left := ClientWidth - FSwitchWidth;
@@ -547,12 +569,12 @@ begin
       Result.Width := FSwitchWidth;
       Result.Height := FSwitchHeight;
     end;
-    slAutoSize:
+    TSwitchLayout.AutoSize:
     begin
       H := TextSize.Height + 6;
       W := Trunc(H * 2.2 + 0.5);
 
-      if FAlignment = saRight then
+      if FAlignment = TSwitchAlignment.Right then
         Result.Left := 0
       else
         Result.Left := ClientWidth - W;
@@ -561,14 +583,14 @@ begin
       Result.Width := W;
       Result.Height := H;
     end;
-    slClient:
+    TSwitchLayout.Client:
     begin
       if ShowCaption then
         W := ClientWidth - TextSize.Width - TextSpace
       else
         W := ClientWidth;
 
-      if FAlignment = saRight then
+      if FAlignment = TSwitchAlignment.Right then
         Result.Left := 0
       else
         Result.Left := ClientWidth - W;
@@ -794,7 +816,7 @@ begin
         if not Enabled then
           Canvas.Font.Color := clGrayText;
 
-      if Alignment = saRight then
+      if Alignment = TSwitchAlignment.Right then
         TextRect := Rect(SwitchRect.Right + TextSpace, 0, ClientWidth, ClientHeight)
       else
         TextRect := Rect(SwitchRect.Left - TextSize.Width, 0, SwitchRect.Left, ClientHeight);
@@ -890,7 +912,7 @@ begin
   if FSwitchHeight <> Value then
   begin
     FSwitchHeight := Value;
-    if FAutoSize and (FSwitchLayout = slFixed) then
+    if FAutoSize and (FSwitchLayout = TSwitchLayout.Fixed) then
       AdjustBounds;
     Invalidate;
   end;
@@ -911,7 +933,7 @@ begin
   if FSwitchWidth <> Value then
   begin
     FSwitchWidth := Value;
-    if FSwitchLayout = slFixed then
+    if FSwitchLayout = TSwitchLayout.Fixed then
       AdjustBounds;
     Invalidate;
   end;
@@ -1165,5 +1187,17 @@ begin
     Change;
   end;
 end;
+
+initialization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  AddEnumElementAliases(TypeInfo(TSwitchAlignment), ['saLeft', 'saRight']);
+  AddEnumElementAliases(TypeInfo(TSwitchLayout), ['slFixed', 'slAutoSize', 'slClient']);
+  {$ENDIF}
+
+finalization
+  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  RemoveEnumElementAliases(TypeInfo(TSwitchAlignment));
+  RemoveEnumElementAliases(TypeInfo(TSwitchLayout));
+  {$ENDIF}
 
 end.

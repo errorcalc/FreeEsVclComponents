@@ -1,5 +1,5 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
+{                           ErrorSoft Core library                             }
 {                           ErrorSoft(c) 2016-2016                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
@@ -12,6 +12,7 @@
 {******************************************************************************}
 // WARNING!!!
 // This unit should not contain references to the VCL/FMX or API's.
+
 unit ES.Core.Classes;
 
 interface
@@ -19,7 +20,10 @@ interface
 uses
   System.SysUtils, System.Variants, System.Classes, System.Types;
 
+{$SCOPEDENUMS ON}
+
 type
+  /// <summary> Analog of TBounds/TMargins, independent of VCL or FMX</summary>
   TBox = class(TPersistent)
   private
     FRight: Integer;
@@ -68,6 +72,7 @@ type
   TBounds = class(TBox);
   TMargins = class(TBox);
 
+  /// <summary>DO NOT USE THIS CLASS, CURRENTLY THIS CLASS IS NOT STABLE!</summary>
   TSizeConstraints = class(TPersistent)
   private
     FMinHeight: Integer;
@@ -85,10 +90,11 @@ type
   public
     constructor Create(MinWidth, MaxWidth, MinHeight, MaxHeight: Integer); overload;
     function Apply(R: TRect): TRect; overload;
-    function ApplyEx(R: TRect): TRect; overload;
+//    function ApplyEx(R: TRect): TRect; overload;
     procedure Apply(var Box: TBox); overload;
-    procedure ApplyEx(var Box: TBox); overload;
+//    procedure ApplyEx(var Box: TBox); overload;
     function IsEmpty: Boolean;
+    function HasValue: Boolean;
   published
     property MinWidth: Integer read FMinWidth write SetMinWidth default 0;
     property MinHeight: Integer read FMinHeight write SetMinHeight default 0;
@@ -97,6 +103,7 @@ type
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
+  /// <summary>DO NOT USE THIS CLASS, CURRENTLY THIS CLASS IS NOT STABLE!</summary>
   TRange = class(TPersistent)
   private
     FMax: Integer;
@@ -110,8 +117,9 @@ type
   public
     constructor Create(Min, Max: Integer); overload;
     function Apply(Value: Integer): Integer;
-    function ApplyEx(Value: Integer): Integer;
+//    function ApplyEx(Value: Integer): Integer;
     function IsEmpty: Boolean;
+    function HasValue: Boolean;
   published
     property Min: Integer read FMin write SetMin default 0;
     property Max: Integer read FMax write SetMax default 0;
@@ -120,7 +128,7 @@ type
 
 implementation
 
-{ TEsRect }
+{ TBox }
 
 constructor TBox.Create;
 begin
@@ -254,14 +262,14 @@ begin
   Change;
 end;
 
-{ TConstraintsSize }
+{ TSizeConstraints }
 
-procedure TSizeConstraints.Apply(var Box: TBox);
-begin
-  Box.Rect := Apply(Box.Rect);
-end;
+//procedure TSizeConstraints.Apply(var Box: TBox);
+//begin
+//  Box.Rect := Apply(Box.Rect);
+//end;
 
-function TSizeConstraints.ApplyEx(R: TRect): TRect;
+function TSizeConstraints.Apply(R: TRect): TRect;
 begin
   if IsEmpty then
     Exit(R);
@@ -278,27 +286,27 @@ begin
   Exit(R);
 end;
 
-procedure TSizeConstraints.ApplyEx(var Box: TBox);
+procedure TSizeConstraints.Apply(var Box: TBox);
 begin
-  Box.Rect := ApplyEx(Box.Rect);
+  Box.Rect := Apply(Box.Rect);
 end;
 
-function TSizeConstraints.Apply(R: TRect): TRect;
-begin
-  if IsEmpty then
-    Exit(R);
-
-  if R.Width < MinWidth then
-    R.Width := MinWidth;
-  if R.Height < MinHeight then
-    R.Height := MinHeight;
-  if R.Width > MaxWidth then
-    R.Width := MaxWidth;
-  if R.Height > MaxHeight then
-    R.Height := MaxHeight;
-
-  Exit(R);
-end;
+//function TSizeConstraints.Apply(R: TRect): TRect;
+//begin
+//  if IsEmpty then
+//    Exit(R);
+//
+//  if R.Width < MinWidth then
+//    R.Width := MinWidth;
+//  if R.Height < MinHeight then
+//    R.Height := MinHeight;
+//  if R.Width > MaxWidth then
+//    R.Width := MaxWidth;
+//  if R.Height > MaxHeight then
+//    R.Height := MaxHeight;
+//
+//  Exit(R);
+//end;
 
 procedure TSizeConstraints.AssignTo(Dest: TPersistent);
 begin
@@ -328,6 +336,11 @@ begin
   FMinWidth := MinWidth;
   FMaxHeight := MaxHeight;
   FMaxWidth := MaxWidth;
+end;
+
+function TSizeConstraints.HasValue: Boolean;
+begin
+  Result := (MinWidth <> 0) or (MinHeight <> 0) or (MaxWidth <> 0) or (MaxHeight <> 0);
 end;
 
 function TSizeConstraints.IsEmpty: Boolean;
@@ -373,20 +386,20 @@ end;
 
 { TRange }
 
+//function TRange.Apply(Value: Integer): Integer;
+//begin
+//  if IsEmpty then
+//    Exit(Value);
+//
+//  if Value < Min then
+//    Value := Min;
+//  if Value > Max then
+//    Value := Max;
+//
+//  Exit(Value);
+//end;
+
 function TRange.Apply(Value: Integer): Integer;
-begin
-  if IsEmpty then
-    Exit(Value);
-
-  if Value < Min then
-    Value := Min;
-  if Value > Max then
-    Value := Max;
-
-  Exit(Value);
-end;
-
-function TRange.ApplyEx(Value: Integer): Integer;
 begin
   if IsEmpty then
     Exit(Value);
@@ -422,6 +435,11 @@ constructor TRange.Create(Min, Max: Integer);
 begin
   FMin := Min;
   FMax := Max;
+end;
+
+function TRange.HasValue: Boolean;
+begin
+  Result := (Min <> 0) or (Max <> 0);
 end;
 
 function TRange.IsEmpty: Boolean;

@@ -1,6 +1,7 @@
 ![Logo](Source/icons/Logo.png)
-# FreeEsVCLComponents
-**Version 1.1.2**
+# ErrorSoft VCL Components
+# Snow update
+**Version 2.0**
 
 Free Open Source components for Delphi & C++Builder (VCL)
 
@@ -20,6 +21,9 @@ You can choose one of two license. See "LICENSE.txt"
 * TEsSwitch (looks like Windows 10 XAML control!)
 * TEsImage (much better than the TImage)
 * TEsImageControl (much better than the TImage & absolitly no flicker!)
+* TEsRegexpEdit
+* TEsRegexButtonedEdit
+* TEsRegexLabeledEdit
 
 ## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin) - compatibility
 
@@ -27,11 +31,11 @@ You can choose one of two license. See "LICENSE.txt"
 
 #English ReadMe:
 
-**FreeEsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components has best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and has modern style. 
+**EsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components has best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and has modern style. 
 
-Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "FreeEsVclComponents" or link to this repository :)
+Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "EsVCLComponents" or link to this repository :)
 
-If you'd like to support the FreeEsVclComponents or EsVclCore lib, you can do so at this link: 
+If you'd like to support the EsVCLComponents or EsVclCore lib, you can do so at this link: 
 ### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 You can order developing vcl/fmx components, please submit requests to mail.
@@ -98,10 +102,28 @@ Features:
 * Draw frame if need
 * Support Focusing
 
+![Icon](Source/icons/TESREGEXEDIT32.bmp)
+**TEsRegexEdit** - Edit with regular expression validation and indication.
+* Customize colors
+* Four indication modes
+* Built-in regular expression editor
+
+![Icon](Source/icons/TESREGEXBUTTONEDEDIT32.bmp)
+**TEsRegexButtonedEdit** - Buttoned edit with regular expression validation and indication.
+* Customize colors
+* Four indication modes
+* Built-in regular expression editor
+
+![Icon](Source/icons/TESREGEXLABELEDEDIT32.bmp)
+**TEsRegexLabeledEdit** - Labeled edit with regular expression validation and indication.
+* Customize colors
+* Four indication modes
+* Built-in regular expression editor
+
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
 #Russian ReadMe:
-**FreeEsVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
+**ErrorsoftVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
 
 **Полностью бесплатная лицензия (в том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
@@ -171,6 +193,24 @@ Features:
 * Несколько режимов растягивания изображения
 * Рисование границы, если необходимо
 * Поддержка фокуса ввода
+
+![Icon](Source/icons/TESREGEXEDIT32.bmp)
+**TEsRegexEdit** - TEdit со встроенной поддержкой валидации и индикации правильности ввода с помощью регулярных выражений.
+* Настройка цвета
+* Четыре режима индикации
+* Встроенный редактор регулярных выражений
+
+![Icon](Source/icons/TESREGEXBUTTONEDEDIT32.bmp)
+**TEsRegexButtonedEdit** - TButtonedEdit со встроенной поддержкой валидации и индикации правильности ввода с помощью регулярных выражений.
+* Настройка цвета
+* Четыре режима индикации
+* Встроенный редактор регулярных выражений
+
+![Icon](Source/icons/TESREGEXLABELEDEDIT32.bmp)
+**TEsRegexLabeledEdit** - TLabeledEdit со встроенной поддержкой валидации и индикации правильности ввода с помощью регулярных выражений.
+* Настройка цвета
+* Четыре режима индикации
+* Встроенный редактор регулярных выражений
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 

@@ -1,9 +1,11 @@
 {******************************************************************************}
-{                      FreeEsVclComponents/EsVclCore v1.1                      }
-{                           ErrorSoft(c) 2015-2016                             }
+{                       EsVclComponents/EsVclCore v2.0                         }
+{                           ErrorSoft(c) 2009-2016                             }
+{                                                                              }
+{                     More beautiful things: errorsoft.org                     }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }
+{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
 {                                                                              }
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
@@ -22,7 +24,7 @@ unit ES.Utils;
 interface
 
 uses
-  Windows, SysUtils, Classes, Controls, Messages, Graphics, Themes, ImgList, DwmApi;
+  WinApi.Windows, System.SysUtils, System.Classes, Vcl.Controls, WinApi.Messages, Vcl.Graphics, Vcl.Themes, Vcl.ImgList, WinApi.DwmApi;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -54,7 +56,7 @@ procedure InitMainColor;
 implementation
 
 uses
-  CommCtrl;
+  WinApi.CommCtrl;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 begin
