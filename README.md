@@ -62,7 +62,7 @@ Features:
 **TEsLayout** - The basic container. Interesting possibility for double buffering TGraphicControl heirs (TLabel, TGlyphButton, TImage, TBevel ...)
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
-**TEsImageLayot** - The Layout with support background 9-Patch images and image - Overlay
+**TEsImageLayout** - The Layout with support background 9-Patch images and image - Overlay
 
 ![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
 **TEsImageStaticText** - The StaticText supports 9-Patch background image, and image - Overlay, the location and alignment of the text can be combined in different ways
@@ -123,7 +123,7 @@ Features:
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
 #Russian ReadMe:
-**ErrorsoftVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Эти как новые элементы управления так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
+**ErrorsoftVCLComponents** - Free ErrorSoft Vcl Components - бесплатная библиотека VCL компонентов для Delphi и C++Builder. Это как новые элементы управления, так и компоненты для улучшения внешнего вида приложений и лучшего пользовательского опыта. Все компоненты имеет лучшую поддержку прозрачности, не мерцают, и имеет поддержку интересной возможности - двойная буферизация для наследников TGraphicControl. Компоненты поддерживают визуальные стили и имеет современный стиль. 
 
 **Полностью бесплатная лицензия (в том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
@@ -145,17 +145,17 @@ Features:
 **TEsNinePatchImage** - TImage для 9-Patch изображений (Растровое изображение с возможностью масштабирования, без потери качества, практически все современные интерфейсы строятся на них), а также изображения - Overlay-a
 
 ![Icon](Source/icons/TESIMAGELABEL32.bmp)
-**TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overlay-a, расположение и выравнивание текста можно комбинировать по-разному
+**TEsImageLabel** - Метка с возможностью установки фонового 9-Patch изображения, а также изображения - Overlay-a, расположение и выравнивание текста можно комбинировать
 
 ![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - Базовый компонент - контейнер.
 Интересен возможностью двойной буферизации для наследников TGraphicControl (TLabel, TGlyphButton, TImage, TBevel...)
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
-**TEsImageLayot** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a
+**TEsImageLayout** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a
 
 ![Icon](Source/icons/TESIMAGESTATICTEXT32.bmp)
-**TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a, и текста расположение и выравнивание текста можно по-разному комбинировать 
+**TEsImageStaticText** - StaticText с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a, и текста расположение и выравнивание текста можно комбинировать 
 
 ![Icon](Source/icons/TESACTIVITYBAR32.bmp)
 **TEsActivityBar** - Компонент имитирует XAML контрол Windows 10, созданный для индикации занятости или отображения прогресса (что-то типа TProgressBar).
