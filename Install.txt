@@ -5,12 +5,14 @@ Please see "Doc/ReleaseNotes_en.pdf"
 
 0. Uninstall previous version!
 1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
-2. Open "ErrorSoftGroup.groupproj" project group
-3. Build "EsCore.bpl"
-4. Build "EsVclCore.bpl"
-5. Build "EsVclComponents.bpl"
-6. Install "EsVclComponentsDesign.bpl"
-7. Enjoy!
+2. If you plan to install the components to multiple versions of Delphi on computer(multiple installation), 
+then start the "Packages\PackagesGenerator.exe" and choose appropriate generated project files.
+3. Open "ErrorSoftGroup.groupproj" project group
+4. Build "EsCore.bpl"
+5. Build "EsVclCore.bpl"
+6. Build "EsVclComponents.bpl"
+7. Install "EsVclComponentsDesign.bpl"
+8. Enjoy!
 
 WARNING:
 1)
@@ -24,12 +26,14 @@ because of some installed packages (ex: AlphaSkins)
 
 0. Полностью удалите предыдущую версию!
 1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path)
-2. Откройте группу проектов "ErrorSoftGroup.groupproj" 
-3. Сделайте билд(Build) "EsCore.bpl"
-4. Сделайте билд(Build) "EsVclCore.bpl"
-5. Сделайте билд(Build) "EsVclComponents.bpl"
-6. Проинсталлируйте(Install) "EsVclComponentsDesign.bpl"
-7. Пользуйтесь :) и пишите отзывы.
+2. Если вы планируете установить компоненты одновременно в нескольких версиях Delphi на компьютере, то запустите 
+"Packages\PackagesGenerator.exe" и выберите соответствующие сгенерированные файлы проекта.
+3. Откройте группу проектов "ErrorSoftGroup.groupproj" 
+4. Сделайте билд(Build) "EsCore.bpl"
+5. Сделайте билд(Build) "EsVclCore.bpl"
+6. Сделайте билд(Build) "EsVclComponents.bpl"
+7. Проинсталлируйте(Install) "EsVclComponentsDesign.bpl"
+8. Пользуйтесь :) и пишите отзывы.
 
 ВНИМАНИЕ:
 1)
