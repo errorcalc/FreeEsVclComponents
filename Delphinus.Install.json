@@ -13,7 +13,7 @@
             "folder": "",
             "base": "",
             "recursive": true,
-            "filter": "*.exe"
+            "filter": "*.*"
         }
     ],
 
