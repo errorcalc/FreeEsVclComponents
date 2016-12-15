@@ -1,0 +1,26 @@
+{
+    "search_pathes": 
+    [
+        {
+            "pathes": "Source",
+            "platforms": "Win32;Win64"
+        }
+    ],
+
+    "source_folders":
+    [
+        {
+            "folder": "",
+            "base": "",
+            "recursive": true,
+            "filter": "*.exe"
+        }
+    ],
+
+    "projects":
+    [
+        {
+            "project": "ErrorSoftGroup.groupproj"
+        }
+    ]
+}
