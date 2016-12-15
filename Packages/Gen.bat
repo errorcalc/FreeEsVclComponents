@@ -1,0 +1,1 @@
+PackagesGenerator -config PackagesGenerator.ini -hide -skip
