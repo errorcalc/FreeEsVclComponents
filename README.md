@@ -4,6 +4,7 @@
 **Version 2.0**
 
 Free Open Source components for Delphi & C++Builder (VCL)
+GetIt and Delphinus-Support
 
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
