@@ -385,7 +385,7 @@ var
 begin
   case AnimationType of
     TActivityAnimationType.Bar:
-      Result := (FillWidth * -0.5) / ClientWidth;
+      Result := (FillWidth * -0.5) / (ClientWidth - HorizontalSpace * 2);
     TActivityAnimationType.Sin:
       Result := -pi * 1;
     TActivityAnimationType.WindowsX:
@@ -460,14 +460,16 @@ end;
 function TEsActivityBar.GetScreenPos(X: Double; Number: Integer): Integer;
 var
   k: Integer;
+  w: Integer;
 begin
+  w := ClientWidth - HorizontalSpace * 2;
   if AnimationType = TActivityAnimationType.Sin then
     k := 4
   else
     k := 1;
   Result :=
-    GetPointPos(
-     ((k * FPointSpace + PointWidth) * (Number - (FPointCount - 1) * 0.5)) / ClientWidth + X, ClientWidth);
+    HorizontalSpace + GetPointPos(
+     ((k * FPointSpace + PointWidth) * (Number - (FPointCount - 1) * 0.5)) / w + X, w);
 end;
 
 function TEsActivityBar.FillWidth: Integer;
@@ -555,6 +557,8 @@ begin
         end;
       end else
       begin
+        if HorizontalSpace <> 0 then
+          IntersectClipRect(Canvas.Handle, HorizontalSpace, 0, ClientWidth - HorizontalSpace, ClientHeight);
         if PointType = TActivityPointType.Circle then
         begin
           Graphics := TGPGraphics.Create(Canvas.Handle);
@@ -570,7 +574,7 @@ begin
         begin
           x := GetScreenPos(Pos, i);
 
-          R.Left := x - PointWidth div 2 + HorizontalSpace;
+          R.Left := x - PointWidth div 2;
           R.Top := FVerticalSpace;
           R.Width := PointWidth;
           R.Height := PointWidth;
