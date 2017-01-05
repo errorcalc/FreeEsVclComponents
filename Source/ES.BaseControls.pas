@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                       EsVclComponents/EsVclCore v2.0                         }
-{                           ErrorSoft(c) 2009-2016                             }
+{                           ErrorSoft(c) 2009-2017                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -543,7 +543,7 @@ begin
        {$IFDEF VER210UP}or not (csDesignerHide in Control.ControlState){$ENDIF})
     then
     begin
-      // Necessary to draw a background if the component has a Property 'Transparent' and also has a Property 'Color'
+      // Necessary to draw a background if the control has a Property 'Transparent' and hasn't a Property 'Color'
       Prop := GetPropInfo(Control.ClassInfo, 'Transparent');
       if Prop <> nil then
       begin
@@ -592,10 +592,8 @@ begin
   end;
 end;
 
-// Main crap located here:
 { TODO -cCRITICAL : 22.02.2013:
- Perhaps in this method double buffering has errors
- need test this and eliminate duplication of code!!! }
+  eliminate duplication of code! }
 procedure TEsCustomControl.PaintHandler(var Message: TWMPaint);
 var
   PS: TPaintStruct;
@@ -837,7 +835,7 @@ end;
 
 { TODO -cMAJOR : 22.02.2013:
  See: PaintHandler,
- need eliminate duplication of code!!! }
+ need eliminate duplication of code! }
 procedure TEsCustomControl.PaintWindow(DC: HDC);
 var
   TempDC: HDC;
