@@ -13,7 +13,7 @@ You can choose one of two license. See "LICENSE.txt"
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
 # List of components:
-* TEsLayout (Absolitly no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
+* TEsLayout (Absolutely no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
 * TEsImageLayout (Best for your application)
 * TEsImageStaticText
 * TEsNinePatchImage
@@ -21,7 +21,7 @@ You can choose one of two license. See "LICENSE.txt"
 * TEsActivityBar (looks like Windows 10 XAML control!)
 * TEsSwitch (looks like Windows 10 XAML control!)
 * TEsImage (much better than the TImage)
-* TEsImageControl (much better than the TImage & absolitly no flicker!)
+* TEsImageControl (much better than the TImage & absolutely no flicker!)
 * TEsRegexpEdit
 * TEsRegexButtonedEdit
 * TEsRegexLabeledEdit
@@ -94,8 +94,8 @@ Features:
 * More Stretch modes
 
 ![Icon](Source/icons/TESIMAGECONTROL32.bmp)
-**TEsImageControl** - Much better than the TImage & absolitly no flicker!
-* Absolitly no flicker!
+**TEsImageControl** - Much better than the TImage & absolutely no flicker!
+* Absolutely no flicker!
 * Smoothing(Interpolation) support, this is always lacked TImage
 * Support ImageList
 * Support Opacity
