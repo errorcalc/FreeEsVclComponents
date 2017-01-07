@@ -606,120 +606,129 @@ var
   IsBeginPaint: Boolean;
 begin
   BufferBitMap := 0;
+  BufferDC := 0;
+  DC := 0;
   Region := 0;
   IsBeginPaint := Message.DC = 0;
 
-  if IsBeginPaint then
-  begin
-    DC := BeginPaint(Handle, PS);
-    {$IFDEF VER230UP}
-    if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
-      UpdateRect := ClientRect
-      // I had to use a crutch to ClientRect, due to the fact that
-      // VCL.Styles.TCustomStyle.DoDrawParentBackground NOT use relative coordinates,
-      // ie ignores SetViewportOrgEx!
-      // This function uses ClientToScreen and ScreenToClient for coordinates calculation!
-    else
-    {$endif}
-      UpdateRect := PS.rcPaint;
-  end
-  else
-  begin
-    DC := Message.DC;
-    {$IFDEF VER230UP}
-    if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
-      UpdateRect := ClientRect
-    else
-    {$endif}
-      if GetClipBox(DC, UpdateRect) = ERROR then
-        UpdateRect := ClientRect;
-  end;
-
-  //------------------------------------------------------------------------------------------------
-  // Dublicate code, see PaintWindow
-  //------------------------------------------------------------------------------------------------
-  // if control not double buffered then create or assign buffer
-  if not DoubleBuffered then
-  begin
-    BufferDC := CreateCompatibleDC(DC);
-    // CreateCompatibleDC(DC) return 0 if Drawing takes place to MemDC(buffer):
-    // return <> 0 => need to double buffer || return = 0 => no need to double buffer
-    if BufferDC <> 0 then
+  try
+    if IsBeginPaint then
     begin
-      // Using the cache if possible
-      if FIsCachedBuffer or FIsFullSizeBuffer then
+      DC := BeginPaint(Handle, PS);
+      {$IFDEF VER230UP}
+      if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
+        UpdateRect := ClientRect
+        // I had to use a crutch to ClientRect, due to the fact that
+        // VCL.Styles.TCustomStyle.DoDrawParentBackground NOT use relative coordinates,
+        // ie ignores SetViewportOrgEx!
+        // This function uses ClientToScreen and ScreenToClient for coordinates calculation!
+      else
+      {$endif}
+        UpdateRect := PS.rcPaint;
+    end
+    else
+    begin
+      DC := Message.DC;
+      {$IFDEF VER230UP}
+      if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
+        UpdateRect := ClientRect
+      else
+      {$endif}
+        if GetClipBox(DC, UpdateRect) = ERROR then
+          UpdateRect := ClientRect;
+    end;
+
+    //------------------------------------------------------------------------------------------------
+    // Duplicate code, see PaintWindow, Please sync this code!!!
+    //------------------------------------------------------------------------------------------------
+    // if control not double buffered then create or assign buffer
+    if not DoubleBuffered then
+    begin
+      BufferDC := CreateCompatibleDC(DC);
+      // CreateCompatibleDC(DC) return 0 if Drawing takes place to MemDC(buffer):
+      // return <> 0 => need to double buffer || return = 0 => no need to double buffer
+      if BufferDC <> 0 then
       begin
-        // Create cache if need
-        if CacheBitmap = 0 then
+        // Using the cache if possible
+        if FIsCachedBuffer or FIsFullSizeBuffer then
         begin
-          BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
-          // Assign to cache if need
-          if FIsCachedBuffer then
-            CacheBitmap := BufferBitMap;
+          // Create cache if need
+          if CacheBitmap = 0 then
+          begin
+            BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
+            // Assign to cache if need
+            if FIsCachedBuffer then
+              CacheBitmap := BufferBitMap;
+          end
+          else
+            BufferBitMap := CacheBitmap;
+
+          // Assign region for minimal overdraw
+          Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
+          SelectClipRgn(BufferDC, Region);
         end
         else
-          BufferBitMap := CacheBitmap;
-
-        // Assign region for minimal overdraw
-        Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
-        SelectClipRgn(BufferDC, Region);
+          // Create buffer
+          BufferBitMap := CreateCompatibleBitmap(DC,
+            UpdateRect.Right - UpdateRect.Left, UpdateRect.Bottom - UpdateRect.Top);
+        // Select buffer bitmap
+        SelectObject(BufferDC, BufferBitMap);
+        // [change coord], if need
+        // Moving update region to the (0,0) point
+        if not(FIsCachedBuffer or FIsFullSizeBuffer) then
+        begin
+          GetViewportOrgEx(BufferDC, SaveViewport);
+          SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
+        end;
       end
       else
-        // Create buffer
-        BufferBitMap := CreateCompatibleBitmap(DC,
-          UpdateRect.Right - UpdateRect.Left, UpdateRect.Bottom - UpdateRect.Top);
-      // Select buffer bitmap
-      SelectObject(BufferDC, BufferBitMap);
-      // [change coord], if need
-      // Moving update region to the (0,0) point
-      if not(FIsCachedBuffer or FIsFullSizeBuffer) then
-      begin
-        GetViewportOrgEx(BufferDC, SaveViewport);
-        SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
-      end;
+        BufferDC := DC;
     end
     else
       BufferDC := DC;
-  end
-  else
-    BufferDC := DC;
-  //------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------
 
-  // DEFAULT HANDLER:
-  Message.DC := BufferDC;
-  inherited PaintHandler(Message);
+    // DEFAULT HANDLER:
+    Message.DC := BufferDC;
+    inherited PaintHandler(Message);
 
-  //------------------------------------------------------------------------------------------------
-  // Dublicate code, see PaintWindow
-  //------------------------------------------------------------------------------------------------
-  // draw to window
-  if not DoubleBuffered then
-  begin
-    if not(FIsCachedBuffer or FIsFullSizeBuffer) then
-    begin
-      // [restore coord], if need
-      SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
-    end
-    else
-    begin
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
-        UpdateRect.Left, UpdateRect.Top, SRCCOPY);
+  finally
+    try
+      //------------------------------------------------------------------------------------------------
+      // Duplicate code, see PaintWindow, Please sync this code!!!
+      //------------------------------------------------------------------------------------------------
+      try
+        // draw to window
+        if not DoubleBuffered then
+        begin
+          if not(FIsCachedBuffer or FIsFullSizeBuffer) then
+          begin
+            // [restore coord], if need
+            SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
+            BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
+          end
+          else
+          begin
+            BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
+              UpdateRect.Left, UpdateRect.Top, SRCCOPY);
+          end;
+        end;
+      finally
+        if BufferDC <> DC then
+          DeleteObject(BufferDC);
+        if Region <> 0 then
+          DeleteObject(Region);
+        // delete buffer, if need
+        if not FIsCachedBuffer and (BufferBitMap <> 0) then
+          DeleteObject(BufferBitMap);
+      end;
+      //------------------------------------------------------------------------------------------------
+    finally
+      // end paint, if need
+      if IsBeginPaint then
+        EndPaint(Handle, PS);
     end;
   end;
-
-  if BufferDC <> DC then
-    DeleteObject(BufferDC);
-  if Region <> 0 then
-    DeleteObject(Region);
-  // delete buufer, if need
-  if not FIsCachedBuffer and (BufferBitMap <> 0) then
-    DeleteObject(BufferBitMap);
-  //------------------------------------------------------------------------------------------------
-
-  // end paint, if need
-  if IsBeginPaint then
-    EndPaint(Handle, PS);
 end;
 
 {$ifdef VER210UP} {$REGION 'BACKUP'}
@@ -849,145 +858,151 @@ var
 begin
   BufferBitMap := 0;
   Region := 0;
+  BufferDC := 0;
 
   if GetClipBox(DC, UpdateRect) = ERROR then
     UpdateRect := ClientRect;
 
   BufferedThis := not BufferedChildrens;
 
-  if BufferedThis then
-  begin
-  //------------------------------------------------------------------------------------------------
-  // Dublicate code, see PaintHandler
-  //------------------------------------------------------------------------------------------------
-    // if control not double buffered then create or assign buffer
-    if not DoubleBuffered then
+  try
+    if BufferedThis then
     begin
-      BufferDC := CreateCompatibleDC(DC);
-      // CreateCompatibleDC(DC) return 0 if Drawing takes place to MemDC(buffer):
-      // return <> 0 => need to double buffer || return = 0 => no need to double buffer
-      if BufferDC <> 0 then
+    //------------------------------------------------------------------------------------------------
+    // Duplicate code, see PaintHandler, Please sync this code!!!
+    //------------------------------------------------------------------------------------------------
+      // if control not double buffered then create or assign buffer
+      if not DoubleBuffered then
       begin
-        // Using the cache if possible
-        if FIsCachedBuffer or FIsFullSizeBuffer then
+        BufferDC := CreateCompatibleDC(DC);
+        // CreateCompatibleDC(DC) return 0 if Drawing takes place to MemDC(buffer):
+        // return <> 0 => need to double buffer || return = 0 => no need to double buffer
+        if BufferDC <> 0 then
         begin
-          // Create cache if need
-          if CacheBitmap = 0 then
+          // Using the cache if possible
+          if FIsCachedBuffer or FIsFullSizeBuffer then
           begin
-            BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
-            // Assign to cache if need
-            if FIsCachedBuffer then
-              CacheBitmap := BufferBitMap;
+            // Create cache if need
+            if CacheBitmap = 0 then
+            begin
+              BufferBitMap := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
+              // Assign to cache if need
+              if FIsCachedBuffer then
+                CacheBitmap := BufferBitMap;
+            end
+            else
+              BufferBitMap := CacheBitmap;
+
+            // Assign region for minimal overdraw
+            Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
+            SelectClipRgn(BufferDC, Region);
           end
           else
-            BufferBitMap := CacheBitmap;
-
-          // Assign region for minimal overdraw
-          Region := CreateRectRgnIndirect(UpdateRect);//0, 0, UpdateRect.Width, UpdateRect.Height);
-          SelectClipRgn(BufferDC, Region);
+            // Create buffer
+            BufferBitMap := CreateCompatibleBitmap(DC, RectWidth(UpdateRect), RectHeight(UpdateRect));
+          // Select buffer bitmap
+          SelectObject(BufferDC, BufferBitMap);
+          // [change coord], if need
+          // Moving update region to the (0,0) point
+          if not(FIsCachedBuffer or FIsFullSizeBuffer) then
+          begin
+            GetViewportOrgEx(BufferDC, SaveViewport);
+            SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
+          end;
         end
         else
-          // Create buffer
-          BufferBitMap := CreateCompatibleBitmap(DC, RectWidth(UpdateRect), RectHeight(UpdateRect));
-        // Select buffer bitmap
-        SelectObject(BufferDC, BufferBitMap);
-        // [change coord], if need
-        // Moving update region to the (0,0) point
-        if not(FIsCachedBuffer or FIsFullSizeBuffer) then
-        begin
-          GetViewportOrgEx(BufferDC, SaveViewport);
-          SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
-        end;
+          BufferDC := DC;
       end
       else
         BufferDC := DC;
-    end
-    else
-      BufferDC := DC;
-  //------------------------------------------------------------------------------------------------
-  end else
-    BufferDC := DC;
-
-  if not(csOpaque in ControlStyle) then
-    if ParentBackground then
-    begin
-      if FIsCachedBackground then
-      begin
-        if CacheBackground = 0 then
-        begin
-          TempDC := CreateCompatibleDC(DC);
-          CacheBackground := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
-          SelectObject(TempDC, CacheBackground);
-          DrawBackground(TempDC); //DrawParentImage(Self, TempDC, False);
-          DeleteDC(TempDC);
-        end;
-        TempDC := CreateCompatibleDC(BufferDC);
-        SelectObject(TempDC, CacheBackground);
-        if not FIsCachedBuffer then
-          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
-            UpdateRect.Left, UpdateRect.Top, SRCCOPY)
-        else
-          BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
-            UpdateRect.Left, UpdateRect.Top, SRCCOPY);
-        DeleteDC(TempDC);
-      end
-      else
-        DrawBackground(BufferDC); //DrawParentImage(Self, BufferDC, False);
+    //------------------------------------------------------------------------------------------------
     end else
-      if (not DoubleBuffered or (DC <> 0)) then
-        if not IsStyledClientControl(Self) then
-          FillRect(BufferDC, ClientRect, Brush.Handle)
-        else
+      BufferDC := DC;
+
+    if not(csOpaque in ControlStyle) then
+      if ParentBackground then
+      begin
+        if FIsCachedBackground then
         begin
-          SetDCBrushColor(BufferDC,
-            ColorToRGB({$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}Color{$endif}));
-          FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
-        end;
+          if CacheBackground = 0 then
+          begin
+            TempDC := CreateCompatibleDC(DC);
+            CacheBackground := CreateCompatibleBitmap(DC, ClientWidth, ClientHeight);
+            SelectObject(TempDC, CacheBackground);
+            DrawBackground(TempDC); //DrawParentImage(Self, TempDC, False);
+            DeleteDC(TempDC);
+          end;
+          TempDC := CreateCompatibleDC(BufferDC);
+          SelectObject(TempDC, CacheBackground);
+          if not FIsCachedBuffer then
+            BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
+              UpdateRect.Left, UpdateRect.Top, SRCCOPY)
+          else
+            BitBlt(BufferDC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), TempDC,
+              UpdateRect.Left, UpdateRect.Top, SRCCOPY);
+          DeleteDC(TempDC);
+        end
+        else
+          DrawBackground(BufferDC); //DrawParentImage(Self, BufferDC, False);
+      end else
+        if (not DoubleBuffered or (DC <> 0)) then
+          if not IsStyledClientControl(Self) then
+            FillRect(BufferDC, ClientRect, Brush.Handle)
+          else
+          begin
+            SetDCBrushColor(BufferDC,
+              ColorToRGB({$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}Color{$endif}));
+            FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
+          end;
 
-  FCanvas.Lock;
-  try
-    Canvas.Handle := BufferDC;
-    TControlCanvas(Canvas).UpdateTextFlags;
+    FCanvas.Lock;
+    try
+      Canvas.Handle := BufferDC;
+      TControlCanvas(Canvas).UpdateTextFlags;
 
-    if Assigned(FOnPainting) then
-      FOnPainting(Self, Canvas, ClientRect);
-    Paint;
-    if Assigned(FOnPaint) then
-      FOnPaint(Self, Canvas, ClientRect);
-  finally
-    FCanvas.Handle := 0;
-    FCanvas.Unlock;
-  end;
-
-  if BufferedThis then
-  begin
-  //------------------------------------------------------------------------------------------------
-  // Dublicate code, see PaintHandler
-  //------------------------------------------------------------------------------------------------
-    // draw to window
-    if not DoubleBuffered then
-    begin
-      if not(FIsCachedBuffer or FIsFullSizeBuffer) then
-      begin
-        // [restore coord], if need
-        SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
-        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
-      end
-      else
-      begin
-        BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
-          UpdateRect.Left, UpdateRect.Top, SRCCOPY);
-      end;
+      if Assigned(FOnPainting) then
+        FOnPainting(Self, Canvas, ClientRect);
+      Paint;
+      if Assigned(FOnPaint) then
+        FOnPaint(Self, Canvas, ClientRect);
+    finally
+      FCanvas.Handle := 0;
+      FCanvas.Unlock;
     end;
 
-    if (BufferDC <> DC) then
-      DeleteObject(BufferDC);
-    if Region <> 0 then
-      DeleteObject(Region);
-    // delete buufer, if need
-    if not FIsCachedBuffer and (BufferBitMap <> 0) then
-      DeleteObject(BufferBitMap);
-  //------------------------------------------------------------------------------------------------
+  finally
+    if BufferedThis then
+    begin
+      //------------------------------------------------------------------------------------------------
+      // Duplicate code, see PaintHandler, Please sync this code!!!
+      //------------------------------------------------------------------------------------------------
+      try
+        // draw to window
+        if not DoubleBuffered then
+        begin
+          if not(FIsCachedBuffer or FIsFullSizeBuffer) then
+          begin
+            // [restore coord], if need
+            SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
+            BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC, 0, 0, SRCCOPY);
+          end
+          else
+          begin
+            BitBlt(DC, UpdateRect.Left, UpdateRect.Top, RectWidth(UpdateRect), RectHeight(UpdateRect), BufferDC,
+              UpdateRect.Left, UpdateRect.Top, SRCCOPY);
+          end;
+        end;
+      finally
+        if BufferDC <> DC then
+          DeleteObject(BufferDC);
+        if Region <> 0 then
+          DeleteObject(Region);
+        // delete buffer, if need
+        if not FIsCachedBuffer and (BufferBitMap <> 0) then
+          DeleteObject(BufferBitMap);
+      end;
+      //------------------------------------------------------------------------------------------------
+    end;
   end;
 end;
 
