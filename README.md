@@ -39,6 +39,8 @@ Free use for commercial and non-commercial projects, you need specify in About, 
 If you'd like to support the EsVCLComponents or EsVclCore lib, you can do so at this link: 
 ### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
+You can help by giving an example of using the components in your projects(screenshot, description).
+
 You can order developing vcl/fmx components, please submit requests to mail.
 
 **Email:** errorsoft(at)mail.ru or dr.enter256@gmail.com
