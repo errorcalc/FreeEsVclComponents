@@ -130,6 +130,9 @@ Features:
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
 
+Вы можете поддержать развитие проекта: 
+### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
+
 **Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
 
 Возможности:
