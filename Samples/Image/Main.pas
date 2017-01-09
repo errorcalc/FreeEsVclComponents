@@ -101,6 +101,7 @@ type
     TrackBar1: TTrackBar;
     Timer2: TTimer;
     EsImage22: TEsImage;
+    LabelIndex: TLabel;
     procedure Timer1Timer(Sender: TObject);
     procedure EsImageControl14Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -129,6 +130,7 @@ begin
   ImageListTestImage.ImageIndex := ImageListTestImage.ImageIndex + 1;
   if ImageListTestImage.ImageIndex >= ImageList.Count then
     ImageListTestImage.ImageIndex := 0;
+  LabelIndex.Caption := IntToStr(ImageListTestImage.ImageIndex);
 end;
 
 procedure TMainForm.Timer2Timer(Sender: TObject);

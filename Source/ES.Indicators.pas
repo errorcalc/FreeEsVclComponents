@@ -339,11 +339,8 @@ begin
   if (Parent = nil) or (csLoading in ComponentState) then
     Exit;
 
-  if Placement = TActivityPlacement.None then
+  if Placement <> TActivityPlacement.None then
   begin
-    Align := alNone;
-    Inherited Anchors := [akTop, akLeft];
-  end else
     if FDisplayMode = TActivityDisplayMode.Overlay then
     begin
       Inherited Align := alNone;
@@ -374,6 +371,7 @@ begin
         Top := Parent.ClientHeight - Height;
       end;
     end;
+  end;
 end;
 
 function TEsActivityBar.GetStartPos: double;

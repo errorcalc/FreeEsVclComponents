@@ -14,7 +14,6 @@ object StyleImageEditor: TStyleImageEditor
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Visible = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShortCut = FormShortCut
@@ -38,12 +37,6 @@ object StyleImageEditor: TStyleImageEditor
     Padding.Bottom = 2
     ParentColor = False
     TabOrder = 0
-    object Shape1: TShape
-      Left = 158
-      Top = 113
-      Width = 118
-      Height = 48
-    end
     object Panel1: TPanel
       Left = 0
       Top = 0
@@ -81,6 +74,8 @@ object StyleImageEditor: TStyleImageEditor
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = 32
+    ExplicitTop = 306
     DesignSize = (
       485
       37)
@@ -122,6 +117,8 @@ object StyleImageEditor: TStyleImageEditor
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitLeft = -16
+    ExplicitTop = 69
     object PlusSpeedButton: TSpeedButton
       Left = 125
       Top = 5

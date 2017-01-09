@@ -55,6 +55,7 @@ type
     property Kind: TProportionalKind read FKind write SetKind;
   end;
 
+  // only internal use
   TBackendSelection = class(TBackendControl)
   private const
     DefaultGrips = [TGripKind.TopLeft, TGripKind.TopRight, TGripKind.BottomLeft, TGripKind.BottomRight,

@@ -72,6 +72,7 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 0
+        TextLayout = Top
         Caption = 'Main'
         DesignSize = (
           201
@@ -222,6 +223,7 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 1
+        TextLayout = Top
         Caption = 'Visual'
         DesignSize = (
           201
@@ -373,6 +375,7 @@ object MainForm: TMainForm
         PaddingWithImage = True
         IsDrawHelper = True
         TabOrder = 2
+        TextLayout = Top
         Caption = 'Animation'
         DesignSize = (
           201
@@ -504,6 +507,7 @@ object MainForm: TMainForm
     Anchors = [akLeft, akTop, akRight]
     AutoHide = True
     Active = True
+    Placement = Top
     Color = clWhite
     ParentColor = False
     TabOrder = 0

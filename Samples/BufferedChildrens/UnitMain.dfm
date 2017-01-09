@@ -1,7 +1,7 @@
-object Form2: TForm2
+object FormDemo: TFormDemo
   Left = 0
   Top = 0
-  Caption = 'Form2'
+  Caption = 'Demo'
   ClientHeight = 487
   ClientWidth = 716
   Color = clBtnFace
@@ -48482,7 +48482,7 @@ object Form2: TForm2
   object CheckBoxBufferedChildrens: TCheckBox
     Left = 8
     Top = 8
-    Width = 97
+    Width = 114
     Height = 17
     Caption = 'BufferedChildrens'
     TabOrder = 1

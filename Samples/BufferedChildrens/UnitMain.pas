@@ -8,7 +8,7 @@ uses
   Vcl.Buttons, Vcl.ComCtrls, Vcl.Imaging.pngimage;
 
 type
-  TForm2 = class(TForm)
+  TFormDemo = class(TForm)
     EsLayout: TEsLayout;
     CheckBoxBufferedChildrens: TCheckBox;
     Label1: TLabel;
@@ -55,7 +55,7 @@ type
   end;
 
 var
-  Form2: TForm2;
+  FormDemo: TFormDemo;
 
 implementation
 
@@ -64,13 +64,13 @@ implementation
 uses
   Styles, Themes;
 
-procedure TForm2.CheckBoxBufferedChildrensClick(Sender: TObject);
+procedure TFormDemo.CheckBoxBufferedChildrensClick(Sender: TObject);
 begin
   EsLayout.Invalidate;
   EsLayout.BufferedChildrens := TCheckBox(Sender).Checked;
 end;
 
-procedure TForm2.CheckBoxUseThemeClick(Sender: TObject);
+procedure TFormDemo.CheckBoxUseThemeClick(Sender: TObject);
 begin
   if TCheckBox(Sender).Checked then
     TStyleManager.TrySetStyle('Windows10')
@@ -78,7 +78,7 @@ begin
     TStyleManager.TrySetStyle('Windows');
 end;
 
-procedure TForm2.EsLayoutPaint(Sender: TObject; Canvas: TCanvas; Rect: TRect);
+procedure TFormDemo.EsLayoutPaint(Sender: TObject; Canvas: TCanvas; Rect: TRect);
 begin
   Canvas.Pen.Width := 1;
   if TEsLayout(EsLayout).BufferedChildrens then
@@ -93,10 +93,10 @@ begin
   end;
   Canvas.Rectangle(Rect);
   Canvas.Font.Color := clBlue;
-  Canvas.TextOut(500, 2, 'TEsCustomControl <- TEsLayot');
+  Canvas.TextOut(300, 150, 'TEsCustomControl <- TEsBaseLayout <- TEsCustomLayout <- TEsLayot');
 end;
 
-procedure TForm2.TimerRepaintTimer(Sender: TObject);
+procedure TFormDemo.TimerRepaintTimer(Sender: TObject);
 begin
   Label1.Caption := 'Label' + IntToStr(Random(100000));
   Label2.Caption := 'Label' + IntToStr(Random(100000));

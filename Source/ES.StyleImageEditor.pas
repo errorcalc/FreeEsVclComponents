@@ -5,23 +5,11 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ToolWin,
-  Vcl.ComCtrls, Es.CfxClasses, Vcl.Imaging.PngImage, Es.Backend.Selection, Es.Vcl.Images;
+  Vcl.ComCtrls, Es.CfxClasses, Vcl.Imaging.PngImage, Es.Backend.Selection, Es.Images;
 
 {$SCOPEDENUMS on}
 
 type
-  TA = class
-  public type
-    T = (a, b);
-  end;
-
-  TB = class
-  public type
-    T = (a, b);
-  end;
-
-  TPaintBox = class(TEsImageControl);
-
   TStyleImageEditor = class(TForm)
     CancelButton: TButton;
     OkButton: TButton;
@@ -35,7 +23,6 @@ type
     LoadButton: TButton;
     Panel1: TPanel;
     Disp: TPaintBox;
-    Shape1: TShape;
     procedure PlusSpeedButtonClick(Sender: TObject);
     procedure MinusSpeedButtonClick(Sender: TObject);
     procedure FormShortCut(var Msg: TWMKey; var Handled: Boolean);
@@ -51,8 +38,6 @@ type
     FBitmap: TBitmap;
     d: THeaderStyle;
     FImageMargins: TImageMargins;
-    A: TA.T;
-    B: TB.T;
     procedure SetBitmap(const Value: TBitmap);
     procedure ChangeSelection(Sender: TObject);
     procedure SetImageMargins(const Value: TImageMargins);
@@ -75,8 +60,6 @@ type
     property ImageMargins: TImageMargins read FImageMargins write SetImageMargins;
   end;
 
-var
-  StyleImageEditor: TStyleImageEditor;
 
 implementation
 
@@ -194,7 +177,7 @@ var
   State: ICanvasSaver;
 begin
   Caption := Random(100000).toString;
-  TEsImageControl(Sender).Canvas.StretchDraw(Rect(0, 0, TEsImageControl(Sender).Width, TEsImageControl(Sender).Height), Bitmap);
+  TPaintBox(Sender).Canvas.StretchDraw(Rect(0, 0, TEsImageControl(Sender).Width, TEsImageControl(Sender).Height), Bitmap);
 
 //  TPaintBox(Sender).Canvas.DrawTransparentFrame(
 //    Rect((0 + ImageMargins.Left) * Zoom, (0 + ImageMargins.Top) * Zoom,
@@ -202,19 +185,19 @@ begin
 //    RGB(0, 0, 0), RGB(255, 255, 255), 200, '12 21 ');
   //TPaintBox(Sender).Canvas.DrawChessFrame(Rect((0 + ImageMargins.Left) * Zoom, (0 + ImageMargins.Top) * Zoom,
   //  (Bitmap.Width - ImageMargins.Right) * Zoom, (Bitmap.Height - ImageMargins.Bottom) * Zoom), clBlack, clWhite);
-  State := TEsImageControl(Sender).Canvas.SaveState([TBrush, TPen]);
-  TEsImageControl(Sender).Canvas.Pen.Style := psDot;
-  TEsImageControl(Sender).Canvas.Pen.Mode := pmNot;
-  TEsImageControl(Sender).Canvas.Brush.Style := bsClear;
+  State := TPaintBox(Sender).Canvas.SaveState([TBrush, TPen]);
+  TPaintBox(Sender).Canvas.Pen.Style := psDot;
+  TPaintBox(Sender).Canvas.Pen.Mode := pmNot;
+  TPaintBox(Sender).Canvas.Brush.Style := bsClear;
 //  TPaintBox(Sender).Canvas.Rectangle(Rect((0 + ImageMargins.Left) * Zoom, (0 + ImageMargins.Top) * Zoom,
 //    (Bitmap.Width - ImageMargins.Right) * Zoom, (Bitmap.Height - ImageMargins.Bottom) * Zoom));
-  TEsImageControl(Sender).Canvas.Line(Selection.Selection.Left * Zoom, 0, Selection.Selection.Left * Zoom, Bitmap.Height * Zoom);
+  TPaintBox(Sender).Canvas.Line(Selection.Selection.Left * Zoom, 0, Selection.Selection.Left * Zoom, Bitmap.Height * Zoom);
   if Selection.Selection.Left <> Selection.Selection.Right then
-    TEsImageControl(Sender).Canvas.Line(Selection.Selection.Right * Zoom - 1, 0, Selection.Selection.Right * Zoom - 1, Bitmap.Height * Zoom);
-  TEsImageControl(Sender).Canvas.Line(0, Selection.Selection.Top * Zoom, Bitmap.Width * Zoom, Selection.Selection.Top * Zoom);
+    TPaintBox(Sender).Canvas.Line(Selection.Selection.Right * Zoom - 1, 0, Selection.Selection.Right * Zoom - 1, Bitmap.Height * Zoom);
+  TPaintBox(Sender).Canvas.Line(0, Selection.Selection.Top * Zoom, Bitmap.Width * Zoom, Selection.Selection.Top * Zoom);
   if Selection.Selection.Top <> Selection.Selection.Bottom then
-    TEsImageControl(Sender).Canvas.Line(0, Selection.Selection.Bottom * Zoom - 1, Bitmap.Width * Zoom, Selection.Selection.Bottom * Zoom - 1);
-  TEsImageControl(Sender).Canvas.RestoreState(State);
+    TPaintBox(Sender).Canvas.Line(0, Selection.Selection.Bottom * Zoom - 1, Bitmap.Width * Zoom, Selection.Selection.Bottom * Zoom - 1);
+  TPaintBox(Sender).Canvas.RestoreState(State);
 
 //  DrawBox(TPaintBox(Sender).Canvas,
 //    Selection.Selection.Left * Zoom, Selection.Selection.Top * Zoom, 4);
@@ -357,7 +340,7 @@ end;
 procedure TStyleImageEditor.SetZoom(const Value: Integer);
 begin
   Selection.Numerator := Value;
-  TEsImageControl(Disp).RecreateBitmap;
+ // TEsImageControl(Disp).RecreateBitmap;
 end;
 
 procedure TStyleImageEditor.ZoomComboBoxChange(Sender: TObject);
