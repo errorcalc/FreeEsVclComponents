@@ -26,7 +26,7 @@ You can choose one of two license. See "LICENSE.txt"
 * TEsRegexButtonedEdit
 * TEsRegexLabeledEdit
 
-## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin) - compatibility
+## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo) - compatibility
 
 ## Now: And support C++Builder
 
