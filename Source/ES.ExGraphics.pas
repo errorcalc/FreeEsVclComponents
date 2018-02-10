@@ -23,7 +23,8 @@ interface
 {$I 'EsVclCore.inc'}
 
 uses
-  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes{$ifdef VER230UP}, Vcl.Imaging.PngImage{$endif};
+  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes{$ifdef VER230UP}, Vcl.Imaging.PngImage{$endif}
+  {$ifdef VER230UP},WinApi.GdipObj, WinApi.GdipApi{$endif};
 
 type
   {$scopedenums on}
@@ -132,12 +133,21 @@ type
   procedure BitmapAssignToPngImage(PngImage: TPngImage; Bitmap: TBitmap; IsPremultipledBitmap: Boolean = True);
   {$endif}
   procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); Inline;
+  {$ifndef DISABLE_GDIPLUS}
+  function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
+  {$endif}
 
   procedure GaussianBlur(Bitmap: TBitmap; Radius: Real);
   {$ifdef VER230UP}
   /// <summary>A cool procedure for a really fast Blur!</summary>
   procedure FastBlur(Bitmap: TBitmap; Radius: Real; BlurScale: Integer; HighQuality: Boolean = True);
   {$endif}
+
+  /// <summary>Draw halftone bitmap to canvas</summary>
+  procedure DrawHalftoneBitmap(Canvas: TCanvas; X, Y: Integer; Bitmap: TBitmap;
+   Value: Byte; Color: TColor = clBlack);
+  /// <summary>Halftone bitmap</summary>
+  procedure HalftoneBitmap(Bitmap: TBitmap; Value: Byte; Color: TColor = clBlack);
 
   // Color spaces
   procedure ColorToHSL(Color: TColor; var H, S, L: Integer);
@@ -149,7 +159,7 @@ type
 implementation
 
 uses
-  System.Classes, System.Types {$ifdef VER230UP},WinApi.GdipObj, WinApi.GdipApi{$endif}, Vcl.GraphUtil, System.UITypes,
+  System.Classes, System.Types, Vcl.GraphUtil, System.UITypes,
   System.TypInfo;
 
 //------------------------------------------------------------------------------
@@ -409,6 +419,27 @@ begin
     Bitmap.Assign(Graphic);
 end;
 
+{$ifndef DISABLE_GDIPLUS}
+function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
+begin
+  Result := nil;
+
+  if Bitmap.PixelFormat = pf32bit then
+  begin
+    Assert(Bitmap.HandleType = bmDIB);
+    Result := TGPBitmap.Create(Bitmap.Width, Bitmap.Height, -Bitmap.Width * 4,
+      PixelFormat32bppPARGB, Bitmap.ScanLine[0]);
+  end else
+  if Bitmap.PixelFormat = pf24bit then
+  begin
+    Assert(Bitmap.HandleType = bmDIB);
+    Result := TGPBitmap.Create(Bitmap.Width, Bitmap.Height, -BytesPerScanline(Bitmap.Width, 24, 32),
+      PixelFormat24bppRGB, Bitmap.ScanLine[0]);
+  end else
+    Result := TGPBitmap.Create(Bitmap.Handle, Bitmap.Palette);
+end;
+{$endif}
+
 //--------------------------------------------------------------------------------------------------
 // *** Begin changed GBlur2.pas ***
 type
@@ -604,6 +635,87 @@ begin
   end;
 end;
 {$endif}
+
+procedure DrawHalftoneBitmap(Canvas: TCanvas; X, Y: Integer; Bitmap: TBitmap;
+   Value: Byte; Color: TColor = clBlack);
+var
+  Brush: TBrush;
+begin
+  Brush := nil;
+  try
+    Brush := TBrush.Create;
+    Brush.Color := Color;
+
+    FillRect(Canvas.Handle, Rect(X, Y, X + Bitmap.Width, Y + Bitmap.Height), Brush.Handle);
+    Canvas.Draw(X, Y, Bitmap, 255 - Value);
+  finally
+    Brush.Free;
+  end;
+end;
+
+procedure HalftoneBitmap(Bitmap: TBitmap; Value: Byte; Color: TColor = clBlack);
+var
+//  {$ifndef DISABLE_GDIPLUS}
+//  GPBitmap: TGPBitmap;
+//  Graphics: TGPGraphics;
+//  Attr: TGPImageAttributes;
+//  M: TColorMatrix;
+//  {$endif}
+  Temp: TBitmap;
+  Brush: TBrush;
+
+begin
+  Color := ColorToRGB(Color);
+
+//  {$ifndef DISABLE_GDIPLUS}
+//  GPBitmap := nil;
+//  Graphics := nil;
+//  Attr := nil;
+//  try
+//    GPBitmap := BitmapToGPBitmap(Bitmap);
+//    Graphics := TGPGraphics.Create(Bitmap.Canvas.Handle);
+//    Attr := TGPImageAttributes.Create;
+//
+//    FillMemory(@M, SizeOf(TColorMatrix), 0);
+//    M[0, 0] := 1 - Value / 255;// r
+//    M[1, 1] := 1 - Value / 255;// g
+//    M[2, 2] := 1 - Value / 255;// b
+//
+//    M[3, 0] := (Value / 255) * (GetRValue(Color) / 255);// r
+//    M[3, 1] := (Value / 255) * (GetGValue(Color) / 255);// g
+//    M[3, 2] := (Value / 255) * (GetBValue(Color) / 255);// b
+//
+//    M[3, 3] := 1;// a
+//    M[4, 4] := 1;// a
+//
+//    Attr.SetColorMatrix(M);
+//
+//    Graphics.DrawImage(GPBitmap,
+//      MakeRect(0, 0, Bitmap.Width, Bitmap.Height),
+//      0, 0, Bitmap.Width, Bitmap.Height, UnitPixel, Attr);
+//
+//  finally
+//    GPBitmap.Free;
+//    Graphics.Free;
+//    Attr.Free;
+//  end;
+//  {$endif}
+
+  Brush := nil;
+  Temp := nil;
+  try
+    Temp := TBitmap.Create;
+    Temp.Assign(Bitmap);
+    Brush := TBrush.Create;
+    Brush.Color := Color;
+
+    FillRect(Bitmap.Canvas.Handle, Rect(0, 0, Bitmap.Width, Bitmap.Height), Brush.Handle);
+    Bitmap.Canvas.Draw(0, 0, Temp, 255 - Value);
+  finally
+    Temp.Free;
+    Brush.Free;
+  end;
+end;
 
 //------------------------------------------------------------------------------
 // Color spaces
