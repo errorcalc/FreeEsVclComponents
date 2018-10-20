@@ -10,7 +10,7 @@
 {         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
 {                                                                              }
 { You can order developing vcl/fmx components, please submit requests to mail. }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
+{ Р’С‹ РјРѕР¶РµС‚Рµ Р·Р°РєР°Р·Р°С‚СЊ СЂР°Р·СЂР°Р±РѕС‚РєСѓ VCL/FMX РєРѕРјРїРѕРЅРµРЅС‚Р° РЅР° Р·Р°РєР°Р·.                   }
 {******************************************************************************}
 unit ES.Switch;
 
@@ -419,6 +419,7 @@ end;
 
 procedure TEsCustomSwitch.CMEnabledChanged(var Message: TMessage);
 begin
+  Inherited;
   Invalidate;
 end;
 
@@ -431,6 +432,7 @@ end;
 
 procedure TEsCustomSwitch.CMMouseEnter(var Message: TMessage);
 begin
+  Inherited;
   if FChecked then
     State := ssOnHot
   else
@@ -440,6 +442,7 @@ end;
 
 procedure TEsCustomSwitch.CMMouseLeave(var Message: TMessage);
 begin
+  Inherited;
   if FChecked then
     State := ssOnNormal
   else
@@ -449,6 +452,7 @@ end;
 
 procedure TEsCustomSwitch.CMStyleChanged(var Message: TMessage);
 begin
+  Inherited;
   // FColors.UpdateColors;
 end;
 
