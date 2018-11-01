@@ -102,6 +102,8 @@ type
     Timer2: TTimer;
     EsImage22: TEsImage;
     LabelIndex: TLabel;
+    Shape3: TShape;
+    Shape4: TShape;
     procedure Timer1Timer(Sender: TObject);
     procedure EsImageControl14Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);

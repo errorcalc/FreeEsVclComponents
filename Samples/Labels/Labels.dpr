@@ -1,14 +1,14 @@
-program DfmConverter;
+program Labels;
 
 uses
   Vcl.Forms,
-  Main in 'Main.pas' {FormConverter};
+  UnitMain in 'UnitMain.pas' {FormMain};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormConverter, FormConverter);
+  Application.CreateForm(TFormMain, FormMain);
   Application.Run;
 end.

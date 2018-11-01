@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                       EsVclComponents/EsVclCore v2.0                         }
-{                           ErrorSoft(c) 2009-2016                             }
+{                       EsVclComponents/EsVclCore v3.0                         }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -98,6 +98,7 @@ type
     procedure DrawChessFrame(R: TRect; Color1, Color2: TColor); overload;
     procedure DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
     procedure DrawInsideFrame(R: TRect; Width: Integer; Color: TColor = clNone);
+    procedure DrawCorners(R: TRect; Width: Integer);
     // support save/restore state
     function SaveState(const Objects: array of TGraphicsClass): ICanvasSaver; overload;
     function SaveState: ICanvasSaver; overload;
@@ -154,13 +155,14 @@ type
   function HSLToColor(Hue, Saturation, Lightness: Integer): TColor;
   //---
   function LuminanceColor(Color: TColor; Value: Integer): TColor;
+  function HighlightColor(Color: TColor; Value: Integer): TColor;
   function GetLuminanceColor(Color: TColor): Byte;
 
 implementation
 
 uses
   System.Classes, System.Types, Vcl.GraphUtil, System.UITypes,
-  System.TypInfo;
+  System.TypInfo, System.Math;
 
 //------------------------------------------------------------------------------
 // Utils
@@ -422,8 +424,6 @@ end;
 {$ifndef DISABLE_GDIPLUS}
 function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
 begin
-  Result := nil;
-
   if Bitmap.PixelFormat = pf32bit then
   begin
     Assert(Bitmap.HandleType = bmDIB);
@@ -865,8 +865,14 @@ begin
   Result := HSLToColor(H, S, Value);
 end;
 
+function HighlightColor(Color: TColor; Value: Integer): TColor;
+begin
+  Result := LuminanceColor(Color, Min(255, Max(0, GetLuminanceColor(Color) + Value)));
+end;
+
 function GetLuminanceColor(Color: TColor): Byte;
 begin
+  Color := ColorToRgb(Color);
   Result := Trunc((GetRValue(Color) + GetGValue(Color) + GetBValue(Color)) * (240/255) / 3);
 end;
 
@@ -1051,6 +1057,26 @@ begin
     DeleteObject(Brush);
     Bitmap.Free;
   end;
+end;
+
+procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
+  .DrawCorners(R: TRect; Width: Integer);
+begin
+  MoveTo(R.Left, R.Top + Width - 1);
+  LineTo(R.Left, R.Top);
+  Self.LineTo(R.Left + Width, R.Top);
+
+  MoveTo(R.Right - Width, R.Top);
+  LineTo(R.Right - 1, R.Top);
+  LineTo(R.Right - 1, R.Top + Width);
+
+  MoveTo(R.Right - 1, R.Bottom - Width);
+  LineTo(R.Right - 1, R.Bottom - 1);
+  LineTo(R.Right - Width - 1, R.Bottom - 1);
+
+  MoveTo(R.Left + Width - 1, R.Bottom - 1);
+  LineTo(R.Left, R.Bottom - 1);
+  LineTo(R.Left, R.Bottom - Width - 1);
 end;
 
 function ValidRect(Rect: TRect): Boolean;

@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                           ErrorSoft Core library                             }
-{                           ErrorSoft(c) 2016-2016                             }
+{                           errorsoft Core library                             }
+{                           errorsoft(c) 2016-2018                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }

@@ -22,7 +22,9 @@ object FormDemo: TFormDemo
     Width = 700
     Height = 448
     Anchors = [akLeft, akTop, akRight, akBottom]
+    BufferedChildren = False
     IsDrawHelper = True
+    ParentBufferedChildren = False
     TabOrder = 0
     OnPaint = EsLayoutPaint
     DesignSize = (
@@ -48498,7 +48500,7 @@ object FormDemo: TFormDemo
     OnClick = CheckBoxUseThemeClick
   end
   object TimerRepaint: TTimer
-    Interval = 1
+    Interval = 10
     OnTimer = TimerRepaintTimer
     Left = 488
     Top = 47

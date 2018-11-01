@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2016                             }
+{                            EsVclComponents v3.0                              }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -26,13 +26,15 @@ implementation
 
 uses
   System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
-  ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics, ES.RegexEditor;
+  ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics,
+  ES.RegexEditor, ES.PaintBox, ES.Labels, ToolsApi, DIalogs;
 
 procedure Register;
 begin
-  RegisterComponents('ErrorSoft', [
+
+  RegisterComponents('errorsoft', [
     // Layouts
-    TEsLayout,
+    TEsLayout, TEsPanel,
     // NinePatch
     TEsNinePatchImage, TEsImageLabel, TEsImageLayout, TEsImageStaticText,
     // Indicators
@@ -42,7 +44,12 @@ begin
     // Images
     TEsImage, TEsImageControl,
     // Regex Controls
-    TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit
+    TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit,
+    // PaintBox
+    TEsPaintBox,
+    // Labels
+    TEsLinkLabel,
+    TEsVersionLabel
   ]);
 
   // ImageList support
@@ -54,6 +61,10 @@ begin
   RegisterComponentEditor(TEsRegexButtonedEdit, TEsRegexEditorEditor);
   RegisterComponentEditor(TEsRegexLabeledEdit, TEsRegexEditorEditor);
 
+  // AlphaControls/alphaskins is bad.
+  // I has too much head pain, because of them!
+  // Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
+  // I think in hell there is a personal cauldron...
   {$ifdef FixLoadPng}
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsNinePatchImage, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageLabel, '', TEsPngPropertyFix);

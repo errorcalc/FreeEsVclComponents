@@ -1,7 +1,9 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Snow update
-**Version 2.0**
+# Community update
+*Release is dedicated to the emergence of a free version of the Delphi Community Edition!*
+*Релиз посвящен появлению бесплатной версии Delphi Community Edition!*
+**Version 3.0**
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
@@ -12,23 +14,28 @@ You can choose one of two license. See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
+**See [ReleaseNotes_en.pdf](Doc/ReleaseNotes_en.pdf) with a description of the new library features!**
+**Смотрите [ReleaseNotes_ru.pdf](Doc/ReleaseNotes_en.pdf) с описанием новых возможностей библиотеки!**
+
 # List of components:
 * TEsLayout (Absolutely no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
+* TEsPanel (Absolutely no flicker! Also this support new frame styles)
+* TEsPaintBox (Flicker free PaintBox)
 * TEsImageLayout (Best for your application)
 * TEsImageStaticText
 * TEsNinePatchImage
 * TEsImageLabel
-* TEsActivityBar (looks like Windows 10 XAML control!)
-* TEsSwitch (looks like Windows 10 XAML control!)
-* TEsImage (much better than the TImage)
-* TEsImageControl (much better than the TImage & absolutely no flicker!)
+* TEsActivityBar (Looks like Windows 10 XAML control!)
+* TEsSwitch (Looks like Windows 10 XAML control!)
+* TEsImage (Much better than the TImage)
+* TEsImageControl (Much better than the TImage & absolutely no flicker!)
 * TEsRegexpEdit
 * TEsRegexButtonedEdit
 * TEsRegexLabeledEdit
+* TEsLinkLabel
+* TEsVersionLabel
 
-## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo) - compatibility
-
-## Now: And support C++Builder
+## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio) - compatibility
 
 # English ReadMe:
 
@@ -49,7 +56,7 @@ Features:
 * Excellent support for transparency!
 * No flicker!
 * Support for built-in VCL skins
-* Support Hight DPI (Seattle+)
+* Support Hight DPI (Berlin+)
 * Display convenient borders in DesignTime, activate properties IsDrawHelper
 * Windows XP support
 
@@ -63,6 +70,18 @@ Features:
 
 ![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - The basic container. Interesting possibility for double buffering TGraphicControl heirs (TLabel, TGlyphButton, TImage, TBevel ...)
+
+![Icon](Source/icons/TESPANEL32.bmp)
+**TEsPanel** - Flicker free Panel. It’s very nice replacement for TPanel, also this support new frame styles
+
+![Icon](Source/icons/TESLINKLABEL32.bmp)
+**TEsLinkLabel** - Clickable link, opens a link on the Internet or local
+
+![Icon](Source/icons/TESVERSIONLABEL32.bmp)
+**TEsVersionLabel** - Display current version of application
+
+![Icon](Source/icons/TESPAINTBOX32.bmp)
+**TEsPaintBox** - Flicker free PaintBox. It’s very nice replacement for TPaintBox
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
 **TEsImageLayout** - The Layout with support background 9-Patch images and image - Overlay
@@ -135,13 +154,13 @@ Features:
 Вы можете поддержать развитие проекта: 
 ### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
-**Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
+**Вы можете помочь развитию библиотеки, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
 
 Возможности:
 * Превосходная поддержка прозрачности
 * Отсутствие мерцания
 * Поддержка встроенного в VCL движка тем
-* Поддержка Hight DPI (Seattle+)
+* Поддержка Hight DPI (Berlin+)
 * Удобное отображение границ в DesignTime, при активации свойства IsDrawHelper
 * Поддержка Windows XP
 
@@ -156,6 +175,18 @@ Features:
 ![Icon](Source/icons/TESLAYOUT32.bmp)
 **TEsLayout** - Базовый компонент - контейнер.
 Интересен возможностью двойной буферизации для наследников TGraphicControl (TLabel, TGlyphButton, TImage, TBevel...)
+
+![Icon](Source/icons/TESPANEL32.bmp)
+**TEsPanel** - Свободный от мерцания аналог TPanel. Отличная замена TPanel, поддерживающая новые стили фреймов
+
+![Icon](Source/icons/TESLINKLABEL32.bmp)
+**TEsLinkLabel** - Кликабельная ссылка, открывает локальную или интернет ссылку
+
+![Icon](Source/icons/TESVERSIONLABEL32.bmp)
+**TEsVersionLabel** - Отображает текущую версию приложения
+
+![Icon](Source/icons/TESPAINTBOX32.bmp)
+**TEsPaintBox** - PaintBox свободный от мерцания, отличная замена стандартному мерцающему TPaintBox
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
 **TEsImageLayout** - Layot с поддержкой фоновых 9-Patch изображений, а также изображения - Overlay-a

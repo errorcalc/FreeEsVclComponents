@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2016                             }
+{                            EsVclComponents v3.0                              }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -241,7 +241,7 @@ type
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
-    property BufferedChildrens;// TEsCustomControl
+    property BufferedChildren;// TEsCustomControl
     property Color;
     property Constraints;
     property Ctl3D;
@@ -262,7 +262,7 @@ type
     property Padding;
     property ParentBiDiMode;
     property ParentBackground;
-    property ParentBufferedChildrens;// TEsCustomControl
+    property ParentBufferedChildren;// TEsCustomControl
     property ParentColor;
     property ParentCtl3D;
     property ParentDoubleBuffered;
@@ -326,6 +326,19 @@ implementation
 
 uses
   Vcl.Themes;
+
+procedure DrawHelper(Canvas: TCanvas; Width, Height: Integer);
+var
+  Saver: ICanvasSaver;
+begin
+  Saver := Canvas.SaveState([TPen]);
+  try
+    Canvas.Pen.Mode := pmNot;
+    Canvas.DrawCorners(Rect(0, 0, Width, Height), 10);
+  finally
+    Canvas.RestoreState(Saver);
+  end;
+end;
 
 { TEsNinePatchImage }
 
@@ -432,6 +445,10 @@ procedure TEsNinePatchImage.Paint;
 begin
   Canvas.Font := Font;
   NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
+
+  if (csDesigning in ComponentState) and not IsDrawHelper then
+    DrawHelper(Canvas, Width, Height);
+
   inherited;
 end;
 
@@ -668,6 +685,10 @@ procedure TEsCustomImageLayout.Paint;
 begin
   Canvas.Font := Font;
   NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
+
+  if (csDesigning in ComponentState) and not IsDrawHelper then
+    DrawHelper(Canvas, Width, Height);
+
   inherited;
 end;
 
