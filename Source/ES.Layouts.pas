@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2016                             }
+{                            EsVclComponents v3.0                              }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -17,7 +17,8 @@ unit ES.Layouts;
 interface
 
 uses
-  Winapi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.BaseControls;
+  Winapi.Messages, Vcl.Controls, System.Classes, System.Types, Vcl.Graphics, ES.BaseControls,
+  ES.CfxClasses;
 
 type
   TEsCustomLayout = class(TEsBaseLayout)
@@ -41,7 +42,7 @@ type
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
-    property BufferedChildrens;// TEsCustomControl
+    property BufferedChildren;// TEsCustomControl
     property Color;
     property Constraints;
     property Ctl3D;
@@ -62,7 +63,7 @@ type
     property Padding;
     property ParentBiDiMode;
     property ParentBackground;
-    property ParentBufferedChildrens;// TEsCustomControl
+    property ParentBufferedChildren;// TEsCustomControl
     property ParentColor;
     property ParentCtl3D;
     property ParentDoubleBuffered;
@@ -108,10 +109,32 @@ type
     property OnUnDock;
   end;
 
+  TEsPanel = class(TEsLayout)
+  private
+    FFrameWidth: TFrameWidth;
+    FFrameColor: TColor;
+    FFrameStyle: TFrameStyle;
+    procedure SetFrameColor(const Value: TColor);
+    procedure SetFrameStyle(const Value: TFrameStyle);
+    procedure SetFrameWidth(const Value: TFrameWidth);
+  protected
+    procedure Paint; override;
+    procedure AdjustClientRect(var Rect: TRect); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+  published
+    property BevelKind;
+    property BevelInner;
+    property BevelOuter;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.Raised;
+    property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
+    property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
+  end;
+
 implementation
 
 uses
-  ES.ExGraphics;
+  ES.ExGraphics, ES.Utils, Vcl.Themes;
 
 procedure TEsCustomLayout.CMIsToolControl(var Message: TMessage);
 begin
@@ -132,6 +155,69 @@ procedure TEsCustomLayout.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
   // nope now
+end;
+
+{ TEsPanel }
+
+procedure TEsPanel.AdjustClientRect(var Rect: TRect);
+begin
+  inherited;
+  if FrameStyle <> TExFrameStyle.None then
+  begin
+    Rect.Inflate(-GetFrameWidth(FrameStyle, FrameWidth), -GetFrameWidth(FrameStyle, FrameWidth));
+  end;
+end;
+
+constructor TEsPanel.Create(AOwner: TComponent);
+begin
+  inherited;
+
+  FFrameColor := clBtnShadow;
+  FFrameWidth := 1;
+  FFrameStyle := TExFrameStyle.Raised;
+end;
+
+procedure TEsPanel.Paint;
+begin
+  if (csDesigning in ComponentState) and IsDrawHelper then
+    DrawControlHelper(Self, [hoPadding, hoClientRect], GetFrameWidth(FrameStyle, FrameWidth));
+
+  if FrameStyle <> TExFrameStyle.None then
+    if IsStyledBorderControl(Self) then
+      DrawFrame(Canvas, ClientRect, FrameStyle, FrameWidth, StyleServices.GetSystemColor(FrameColor),
+        StyleServices.GetSystemColor(clBtnHighlight), StyleServices.GetSystemColor(clBtnShadow))
+    else
+      DrawFrame(Canvas, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
+
+end;
+
+procedure TEsPanel.SetFrameColor(const Value: TColor);
+begin
+  if FFrameColor <> Value then
+  begin
+    FFrameColor := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsPanel.SetFrameStyle(const Value: TFrameStyle);
+begin
+  if FFrameStyle <> Value then
+  begin
+    FFrameStyle := Value;
+    Realign;
+    Invalidate;
+  end;
+end;
+
+procedure TEsPanel.SetFrameWidth(const Value: TFrameWidth);
+begin
+  if FFrameWidth <> Value then
+  begin
+    FFrameWidth := Value;
+    Realign;
+    Invalidate;
+  end;
 end;
 
 end.

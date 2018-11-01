@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                       EsVclComponents/EsVclCore v2.0                         }
-{                           ErrorSoft(c) 2009-2017                             }
+{                       EsVclComponents/EsVclCore v3.0                         }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -41,7 +41,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 2.0;
+  EsVclCoreVersion = 3.0;
 
 type
   THelperOption = (hoPadding, hoBorder, hoClientRect);
@@ -58,29 +58,25 @@ type
     CacheBackground: HBITMAP;// Cache for background BitMap
     FIsCachedBuffer: Boolean;
     FIsCachedBackground: Boolean;
-    StoredCachedBuffer: Boolean;
-    StoredCachedBackground: Boolean;
-    FBufferedChildrens: Boolean;
-    FParentBufferedChildrens: Boolean;
+    FBufferedChildren: Boolean;
+    FParentBufferedChildren: Boolean;
     FIsFullSizeBuffer: Boolean;
     // paint events
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
     // draw helper
     FIsDrawHelper: Boolean;
-    // transparent mouse
-    // FIsTransparentMouse: Boolean;
     // paint
     procedure SetIsCachedBuffer(Value: Boolean);
     procedure SetIsCachedBackground(Value: Boolean);
     procedure SetIsDrawHelper(const Value: Boolean);
     procedure SetIsOpaque(const Value: Boolean);
     function GetIsOpaque: Boolean;
-    procedure SetBufferedChildrens(const Value: Boolean);
-    procedure SetParentBufferedChildrens(const Value: Boolean);
+    procedure SetBufferedChildren(const Value: Boolean);
+    procedure SetParentBufferedChildren(const Value: Boolean);
     function GetTransparent: Boolean;
     procedure SetTransparent(const Value: Boolean);
-    function IsBufferedChildrensStored: Boolean;
+    function IsBufferedChildrenStored: Boolean;
     // handle messages
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
     procedure WMEraseBkgnd(var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
@@ -93,15 +89,17 @@ type
     // other
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
     procedure WMTextChanges(var Message: TMessage); message WM_SETTEXT;
+    // fix
+    procedure FixBufferedChildren(Reader: TReader);
+    procedure FixParentBufferedChildren(Reader: TReader);
+    procedure SetIsFullSizeBuffer(const Value: Boolean);
   protected
+    // fix
+    procedure DefineProperties(Filer: TFiler); override;
     // paint
     property Canvas: TCanvas read FCanvas;
     procedure DeleteCache;{$IFDEF VER210UP}inline;{$ENDIF}
     procedure Paint; virtual;
-    procedure BeginCachedBuffer;{$IFDEF VER210UP}inline;{$ENDIF}
-    procedure EndCachedBuffer;{$IFDEF VER210UP}inline;{$ENDIF}
-    procedure BeginCachedBackground;{$IFDEF VER210UP}inline;{$ENDIF}
-    procedure EndCachedBackground;{$IFDEF VER210UP}inline;{$ENDIF}
     procedure PaintWindow(DC: HDC); override;
     procedure PaintHandler(var Message: TWMPaint);
     procedure DrawBackground(DC: HDC); virtual;
@@ -124,15 +122,14 @@ type
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
     // BufferedChildrens
-    property ParentBufferedChildrens: Boolean read FParentBufferedChildrens write SetParentBufferedChildrens default True;
-    property BufferedChildrens: Boolean read FBufferedChildrens write SetBufferedChildrens stored IsBufferedChildrensStored;
+    property ParentBufferedChildren: Boolean read FParentBufferedChildren write SetParentBufferedChildren default True;
+    property BufferedChildren: Boolean read FBufferedChildren write SetBufferedChildren stored IsBufferedChildrenStored;
     // External prop
     property IsCachedBuffer: Boolean read FIsCachedBuffer write SetIsCachedBuffer default False;
     property IsCachedBackground: Boolean read FIsCachedBackground write SetIsCachedBackground default False;
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
     property IsOpaque: Boolean read GetIsOpaque write SetIsOpaque default False;
-    // property IsTransparentMouse: Boolean read FIsTransparentMouse write FIsTransparentMouse default False;
-    property IsFullSizeBuffer: Boolean read FIsFullSizeBuffer write FIsFullSizeBuffer default False;
+    property IsFullSizeBuffer: Boolean read FIsFullSizeBuffer write SetIsFullSizeBuffer default False;
   end;
 
   {$IFDEF VER180UP}
@@ -165,9 +162,11 @@ type
     // new
     procedure CalcContentMargins(var Margins: TContentMargins); virtual;
   public
+    constructor Create(AOwner: TComponent); override;
     function ContentRect: TRect; virtual;
     function ContentMargins: TContentMargins; inline;
     property BorderWidth: TBorderWidth read FBorderWidth write SetBorderWidth default 0;
+    property BufferedChildren default True;
   end;
 
   /// <summary> The GraphicControl, supports Padding and IsDrawHelper property </summary>
@@ -192,7 +191,7 @@ type
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
   end;
 
-  procedure DrawControlHelper(Control: TControl; Options: THelperOptions); overload;
+  procedure DrawControlHelper(Control: TControl; Options: THelperOptions; FrameWidth: Integer = 0); overload;
   procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
     Padding: TPadding; Options: THelperOptions); overload;
   {$ENDIF}
@@ -301,12 +300,13 @@ begin
   end;
 end;
 
-procedure DrawControlHelper(Control: TControl; Options: THelperOptions);
+procedure DrawControlHelper(Control: TControl; Options: THelperOptions; FrameWidth: Integer = 0);
 var
   Canvas: TCanvas;
   Padding: TPadding;
   BorderWidth: Integer;
   MyCanvas: Boolean;
+  R: TRect;
 begin
   MyCanvas := False;
   Canvas := nil;
@@ -316,6 +316,8 @@ begin
   // if win control
   if Control is TWinControl then
   begin
+    TOpenCtrl(Control).AdjustClientRect(R);
+
     // get padding
     Padding := TWinControl(Control).Padding;
     // get canvas
@@ -342,7 +344,9 @@ begin
   end;
 
   try
-    DrawControlHelper(Canvas, Control.ClientRect, BorderWidth, Padding, Options);
+    R := Control.ClientRect;
+    R.Inflate(-FrameWidth, -FrameWidth);
+    DrawControlHelper(Canvas, R, BorderWidth, Padding, Options);
   finally
     if MyCanvas then
       Canvas.Free;
@@ -427,7 +431,6 @@ begin
   IntersectClipRect(DC, 0, 0, Control.Parent.ClientWidth, Control.Parent.ClientHeight);
 
   Control.Parent.Perform(WM_ERASEBKGND, DC, 0);
-  // Control.Parent.Perform(WM_PAINT, DC, 0);
   Control.Parent.Perform(WM_PRINTCLIENT, DC, PRF_CLIENT);
 
   RestoreDC(DC, SaveIndex);
@@ -442,43 +445,27 @@ begin
   SetViewportOrgEx(DC, P.X, P.Y, nil);
 end;
 
-{ TESCustomControl }
-
-procedure BitMapDeleteAndNil(var BitMap: HBITMAP);{$IFDEF VER210UP}inline;{$ENDIF}
+procedure BitmapDeleteAndNil(var Bitmap: HBITMAP);{$IFDEF VER210UP}inline;{$ENDIF}
 begin
-  if BitMap <> 0 then
+  if Bitmap <> 0 then
   begin
-    DeleteObject(BitMap);
-    BitMap := 0;
+    DeleteObject(Bitmap);
+    Bitmap := 0;
   end;
-end;
-
-procedure TEsCustomControl.BeginCachedBackground;
-begin
-  if CacheBackground <> 0 then BitMapDeleteAndNil(CacheBackground);
-  StoredCachedBackground := FIsCachedBackground;
-  FIsCachedBackground := True;
-end;
-
-procedure TEsCustomControl.BeginCachedBuffer;
-begin
-  if CacheBitmap <> 0 then BitMapDeleteAndNil(CacheBitmap);
-  StoredCachedBuffer := FIsCachedBuffer;
-  FIsCachedBuffer := True;
 end;
 
 procedure TEsCustomControl.CMParentBufferedChildrensChanged(var Message: TMessage);
 begin
-  if FParentBufferedChildrens then
+  if FParentBufferedChildren then
   begin
     if Parent <> nil then
     begin
       if Parent is TEsCustomControl then
-        BufferedChildrens := TEsCustomControl(Parent).BufferedChildrens
+        BufferedChildren := TEsCustomControl(Parent).BufferedChildren
       else
-        BufferedChildrens := False;
+        BufferedChildren := False;
     end;
-    FParentBufferedChildrens := True;
+    FParentBufferedChildren := True;
   end;
 end;
 
@@ -498,23 +485,42 @@ end;
 constructor TEsCustomControl.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FCanvas := TControlCanvas.Create;
-  TControlCanvas(FCanvas).Control := Self;
+
+  // init
   ControlStyle := ControlStyle - [csOpaque] + [csParentBackground];
   {$IFDEF VER210UP}
   ParentDoubleBuffered := False;
   {$ENDIF}
-  FParentBufferedChildrens := True;// !!
+
   CacheBitmap := 0;
   CacheBackground := 0;
+
+  // canvas
+  FCanvas := TControlCanvas.Create;
+  TControlCanvas(FCanvas).Control := Self;
+
+  // new props
+  FParentBufferedChildren := True;
+  FBufferedChildren := False;
   FIsCachedBuffer := False;
   FIsCachedBackground := False;
+  FIsFullSizeBuffer := False;
+  FIsDrawHelper := False;
 end;
 
+// temp fix
+procedure TEsCustomControl.DefineProperties(Filer: TFiler);
+begin
+  inherited;
+  Filer.DefineProperty('BufferedChildrens', FixBufferedChildren, nil, False);
+  Filer.DefineProperty('ParentBufferedChildrens', FixParentBufferedChildren, nil, False);
+end;
+
+// ok
 procedure TEsCustomControl.DeleteCache;
 begin
-  if CacheBitmap <> 0 then BitMapDeleteAndNil(CacheBitmap);
-  if CacheBackground <> 0 then BitMapDeleteAndNil(CacheBackground);
+  BitmapDeleteAndNil(CacheBitmap);
+  BitmapDeleteAndNil(CacheBackground);
 end;
 
 destructor TEsCustomControl.Destroy;
@@ -529,6 +535,7 @@ begin
   DrawParentImage(Self, DC, False);
 end;
 
+// hack for bad graphic controls
 procedure TEsCustomControl.DrawBackgroundForOpaqueControls(DC: HDC);
 var
   i: integer;
@@ -552,14 +559,10 @@ begin
           FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
       end;
     end;
-//    if (Control is TGraphicControl) and (Control is TSpeedButton) and (csOpaque in Control.ControlStyle) and
-//      Control.Visible and (not (csDesigning in ComponentState) or not (csDesignerHide in Control.ControlState) and
-//      not (csNoDesignVisible in ControlStyle)) then
-//        FillRect(DC, Rect(Control.Left, Control.Top, Control.Left + Control.Width, Control.Top + Control.Height), Brush.Handle);
   end;
 end;
 
-procedure TEsCustomControl.EndCachedBackground;
+(*procedure TEsCustomControl.EndCachedBackground;
 begin
   FIsCachedBackground := StoredCachedBackground;
 end;
@@ -567,6 +570,18 @@ end;
 procedure TEsCustomControl.EndCachedBuffer;
 begin
   FIsCachedBuffer := StoredCachedBuffer;
+end;*)
+
+// temp fix
+procedure TEsCustomControl.FixBufferedChildren(Reader: TReader);
+begin
+  BufferedChildren := Reader.ReadBoolean;
+end;
+
+// temp fix
+procedure TEsCustomControl.FixParentBufferedChildren(Reader: TReader);
+begin
+  ParentBufferedChildren := Reader.ReadBoolean;
 end;
 
 function TEsCustomControl.GetIsOpaque: Boolean;
@@ -731,117 +746,6 @@ begin
   end;
 end;
 
-{$ifdef VER210UP} {$REGION 'BACKUP'}
-(*
-// Main magic located here:
-procedure TESCustomControl.PaintWindow(DC: HDC);
-var
-  BufferDC, TempDC: HDC;
-  BufferBitMap: HBITMAP;
-  UpdateRect: TRect;
-  SaveViewport: TPoint;
-  Region: HRGN;
-begin
-  //UpdateRect := Rect(0, 0, Width, Height);
-  //GetClipBox(DC, UpdateRect);
-  if GetClipBox(DC, UpdateRect) = ERROR then
-    UpdateRect := Rect(0, 0, Width, Height);
-
-  if not DoubleBuffered then
-  begin
-    BufferDC := CreateCompatibleDC(DC);
-    // for bitmap context
-    if BufferDC = 0 then
-      BufferDC := DC
-    else
-    begin
-      if FCachedBuffer then
-      begin
-        if CacheBuffer = 0 then
-          CacheBuffer := CreateCompatibleBitmap(DC, Width, Height);
-        BufferBitMap := CacheBuffer;
-        Region := CreateRectRgn(0, 0, UpdateRect.Width, UpdateRect.Height);
-        SelectClipRgn(BufferDC, Region);
-      end
-      else
-        BufferBitMap := CreateCompatibleBitmap(DC, UpdateRect.Width, UpdateRect.Height);
-      SelectObject(BufferDC, BufferBitMap);
-    end;
-  end
-  else
-    BufferDC := DC;
-
-  // change coord
-  if (not DoubleBuffered){ and (not FCachedBuffer)} then
-  begin
-    GetViewportOrgEx(BufferDC, SaveViewport);
-    SetViewportOrgEx(BufferDC, -UpdateRect.Left + SaveViewport.X, -UpdateRect.Top + SaveViewport.Y, nil);
-  end;
-
-  if not(csOpaque in ControlStyle) then
-    if ParentBackground then
-    begin
-      if FCachedBackground then
-      begin
-        if CacheBackground = 0 then
-        begin
-          TempDC := CreateCompatibleDC(DC);
-          CacheBackground := CreateCompatibleBitmap(DC, Width, Height);
-          SelectObject(TempDC, CacheBackground);
-          DrawParentImage(Self, TempDC, False);
-          DeleteDC(TempDC);
-        end;
-        TempDC := CreateCompatibleDC(BufferDC);
-        SelectObject(TempDC, CacheBackground);
-        BitBlt(BufferDC, 0, 0, UpdateRect.Width, UpdateRect.Height, TempDC, 0, 0, SRCCOPY);
-        DeleteDC(TempDC);
-      end
-      else
-        DrawParentImage(Self, BufferDC, False);
-    end else
-      if (not DoubleBuffered) then
-        FillRect(BufferDC, Rect(0, 0, Width, Height), Brush.Handle);
-
-  FCanvas.Lock;
-  try
-    Canvas.Handle := BufferDC;
-    TControlCanvas(Canvas).UpdateTextFlags;
-    Paint;
-    //Canvas.Brush.Color := Random(256*256*256);
-    //Canvas.FillRect(Updaterect);
-  finally
-    FCanvas.Handle := 0;
-    FCanvas.Unlock;
-  end;
-
-  if IsDrawHelper and(csDesigning in ComponentState) then
-  begin
-    SetBkColor(BufferDC, RGB(127,255,255));
-    DrawFocusRect(BufferDC, self.ClientRect);//self.ClientRect);// for Design
-  end;
-
-  // restore coord
-  if (not DoubleBuffered){ and (not FCachedBuffer)} then
-    SetViewportOrgEx(BufferDC, SaveViewport.X, SaveViewport.Y, nil);
-
-  if not DoubleBuffered then
-  begin
-    if not FCachedBuffer then
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC, 0, 0, SRCCOPY)
-    else
-    begin
-      //BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC, UpdateRect.Left, UpdateRect.Top, SRCCOPY);
-      BitBlt(DC, UpdateRect.Left, UpdateRect.Top, UpdateRect.Width, UpdateRect.Height, BufferDC, 0, 0, SRCCOPY);
-      DeleteObject(Region);
-    end;
-    DeleteDC(BufferDC);
-  end;
-
-  if not FCachedBuffer and (BufferBitMap <> 0) then DeleteObject(BufferBitMap);
-end;
-*)
-{$ENDREGION} {$endif}
-
 { TODO -cMAJOR : 22.02.2013:
  See: PaintHandler,
  need eliminate duplication of code! }
@@ -863,7 +767,10 @@ begin
   if GetClipBox(DC, UpdateRect) = ERROR then
     UpdateRect := ClientRect;
 
-  BufferedThis := not BufferedChildrens;
+  BufferedThis := not BufferedChildren;
+
+  // fix for designer selection
+  BufferedThis := BufferedThis or (csDesigning in ComponentState);
 
   try
     if BufferedThis then
@@ -1006,17 +913,19 @@ begin
   end;
 end;
 
-function TEsCustomControl.IsBufferedChildrensStored: Boolean;
+// ok
+function TEsCustomControl.IsBufferedChildrenStored: Boolean;
 begin
-  Result := not ParentBufferedChildrens;
+  Result := not ParentBufferedChildren;
 end;
 
-procedure TEsCustomControl.SetBufferedChildrens(const Value: Boolean);
+// ok
+procedure TEsCustomControl.SetBufferedChildren(const Value: Boolean);
 begin
-  if Value <> FBufferedChildrens then
+  if Value <> FBufferedChildren then
   begin
-    FBufferedChildrens := Value;
-    FParentBufferedChildrens := False;
+    FBufferedChildren := Value;
+    FParentBufferedChildren := False;
     NotifyControls(CM_PARENT_BUFFEREDCHILDRENS_CHANGED);
   end;
 end;
@@ -1026,7 +935,7 @@ begin
   if Value <> FIsCachedBackground then
   begin
     FIsCachedBackground := Value;
-    if not FIsCachedBackground then BitMapDeleteAndNil(CacheBackground);
+    if not FIsCachedBackground then BitmapDeleteAndNil(CacheBackground);
   end;
 end;
 
@@ -1035,48 +944,46 @@ begin
   if Value <> FIsCachedBuffer then
   begin
     FIsCachedBuffer := Value;
-    if not FIsCachedBuffer then BitMapDeleteAndNil(CacheBitmap);
+    if not FIsCachedBuffer then BitmapDeleteAndNil(CacheBitmap);
   end;
 end;
 
 procedure TEsCustomControl.SetIsDrawHelper(const Value: Boolean);
 begin
-  FIsDrawHelper := Value;
-  if csDesigning in ComponentState then Invalidate;
+  if Value <> FIsDrawHelper then
+  begin
+    FIsDrawHelper := Value;
+    if csDesigning in ComponentState then
+      Invalidate;
+  end;
 end;
 
+procedure TEsCustomControl.SetIsFullSizeBuffer(const Value: Boolean);
+begin
+  DeleteCache;
+end;
+
+// ok
 procedure TEsCustomControl.SetIsOpaque(const Value: Boolean);
 begin
   if Value <> (csOpaque in ControlStyle) then
   begin
     if Value then
-    begin
-      ControlStyle := ControlStyle + [csOpaque];
-    end else
-    begin
+      ControlStyle := ControlStyle + [csOpaque]
+    else
       ControlStyle := ControlStyle - [csOpaque];
-    end;
+
     Invalidate;
   end;
 end;
 
-procedure TEsCustomControl.SetParentBufferedChildrens(const Value: Boolean);
+// ok
+procedure TEsCustomControl.SetParentBufferedChildren(const Value: Boolean);
 begin
-  //FParentBufferedChildrens := Value;
-  if Value <> FParentBufferedChildrens then
+  if Value <> FParentBufferedChildren then
   begin
-//    if (Parent <> nil) and Value then
-//    begin
-//      if Parent is TESCustomControl then
-//        BufferedChildrens := TESCustomControl(Parent).BufferedChildrens
-//      else
-//        BufferedChildrens := False;
-//    end
-//    else
-//      if Value then
-//        BufferedChildrens := False;
-//    FParentBufferedChildrens := Value;
-    FParentBufferedChildrens := Value;
+    FParentBufferedChildren := Value;
+
     if (Parent <> nil) and not (csReading in ComponentState) then
       Perform(CM_PARENT_BUFFEREDCHILDRENS_CHANGED, 0, 0);
   end;
@@ -1099,21 +1006,23 @@ end;
 procedure TEsCustomControl.UpdateBackground(Repaint: Boolean);
 begin
   // Delete cache background
-  if CacheBackground <> 0 then BitMapDeleteAndNil(CacheBackground);
+  BitmapDeleteAndNil(CacheBackground);
+
   if Repaint then Invalidate;
 end;
 
 procedure TEsCustomControl.WMEraseBkgnd(var Message: TWMEraseBkgnd);
 begin
-  if DoubleBuffered {and not(csOpaque in ControlStyle)} then
+  if DoubleBuffered then
   begin
-    Inherited;
+    inherited;
+    // Message.Result := 1;
+  end else
+  begin
+    if ControlCount <> 0 then
+      DrawBackgroundForOpaqueControls(Message.DC);
     Message.Result := 1;
-    exit;
   end;
-  if ControlCount <> 0 then
-    DrawBackgroundForOpaqueControls(Message.DC);
-  Message.Result := 1;
 end;
 
 //procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
@@ -1127,12 +1036,15 @@ end;
 procedure TEsCustomControl.WMPaint(var Message: TWMPaint);
 begin
   ControlState := ControlState + [csCustomPaint];
-  if BufferedChildrens and (not FDoubleBuffered or (Message.DC <> 0)) then
+
+  // buffered childen aviable only for not DoubleBuffered controls
+  if BufferedChildren and (not FDoubleBuffered) and
+     not (csDesigning in ComponentState) then // fix for designer selection
   begin
     PaintHandler(Message)// My new PaintHandler
-  end
-  else
-    inherited;// WMPaint(Message);
+  end else
+    inherited;
+
   ControlState := ControlState - [csCustomPaint];
 end;
 
@@ -1151,6 +1063,13 @@ end;
 
 {$IFDEF VER180UP}
 { TEsBaseLayout }
+
+constructor TEsBaseLayout.Create(AOwner: TComponent);
+begin
+  inherited;
+
+  FBufferedChildren := True;
+end;
 
 procedure TEsBaseLayout.AdjustClientRect(var Rect: TRect);
 begin

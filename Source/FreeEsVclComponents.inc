@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                             FreeEsVclComponents                              }
-{                           ErrorSoft(c) 2015-2016                             }
+{                           ErrorSoft(c) 2015-2018                             }
 {                                                                              }
 {           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
 {     errorsoft@protonmail.ch | habrahabr.ru/user/error1024 | errorsoft.org    }

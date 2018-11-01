@@ -67,7 +67,7 @@ uses
 procedure TFormDemo.CheckBoxBufferedChildrensClick(Sender: TObject);
 begin
   EsLayout.Invalidate;
-  EsLayout.BufferedChildrens := TCheckBox(Sender).Checked;
+  EsLayout.BufferedChildren := TCheckBox(Sender).Checked;
 end;
 
 procedure TFormDemo.CheckBoxUseThemeClick(Sender: TObject);
@@ -81,7 +81,7 @@ end;
 procedure TFormDemo.EsLayoutPaint(Sender: TObject; Canvas: TCanvas; Rect: TRect);
 begin
   Canvas.Pen.Width := 1;
-  if TEsLayout(EsLayout).BufferedChildrens then
+  if TEsLayout(EsLayout).BufferedChildren then
   begin
     Canvas.Pen.Color := RGB(0, 230, 0);
     Canvas.Brush.Color := RGB(240, 255, 240);
@@ -93,7 +93,7 @@ begin
   end;
   Canvas.Rectangle(Rect);
   Canvas.Font.Color := clBlue;
-  Canvas.TextOut(300, 150, 'TEsCustomControl <- TEsBaseLayout <- TEsCustomLayout <- TEsLayot');
+  Canvas.TextOut(10, EsLayout.Height - 25, 'TEsCustomControl <- TEsBaseLayout <- TEsCustomLayout <- TEsLayot');
 end;
 
 procedure TFormDemo.TimerRepaintTimer(Sender: TObject);

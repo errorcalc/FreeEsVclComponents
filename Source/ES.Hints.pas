@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2016                             }
+{                            EsVclComponents v3.0                              }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }

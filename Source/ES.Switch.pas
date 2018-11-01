@@ -1,6 +1,6 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2018                             }
+{                            EsVclComponents v3.0                              }
+{                           errorsoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -189,7 +189,11 @@ type
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure Click; override;
     procedure CreateWnd; override;
+    {$if CompilerVersion >= 31}
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    {$else}
     procedure ChangeScale(M, D: Integer); override;
+    {$endif}
     // for external styles
     function CreateStyle: TSwitchStyle; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -397,12 +401,21 @@ begin
     RealCalc;
 end;
 
+{$if CompilerVersion >= 31}
+procedure TEsCustomSwitch.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+begin
+  inherited;
+  SwitchWidth := MulDiv(SwitchWidth, M, D);
+  SwitchHeight := MulDiv(SwitchHeight, M, D);
+end;
+{$else}
 procedure TEsCustomSwitch.ChangeScale(M, D: Integer);
 begin
   inherited;
   SwitchWidth := MulDiv(SwitchWidth, M, D);
   SwitchHeight := MulDiv(SwitchHeight, M, D);
 end;
+{$endif}
 
 procedure TEsCustomSwitch.ChangeState;
 begin
