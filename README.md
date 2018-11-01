@@ -1,9 +1,9 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
 # Community update
-*Release is dedicated to the emergence of a free version of the Delphi Community Edition!*
-*Релиз посвящен появлению бесплатной версии Delphi Community Edition!*
-**Version 3.0**
+*Release is dedicated to the emergence of a free version of the Delphi Community Edition!*  
+*Релиз посвящен появлению бесплатной версии Delphi Community Edition!*  
+**Version 3.0**  
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
