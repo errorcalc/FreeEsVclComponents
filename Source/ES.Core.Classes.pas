@@ -133,16 +133,16 @@ type
     Release: Word;
     Build: Word;
     //
-    class operator Equal(L, R: TFileVersion): Boolean;// =
-    class operator NotEqual(L, R: TFileVersion): Boolean;//	<>
-    class operator GreaterThan(L, R: TFileVersion): Boolean;// >
-    class operator GreaterThanOrEqual(L, R: TFileVersion): Boolean;// >=
-    class operator LessThan(L, R: TFileVersion): Boolean;// <
-    class operator LessThanOrEqual(L, R: TFileVersion): Boolean;// <=
+    class operator Equal(const L, R: TFileVersion): Boolean;// =
+    class operator NotEqual(const L, R: TFileVersion): Boolean;//	<>
+    class operator GreaterThan(const L, R: TFileVersion): Boolean;// >
+    class operator GreaterThanOrEqual(const L, R: TFileVersion): Boolean;// >=
+    class operator LessThan(const L, R: TFileVersion): Boolean;// <
+    class operator LessThanOrEqual(const L, R: TFileVersion): Boolean;// <=
     //
-    constructor Create(VersionStr: string);
+    constructor Create(const VersionStr: string);
     {$IFDEF MSWINDOWS}
-    constructor CreateForFile(FileName: TFileName);
+    constructor CreateForFile(const FileName: TFileName);
     {$ENDIF}
     function ToString: string;
   end;
@@ -520,7 +520,7 @@ end;
 
 { TFileVersion }
 
-constructor TFileVersion.Create(VersionStr: string);
+constructor TFileVersion.Create(const VersionStr: string);
 var
   A: TArray<string>;
 begin
@@ -545,29 +545,29 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-constructor TFileVersion.CreateForFile(FileName: TFileName);
+constructor TFileVersion.CreateForFile(const FileName: TFileName);
 begin
   Self := Default(TFileVersion);
   GetFileVersion(FileName, Self);
 end;
 {$ENDIF}
 
-class operator TFileVersion.Equal(L, R: TFileVersion): Boolean;
+class operator TFileVersion.Equal(const L, R: TFileVersion): Boolean;
 begin
   Result := (L.Major = R.Major) and (L.Minor = R.Minor) and (L.Release = R.Release) and (L.Build = R.Build);
 end;
 
-class operator TFileVersion.GreaterThan(L, R: TFileVersion): Boolean;
+class operator TFileVersion.GreaterThan(const L, R: TFileVersion): Boolean;
 begin
   Result := R < L;
 end;
 
-class operator TFileVersion.GreaterThanOrEqual(L, R: TFileVersion): Boolean;
+class operator TFileVersion.GreaterThanOrEqual(const L, R: TFileVersion): Boolean;
 begin
   Result := R <= L;
 end;
 
-class operator TFileVersion.LessThan(L, R: TFileVersion): Boolean;
+class operator TFileVersion.LessThan(const L, R: TFileVersion): Boolean;
 begin
   Result := False;
 
@@ -588,12 +588,12 @@ begin
   if L.Build < R.Build then Exit(True);
 end;
 
-class operator TFileVersion.LessThanOrEqual(L, R: TFileVersion): Boolean;
+class operator TFileVersion.LessThanOrEqual(const L, R: TFileVersion): Boolean;
 begin
   Result := (L < R) or (L = R);
 end;
 
-class operator TFileVersion.NotEqual(L, R: TFileVersion): Boolean;
+class operator TFileVersion.NotEqual(const L, R: TFileVersion): Boolean;
 begin
   Result := not (L = R);
 end;
