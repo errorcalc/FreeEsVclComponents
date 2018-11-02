@@ -33,8 +33,7 @@ requires
   rtl,
   vcl,
   vclimg,
-  EsVclCore,
-  EsCore;
+  EsVclCore;
 
 contains
   ES.Switch in 'Source\ES.Switch.pas',
@@ -43,8 +42,6 @@ contains
   ES.Indicators in 'Source\ES.Indicators.pas',
   ES.Images in 'Source\ES.Images.pas',
   ES.RegExControls in 'Source\ES.RegExControls.pas',
-  ES.Hints in 'Source\ES.Hints.pas',
-  ES.Labels in 'Source\ES.Labels.pas',
-  ES.PaintBox in 'Source\ES.PaintBox.pas';
+  ES.Hints in 'Source\ES.Hints.pas';
 
 end.

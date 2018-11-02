@@ -56,24 +56,15 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 2. Добавлен один новый пример в ImagesTest
 3. Релиз версии 1.1
 
-[09.10.2016]
+09.10.2016
 1. Fixed memory leak in TEsSwitch animator
 
-[02.12.2016]
+02.12.2016
 1. Global refactoring
 2. Add three new components: TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit.
 3. Rename some packages
 4. Release version 2.0
 5. Add converter util
 
-[14.12.2016]
+14.12.2016
 1. Add Package Generator for multiple installation
-
-[01.11.2018]
-1. Refactoring
-2. Fix a type: BufferedChildrens -> BufferedClidren, ParentBufferedChildrens -> ParentBufferedClidren
-3. Add DrawHalftoneBitmap and HalftoneBitmap functions
-4. Add new control TEsPaintBox
-5. Add new control TEsLinkLabel
-6. Add new control TEsPanel
-7. Improved high DPI support
