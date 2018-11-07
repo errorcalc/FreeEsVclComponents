@@ -281,17 +281,7 @@ begin
   end;
 end;
 
-{ procedure TEsLinkLabel.SetStyle(const Value: TLinkLabelStyle);
-begin
-  FStyle := Value;
-end;
-
-procedure TEsLinkLabel.SetFontColor(const Value: TColor);
-begin
-  FFontColor := Value;
-end;
-
-TEsVersionLabel }
+{ TEsVersionLabel }
 
 procedure TEsVersionLabel.Click;
 begin
