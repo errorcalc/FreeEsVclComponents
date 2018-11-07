@@ -28,6 +28,13 @@ object FormMain: TFormMain
       Width = 78
       Height = 13
     end
+    object Label1: TLabel
+      Left = 237
+      Top = 24
+      Width = 68
+      Height = 13
+      Caption = '<--- Click this!'
+    end
   end
   object GroupBox2: TGroupBox
     Left = 8

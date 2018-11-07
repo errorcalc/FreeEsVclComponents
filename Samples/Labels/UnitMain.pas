@@ -14,6 +14,7 @@ type
     EditCaption: TLabeledEdit;
     EditAddress: TLabeledEdit;
     EsLinkLabel: TEsLinkLabel;
+    Label1: TLabel;
     procedure EditCaptionChange(Sender: TObject);
     procedure EditAddressChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -44,7 +45,7 @@ end;
 procedure TFormMain.Update;
 begin
   EsLinkLabel.Caption := EditCaption.Text;
-  EsLinkLabel.Address := EditAddress.Text;
+  EsLinkLabel.Url := EditAddress.Text;
 end;
 
 procedure TFormMain.EditAddressChange(Sender: TObject);

@@ -23,8 +23,11 @@ uses
 
 procedure ShowErrorHint(const Control: TControl; const Title, Description: string); overload;
 procedure ShowErrorHint(const Control: TControl; const Hint: string); overload;
+procedure ShowNormalHint(const Control: TControl; const Hint: string);
 
 implementation
+
+// rewrite me please!
 
 {$R 'Cfx\EsVclComponentsCfx.res'}
 
@@ -32,32 +35,36 @@ uses
   Vcl.ImgList;
 
 var
-  FErrorHint: TBalloonHint = nil;
+  FHint: TBalloonHint = nil;
   Images: TImageList = nil;
 
-function ErrorHint: TBalloonHint;
+const
+  NopeHintIndex = -1;
+  ErrorHintIndex = 0;
+
+function AppHint: TBalloonHint;
 begin
-  if FErrorHint = nil then
+  if FHint = nil then
   begin
-    FErrorHint := TBalloonHint.Create(nil);
+    FHint := TBalloonHint.Create(nil);
     Images := TImageList.Create(nil);
     Images.Width := 24;
     Images.Height := 24;
     Images.ResInstLoad(HInstance, TResType.rtBitmap, 'ESERRORHINTIMAGE', 0);
-    FErrorHint.Images := Images;
-    FErrorHint.ImageIndex := 0;
-    FErrorHint.Delay := 20;
-    FErrorHint.HideAfter := 1000;
+    FHint.Images := Images;
+    FHint.Delay := 20;
+    FHint.HideAfter := 1000;
   end;
 
-  Result := FErrorHint;
+  Result := FHint;
 end;
 
 procedure ShowErrorHint(const Control: TControl; const Title, Description: string);
 begin
-  ErrorHint.Title := Title;
-  ErrorHint.Description := Description;
-  ErrorHint.ShowHint(Control);
+  AppHint.Title := Title;
+  AppHint.Description := Description;
+  AppHint.ImageIndex := ErrorHintIndex;
+  AppHint.ShowHint(Control);
 end;
 
 procedure ShowErrorHint(const Control: TControl; const Hint: string);
@@ -65,9 +72,17 @@ begin
   ShowErrorHint(Control, '', Hint);
 end;
 
+procedure ShowNormalHint(const Control: TControl; const Hint: string);
+begin
+  AppHint.Title := '';
+  AppHint.Description := Hint;
+  AppHint.ImageIndex := NopeHintIndex;
+  AppHint.ShowHint(Control);
+end;
+
 initialization
 finalization
-  FErrorHint.Free;
+  FHint.Free;
   Images.Free;
 
 end.

@@ -21,14 +21,21 @@ uses
   Vcl.Graphics, Vcl.Themes;
 
 type
+  TLinkLabelStyle = (Underline, Mixed, Normal);
 
   TEsLinkLabel = class(TCustomLabel)
   private
     LinkState: (lsNormal, lsHot, lsDown);
-    FAddress: string;
-    function IsAddressStored: Boolean;
+    FUrl: string;
+    FLinkColor: TColor;
+    FLinkStyle: TLinkLabelStyle;
+    function IsUrlStored: Boolean;
     procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
+
+    procedure SetLinkColor(const Value: TColor);
+
+    procedure SetLinkStyle(const Value: TLinkLabelStyle);
   protected
     procedure Paint; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -39,7 +46,6 @@ type
   public
     constructor Create(AOwner: TComponent); override;
   published
-    property Address: string read FAddress write FAddress stored IsAddressStored;
     property Align;
     property Alignment;
     property Anchors;
@@ -65,10 +71,13 @@ type
     property ShowHint;
     property Touch;
     property Transparent;
+    property Url: string read FUrl write FUrl stored IsUrlStored;
     property Layout;
+    property LinkColor: TColor read FLinkColor write SetLinkColor default clHotLight;
+    property LinkStyle: TLinkLabelStyle read FLinkStyle write SetLinkStyle default TLinkLabelStyle.Underline;
     property Visible;
     property WordWrap;
-    property StyleElements default [seClient, seBorder];
+    property StyleElements default [seClient, seBorder, seFont];
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -96,6 +105,8 @@ type
     procedure SetVersionText(const Value: string);
     procedure UpdateCaption;
     function IsVersionTextStored: Boolean;
+  protected
+    procedure Click; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -149,7 +160,7 @@ implementation
 
 uses
   WinApi.Windows, WinApi.ShellAPI, ES.Core.Classes, ES.ExGraphics,
-  ES.Utils, System.SysUtils;
+  ES.Utils, System.SysUtils, Vcl.ClipBrd, ES.Hints;
 
 { TEsLinkLabel }
 
@@ -160,8 +171,8 @@ var
 begin
   inherited;
 
-  if Address <> '' then
-    s := Address
+  if Url <> '' then
+    s := Url
   else
     s := Caption;
 
@@ -193,13 +204,14 @@ end;
 constructor TEsLinkLabel.Create(AOwner: TComponent);
 begin
   inherited;
-  StyleElements := [seClient, seBorder];
+  StyleElements := [seClient, seBorder, seFont];
   Cursor := crHandPoint;
+  FLinkColor := clHotLight;
 end;
 
-function TEsLinkLabel.IsAddressStored: Boolean;
+function TEsLinkLabel.IsUrlStored: Boolean;
 begin
-  result := FAddress <> '';
+  result := FUrl <> '';
 end;
 
 procedure TEsLinkLabel.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
@@ -221,26 +233,72 @@ end;
 procedure TEsLinkLabel.Paint;
 var
   OnChange: TNotifyEvent;
+  StoredFont: TFont;
 begin
 
+
   OnChange := Font.OnChange;
-  Font.OnChange := nil;
+  StoredFont := TFont.Create;
   try
-    Font.Style := [fsUnderline];
-    if LinkState = lsNormal then
-      Font.Color := clHotLight
-    else if LinkState = lsHot then
-      Font.Color := HighlightColor(FontColorToRgb(clHotLight, Self), 30)
+    StoredFont.Assign(Font);
+    Font.OnChange := nil;
+
+    if (LinkStyle = TLinkLabelStyle.Underline) or
+       ((LinkStyle = TLinkLabelStyle.Mixed) and (LinkState <> lsNormal)) then
+      Font.Style := Font.Style + [fsUnderline]
     else
-      Font.Color := HighlightColor(FontColorToRgb(clHotLight, Self), -30);
+      Font.Style := Font.Style - [fsUnderline];
+
+    if LinkState = lsNormal then
+      Font.Color := FontColorToRgb(LinkColor, Self)
+    else if LinkState = lsHot then
+      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), 30)
+    else
+      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), -30);
 
     inherited;
   finally
+    Font.Assign(StoredFont);
     Font.OnChange := OnChange;
   end;
 end;
 
-{ TEsVersionLabel }
+procedure TEsLinkLabel.SetLinkColor(const Value: TColor);
+begin
+  if Value <> FLinkColor then
+  begin
+    FLinkColor := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsLinkLabel.SetLinkStyle(const Value: TLinkLabelStyle);
+begin
+  if Value <> FLinkStyle then
+  begin
+    FLinkStyle := Value;
+    Invalidate;
+  end;
+end;
+
+{ procedure TEsLinkLabel.SetStyle(const Value: TLinkLabelStyle);
+begin
+  FStyle := Value;
+end;
+
+procedure TEsLinkLabel.SetFontColor(const Value: TColor);
+begin
+  FFontColor := Value;
+end;
+
+TEsVersionLabel }
+
+procedure TEsVersionLabel.Click;
+begin
+  inherited;
+  Clipboard.AsText := Caption;
+  ShowNormalHint(self, 'Version has been copied to clipboard!');
+end;
 
 constructor TEsVersionLabel.Create(AOwner: TComponent);
 begin
