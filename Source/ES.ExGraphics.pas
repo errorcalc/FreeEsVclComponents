@@ -160,7 +160,7 @@ implementation
 
 uses
   System.Classes, System.Types, Vcl.GraphUtil, System.UITypes,
-  System.TypInfo, Vcl.Dialogs;
+  System.TypInfo;
 
 //------------------------------------------------------------------------------
 // Utils
