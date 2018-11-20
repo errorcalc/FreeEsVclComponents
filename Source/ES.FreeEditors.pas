@@ -18,7 +18,7 @@ interface
 
 uses
   DesignEditors, DesignIntf, DesignConst, System.Classes, WinApi.Windows, Vcl.Graphics,
-  Vcl.Imaging.PngImage, PicEdit, Vcl.ImgList, VclEditors, System.Types, System.TypInfo;
+  Vcl.ImgList, PicEdit, VclEditors, Vcl.Imaging.PngImage, System.Types, System.TypInfo;
 
 type
   TEsPngPropertyFix = class(TGraphicProperty)
@@ -49,14 +49,13 @@ type
 implementation
 
 uses
-  System.SysUtils, System.Math, ES.ExGraphics, Vcl.Dialogs;
+  System.SysUtils, System.Math, ES.ExGraphics;
 
 {TEsPngPropertyFix}
 
-// AlphaControls/alphaskins is suck.
+// AlphaControls/alphaskins is bad.
 // I has too much head pain, because of them!
 // Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
-// I think in hell there is a personal cauldron for the author of these components.
 procedure TEsPngPropertyFix.Edit;
 var
   PictureEditor: TPictureEditor;
@@ -168,10 +167,9 @@ end;
 
 { TEsPicturePropertyFix }
 
-// AlphaControls/alphaskins is suck.
+// AlphaControls/alphaskins is bad.
 // I has too much head pain, because of them!
 // Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
-// I think in hell there is a personal cauldron for the author of these components.
 procedure TEsPicturePropertyFix.Edit;
 var
   Png: TPngImage;

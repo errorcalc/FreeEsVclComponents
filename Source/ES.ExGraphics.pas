@@ -280,12 +280,22 @@ var
   C: TRGBQuad;
   A: Byte;
 begin
-  if PngImage.Empty or (PngImage.TransparencyMode <> ptmPartial) or (PngImage.Header.BitDepth <> 8) then
-    Bitmap.Assign(PngImage)
-  else
+  if (PngImage = nil) or (PngImage.Empty) then
   begin
     Bitmap.SetSize(0, 0);
-    Bitmap.AlphaFormat := TAlphaFormat.afPremultiplied;
+    Exit;
+  end;
+
+  if (PngImage.TransparencyMode <> ptmPartial) or (PngImage.Header.BitDepth <> 8) then
+  begin
+    Bitmap.Assign(PngImage);
+  end else
+  begin
+    Bitmap.SetSize(0, 0);
+    if IsPremultipledBitmap then
+      Bitmap.AlphaFormat := TAlphaFormat.afPremultiplied
+    else
+      Bitmap.AlphaFormat := TAlphaFormat.afDefined;
     Bitmap.PixelFormat := pf32bit;
     Bitmap.SetSize(PngImage.Width, PngImage.Height);
 
@@ -367,8 +377,9 @@ var
   pPngAlpha: PByteArray;
 begin
   if Bitmap.Empty or (Bitmap.PixelFormat <> pf32bit) then
-    PngImage.Assign(Bitmap)
-  else
+  begin
+    PngImage.Assign(Bitmap);
+  end else
   begin
     // set need settings
     TempPng := TPngImage.CreateBlank(COLOR_RGBALPHA, 8, 1, 1);
@@ -424,6 +435,7 @@ end;
 {$ifndef DISABLE_GDIPLUS}
 function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
 begin
+
   if Bitmap.PixelFormat = pf32bit then
   begin
     Assert(Bitmap.HandleType = bmDIB);
@@ -965,7 +977,10 @@ begin
   BF.BlendOp := AC_SRC_OVER;
   BF.BlendFlags := 0;
   BF.SourceConstantAlpha := Opacity;
-  BF.AlphaFormat := AC_SRC_ALPHA;
+  if Bitmap.PixelFormat = pf32bit then
+    BF.AlphaFormat := AC_SRC_ALPHA
+  else
+    BF.AlphaFormat := 0;
 
   AlphaBlend(Handle, DestRect.Left, DestRect.Top, DestRect.Right - DestRect.Left, DestRect.Bottom - DestRect.Top,
     Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, SrcRect.Right - SrcRect.Left, SrcRect.Bottom - SrcRect.Top, BF);

@@ -668,11 +668,7 @@ begin
   FOverlayMargins := TImageMargins.Create(nil);
   FOverlayMargins.OnChange := BoundsChange;
   FBitmap := TBitMap.Create;
-  FBitmap.PixelFormat := pf32bit;
-  FBitmap.AlphaFormat := afPremultiplied;
   FOverlay := TBitMap.Create;
-  FOverlay.PixelFormat := pf32bit;
-  FOverlay.AlphaFormat := afPremultiplied;
   FOverlayAlign := TImageAlign.TopLeft;
   // FContentSpace := True;
 end;
@@ -796,20 +792,20 @@ end;
 
 procedure TNinePatchObject.AssignImage(G: TGraphic);
 begin
-  FBitmap.SetSize(G.Width, G.Height);
-  FBitmap.Canvas.Brush.Color := 0;
-  FBitmap.Canvas.FillRect(Rect(0, 0, FBitmap.Width, FBitmap.Height));
-  FBitmap.Canvas.Draw(0, 0, G);
+  if G is TPngImage then
+    PngImageAssignToBitmap(FBitmap, TPngImage(G))
+  else
+    FBitmap.Assign(G);
 
   NeedRepaint;
 end;
 
 procedure TNinePatchObject.AssignOverlay(G: TGraphic);
 begin
-  FOverlay.SetSize(G.Width, G.Height);
-  FOverlay.Canvas.Brush.Color := 0;
-  FOverlay.Canvas.FillRect(Rect(0, 0, FOverlay.Width, FOverlay.Height));
-  FOverlay.Canvas.Draw(0, 0, G);
+  if G is TPngImage then
+    PngImageAssignToBitmap(FOverlay, TPngImage(G))
+  else
+    FOverlay.Assign(G);
 
   NeedRepaint;
 end;
