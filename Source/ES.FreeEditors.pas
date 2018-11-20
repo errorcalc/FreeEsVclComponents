@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2016                             }
+{                           ErrorSoft(c) 2009-2018                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -17,8 +17,8 @@ unit ES.FreeEditors;
 interface
 
 uses
-  DesignEditors, DesignIntf, System.Classes, WinApi.Windows, Vcl.Graphics, Vcl.Imaging.PngImage, PicEdit,
-  Vcl.ImgList, VclEditors, System.Types, System.TypInfo;
+  DesignEditors, DesignIntf, DesignConst, System.Classes, WinApi.Windows, Vcl.Graphics,
+  Vcl.ImgList, PicEdit, VclEditors, Vcl.Imaging.PngImage, System.Types, System.TypInfo;
 
 type
   TEsPngPropertyFix = class(TGraphicProperty)
@@ -53,11 +53,41 @@ uses
 
 {TEsPngPropertyFix}
 
+// AlphaControls/alphaskins is bad.
+// I has too much head pain, because of them!
+// Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
 procedure TEsPngPropertyFix.Edit;
+var
+  PictureEditor: TPictureEditor;
+  Png: TPngImage;
+
 begin
-  TPicture.RegisterFileFormat('PNG', 'ErrorSoft fix PNG loader', TPngImage);
-  inherited;
-  TPicture.UnregisterGraphicClass(TPngImage);
+  PictureEditor := TPictureEditor.Create(nil);
+  try
+    PictureEditor.GraphicClass := TGraphicClass(GetTypeData(GetPropType)^.ClassType);
+    PictureEditor.Picture.Graphic := TGraphic(Pointer(GetOrdValue));
+
+    if PictureEditor.Execute then
+      if (PictureEditor.Picture.Graphic = nil) or
+         (PictureEditor.Picture.Graphic is PictureEditor.GraphicClass) then
+        SetOrdValue(LongInt(PictureEditor.Picture.Graphic))
+      else
+        if (PictureEditor.Picture.Graphic is TBitmap) and
+           PictureEditor.Picture.Graphic.ClassNameIs('TPNGGraphic') then
+        begin
+          Png := TPngImage.Create;
+          try
+            BitmapAssignToPngImage(Png, TBitmap(PictureEditor.Picture.Graphic), False);
+            SetOrdValue(LongInt(Png));
+          finally
+            Png.Free;
+          end;
+        end
+        else
+          raise Exception.CreateRes(@SInvalidFormat);
+  finally
+    PictureEditor.Free;
+  end;
 end;
 
 { TEsCustomImageIndexProperty }
@@ -137,40 +167,14 @@ end;
 
 { TEsPicturePropertyFix }
 
-type
-  TRawPngImage = class(TPngImage)
-  end;
-
+// AlphaControls/alphaskins is bad.
+// I has too much head pain, because of them!
+// Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
 procedure TEsPicturePropertyFix.Edit;
 var
   Png: TPngImage;
   Pic: TPicture;
 begin
-//  PictureEditor := TPictureEditor.Create(nil);
-//  try
-//    TPicture.RegisterFileFormat('PNG', 'ErrorSoft fix PNG loader', TRawPngImage);
-//    PictureEditor.Picture := TPicture(Pointer(GetOrdValue));
-//
-//    if PictureEditor.Execute then
-//    begin
-//      if PictureEditor.Picture.Graphic is TRawPngImage then
-//      begin
-//        Png := TPngImage.Create;
-//        try
-//          Png.Assign(PictureEditor.Picture.Graphic);
-//          PictureEditor.Picture.Assign(Png);
-//        finally
-//          Png.Free;
-//        end;
-//      end;
-//      SetOrdValue(Longint(PictureEditor.Picture));
-//    end;
-//
-//  finally
-//    PictureEditor.Free;
-//    TPicture.UnregisterGraphicClass(TRawPngImage);
-//  end;
-
   Inherited;
   Pic := TPicture(Pointer(GetOrdValue));
   if (Pic.Graphic is TBitmap) and Pic.Graphic.ClassNameIs('TPNGGraphic') then
