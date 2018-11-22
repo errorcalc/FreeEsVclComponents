@@ -4,6 +4,7 @@
 *Release is dedicated to the emergence of a free version of the Delphi Community Edition!*  
 *Релиз посвящен появлению бесплатной версии Delphi Community Edition!*  
 **Version 3.0**  
+The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
