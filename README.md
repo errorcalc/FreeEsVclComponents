@@ -16,7 +16,7 @@ You can choose one of two license. See "LICENSE.txt"
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
 **See [ReleaseNotes_en.pdf](Doc/ReleaseNotes_en.pdf) with a description of the new library features!**  
-**Смотрите [ReleaseNotes_ru.pdf](Doc/ReleaseNotes_en.pdf) с описанием новых возможностей библиотеки!**
+**Смотрите [ReleaseNotes_ru.pdf](Doc/ReleaseNotes_ru.pdf) с описанием новых возможностей библиотеки!**
 
 # List of components:
 * TEsLayout (Absolutely no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
@@ -259,4 +259,4 @@ Features:
 Совместима с Delphi/C++Builder, начиная с XE2
 (Хотя класс **TEsCustomControl** будет полезен и ценителям Delphi 7)
 
-**Посмотрите на другие проекты на этом GitHub, возможно, вы будите заинтересованы ...**
+**Посмотрите на другие проекты на этом GitHub, возможно, вы будете заинтересованы ...**
