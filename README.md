@@ -6,6 +6,9 @@
 **Version 3.0**  
 The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
+# If you need to install FreeEsVclComponents in several versions of Delphi, you can use
+# https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ for generate individual packages for every versions.
+
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
 
