@@ -80,3 +80,6 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 
 [15.12.2018]
 Added lost x64 support
+
+[15.12.2018]
+Added packages for any versions rad studio by default

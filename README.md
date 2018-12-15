@@ -3,7 +3,7 @@
 # Community update
 *Release is dedicated to the emergence of a free version of the Delphi Community Edition!*  
 *Релиз посвящен появлению бесплатной версии Delphi Community Edition!*  
-**Version 3.0.5**  
+**Version 3.1.0**  
 The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
 # If you need to install FreeEsVclComponents in several versions of Delphi, you can use   https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ for generate individual packages for every versions.
