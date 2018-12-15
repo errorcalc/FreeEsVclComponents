@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5B9287A3-1F89-4FEE-A2E4-39EB910041C0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="XE5\EsCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="XE5\EsVclCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="XE5\EsVclComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="XE5\EsVclComponentsDesign.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EsCore">
+        <MSBuild Projects="XE5\EsCore.dproj"/>
+    </Target>
+    <Target Name="EsCore:Clean">
+        <MSBuild Projects="XE5\EsCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsCore:Make">
+        <MSBuild Projects="XE5\EsCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclCore">
+        <MSBuild Projects="XE5\EsVclCore.dproj"/>
+    </Target>
+    <Target Name="EsVclCore:Clean">
+        <MSBuild Projects="XE5\EsVclCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclCore:Make">
+        <MSBuild Projects="XE5\EsVclCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponents">
+        <MSBuild Projects="XE5\EsVclComponents.dproj"/>
+    </Target>
+    <Target Name="EsVclComponents:Clean">
+        <MSBuild Projects="XE5\EsVclComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponents:Make">
+        <MSBuild Projects="XE5\EsVclComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign">
+        <MSBuild Projects="XE5\EsVclComponentsDesign.dproj"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Clean">
+        <MSBuild Projects="XE5\EsVclComponentsDesign.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Make">
+        <MSBuild Projects="XE5\EsVclComponentsDesign.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EsCore;EsVclCore;EsVclComponents;EsVclComponentsDesign"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EsCore:Clean;EsVclCore:Clean;EsVclComponents:Clean;EsVclComponentsDesign:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EsCore:Make;EsVclCore:Make;EsVclComponents:Make;EsVclComponentsDesign:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -77,3 +77,6 @@ Padding, IsDrawHelper props, and ContentRect, ContentMargins functions
 5. Add new control TEsLinkLabel
 6. Add new control TEsPanel
 7. Improved high DPI support
+
+[15.12.2018]
+Added lost x64 support

@@ -4,7 +4,7 @@
 Please see "Doc/ReleaseNotes_en.pdf"
 
 0. Uninstall previous version!
-1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path)
+1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path), for "Selected platform": "32-bit Windows" and "64-bit Windows"
 2. If you plan to install the components to multiple versions of Delphi on computer(multiple installation), 
 then start the "Packages\PackagesGenerator.exe" and choose appropriate generated project files.
 3. Open "ErrorSoftGroup.groupproj" project group
@@ -25,7 +25,7 @@ because of some installed packages (ex: AlphaSkins)
 Пожалуйста посмотрите "Doc/ReleaseNotes_ru.pdf"
 
 0. Полностью удалите предыдущую версию!
-1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path)
+1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path), для "Selected platform": "32-bit Windows" и "64-bit Windows"
 2. Если вы планируете установить компоненты одновременно в нескольких версиях Delphi на компьютере, то запустите 
 "Packages\PackagesGenerator.exe" и выберите соответствующие сгенерированные файлы проекта.
 3. Откройте группу проектов "ErrorSoftGroup.groupproj" 

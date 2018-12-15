@@ -1,0 +1,41 @@
+package EsCore;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+{$LIBSUFFIX '330'}
+
+requires
+  rtl;
+
+contains
+  ES.Backend.Controls in '..\..\Source\ES.Backend.Controls.pas',
+  ES.Backend.Selection in '..\..\Source\ES.Backend.Selection.pas',
+  ES.Core.Classes in '..\..\Source\ES.Core.Classes.pas',
+  ES.Core.Utils in '..\..\Source\ES.Core.Utils.pas';
+
+end.
