@@ -6,14 +6,14 @@
 **Version 3.1.0**  
 The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
-# If you need to install FreeEsVclComponents in several versions of Delphi, you can use   https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ for generate individual packages for every versions.
+# If you need to install FreeEsVclComponents in several versions of Delphi, you can use   https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ to generate individual packages for every version.
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
 
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
-This library licensed at two license: Modified MIT License (MIT) and GNU GPL v2.    
-You can choose one of two license. See "LICENSE.txt"
+This library licensed at two licenses: Modified MIT License (MIT) and GNU GPL v2.    
+You can choose one of two licenses. See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
@@ -42,9 +42,9 @@ You can choose one of two license. See "LICENSE.txt"
 
 # English ReadMe:
 
-**EsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components has best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and has modern style. 
+**EsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components have best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and have a modern style. 
 
-Free use for commercial and non-commercial projects, you need specify in About, or anywhere else, that the program used components "EsVCLComponents" or link to this repository :)
+Free use for commercial and non-commercial projects, you need to specify in About, or anywhere else, that the program used components "EsVCLComponents" or link to this repository :)
 
 If you'd like to support the EsVCLComponents or EsVclCore lib, you can do so at this link: 
 ### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
@@ -84,7 +84,7 @@ Features:
 **TEsVersionLabel** - Display current version of application
 
 ![Icon](Source/icons/TESPAINTBOX32.bmp)
-**TEsPaintBox** - Flicker free PaintBox. It’s very nice replacement for TPaintBox
+**TEsPaintBox** - Flicker free PaintBox. It’s a very nice replacement for TPaintBox
 
 ![Icon](Source/icons/TESIMAGELAYOUT32.bmp)
 **TEsImageLayout** - The Layout with support background 9-Patch images and image - Overlay
