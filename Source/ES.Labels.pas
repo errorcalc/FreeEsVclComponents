@@ -77,7 +77,9 @@ type
     property LinkStyle: TLinkLabelStyle read FLinkStyle write SetLinkStyle default TLinkLabelStyle.Underline;
     property Visible;
     property WordWrap;
+    {$if CompilerVersion > 23}
     property StyleElements default [seClient, seBorder, seFont];
+    {$ifend}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -137,7 +139,9 @@ type
     property Layout;
     property Visible;
     property WordWrap;
+    {$if CompilerVersion > 23}
     property StyleElements;
+    {$ifend}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -204,7 +208,9 @@ end;
 constructor TEsLinkLabel.Create(AOwner: TComponent);
 begin
   inherited;
+  {$if CompilerVersion > 23}
   StyleElements := [seClient, seBorder, seFont];
+  {$ifend}
   Cursor := crHandPoint;
   FLinkColor := clHotLight;
 end;

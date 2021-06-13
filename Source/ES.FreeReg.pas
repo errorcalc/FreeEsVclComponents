@@ -27,7 +27,7 @@ implementation
 uses
   System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
   ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics,
-  ES.RegexEditor, ES.PaintBox, ES.Labels, ToolsApi, DIalogs;
+  ES.RegexEditor, ES.PaintBox, ES.Labels, ToolsApi, Dialogs;
 
 procedure Register;
 begin

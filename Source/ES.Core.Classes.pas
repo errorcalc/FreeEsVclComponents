@@ -522,25 +522,32 @@ end;
 
 constructor TFileVersion.Create(const VersionStr: string);
 var
-  A: TArray<string>;
+  List: TStringList;
 begin
   Major := 0;
   Minor := 0;
   Release := 0;
   Build := 0;
-  A := VersionStr.Split(['.']);
 
+  List := TStringList.Create;
   try
-    if High(A) >= 0 then
-      Major := A[0].Trim.ToInteger;
-    if High(A) >= 1 then
-      Minor := A[1].Trim.ToInteger;
-    if High(A) >= 2 then
-      Release := A[2].Trim.ToInteger;
-    if High(A) >= 3 then
-      Build := A[3].Trim.ToInteger;
-  except
-    on EConvertError do ;
+    List.Delimiter := '.';
+    List.DelimitedText := VersionStr;
+
+    try
+      if List.Count >= 1 then
+        Major := StrToInt(Trim(List[0]));
+      if List.Count >= 2 then
+        Minor := StrToInt(Trim(List[1]));
+      if List.Count >= 3 then
+        Release := StrToInt(Trim(List[2]));
+      if List.Count >= 4 then
+        Build := StrToInt(Trim(List[3]));
+    except
+      on EConvertError do ;
+    end;
+  finally
+    List.Free;
   end;
 end;
 

@@ -1,4 +1,4 @@
-{******************************************************************************}
+﻿{******************************************************************************}
 {                            EsVclComponents v3.0                              }
 {                           errorsoft(c) 2009-2018                             }
 {                                                                              }
@@ -193,7 +193,7 @@ type
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     {$else}
     procedure ChangeScale(M, D: Integer); override;
-    {$endif}
+    {$ifend}
     // for external styles
     function CreateStyle: TSwitchStyle; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -415,7 +415,7 @@ begin
   SwitchWidth := MulDiv(SwitchWidth, M, D);
   SwitchHeight := MulDiv(SwitchHeight, M, D);
 end;
-{$endif}
+{$ifend}
 
 procedure TEsCustomSwitch.ChangeState;
 begin
