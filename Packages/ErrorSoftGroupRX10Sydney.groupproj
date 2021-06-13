@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5B9287A3-1F89-4FEE-A2E4-39EB910041C0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="RX10Sydney\EsCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX10Sydney\EsVclCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX10Sydney\EsVclComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX10Sydney\EsVclComponentsDesign.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EsCore">
+        <MSBuild Projects="RX10Sydney\EsCore.dproj"/>
+    </Target>
+    <Target Name="EsCore:Clean">
+        <MSBuild Projects="RX10Sydney\EsCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsCore:Make">
+        <MSBuild Projects="RX10Sydney\EsCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclCore">
+        <MSBuild Projects="RX10Sydney\EsVclCore.dproj"/>
+    </Target>
+    <Target Name="EsVclCore:Clean">
+        <MSBuild Projects="RX10Sydney\EsVclCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclCore:Make">
+        <MSBuild Projects="RX10Sydney\EsVclCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponents">
+        <MSBuild Projects="RX10Sydney\EsVclComponents.dproj"/>
+    </Target>
+    <Target Name="EsVclComponents:Clean">
+        <MSBuild Projects="RX10Sydney\EsVclComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponents:Make">
+        <MSBuild Projects="RX10Sydney\EsVclComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign">
+        <MSBuild Projects="RX10Sydney\EsVclComponentsDesign.dproj"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Clean">
+        <MSBuild Projects="RX10Sydney\EsVclComponentsDesign.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Make">
+        <MSBuild Projects="RX10Sydney\EsVclComponentsDesign.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EsCore;EsVclCore;EsVclComponents;EsVclComponentsDesign"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EsCore:Clean;EsVclCore:Clean;EsVclComponents:Clean;EsVclComponentsDesign:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EsCore:Make;EsVclCore:Make;EsVclComponents:Make;EsVclComponentsDesign:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

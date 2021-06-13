@@ -10,7 +10,11 @@ The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/V
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
-
+  
+## **Is still not know what Delphi/ObjectPascal?**  
+**You can get Delphi/Rad Studio IDE on this resource:** https://www.embarcadero.com  
+**And learn Delphi/ObjectPascal on this resource:** https://learndelphi.org/  
+  
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two licenses: Modified MIT License (MIT) and GNU GPL v2.    
 You can choose one of two licenses. See "LICENSE.txt"
@@ -38,7 +42,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsLinkLabel
 * TEsVersionLabel
 
-## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio) - compatibility
+## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney) - compatibility
 
 # English ReadMe:
 
