@@ -34,7 +34,8 @@ requires
   vcl,
   vclimg,
   EsVclCore,
-  EsCore;
+  EsCore,
+  vclwinx;
 
 contains
   ES.Switch in 'Source\ES.Switch.pas',

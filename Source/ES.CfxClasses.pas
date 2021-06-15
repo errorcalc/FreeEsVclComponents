@@ -18,11 +18,13 @@ interface
 
 {$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
 {$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
+{$IF CompilerVersion >= 34} {$DEFINE VER340UP} {$IFEND}
 {$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 uses
   WinApi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
-  ES.ExGraphics, WinApi.Messages, System.Generics.Collections, Vcl.Dialogs, Vcl.StdCtrls;
+  ES.ExGraphics, WinApi.Messages, System.Generics.Collections, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.Themes;
 
 type
   {$scopedenums on}
@@ -352,14 +354,15 @@ type
     property Value: Integer read GetValue;
   end;
 
-  function DrawFrame(Canvas: TCanvas; Rect: TRect; Style: TExFrameStyle; FrameWidth: TFrameWidth;
-    FrameColor: TColor; TopColor, BottomColor: TColor; BaseColor: TColor = clNone): TRect;
+  function DrawFrame(Canvas: TCanvas; Control: TControl; Rect: TRect; Style: TExFrameStyle;
+    FrameWidth: TFrameWidth; FrameColor, TopColor, BottomColor: TColor;
+    CheckBorderStyle: Boolean = False): TRect;
   function GetFrameWidth(Style: TExFrameStyle; FrameWidth: TFrameWidth = 1): Integer;
 
 implementation
 
 uses
-  Vcl.Themes, ES.BaseControls, ES.Utils, System.SysUtils, System.TypInfo, Vcl.GraphUtil, System.UIConsts, System.Types;
+  ES.BaseControls, ES.Utils, System.SysUtils, System.TypInfo, Vcl.GraphUtil, System.UIConsts, System.Types;
 
 {$REGION 'Delphi 2010/XE support'}
 {$ifndef VER230UP}
@@ -486,37 +489,40 @@ begin
   end;
 end;
 
-// todo: NOW THIS FUNCTION IS HELL, REFACTOR ME PLEASE!!!
-function DrawFrame(Canvas: TCanvas; Rect: TRect; Style: TExFrameStyle; FrameWidth: TFrameWidth;
-  FrameColor: TColor; TopColor, BottomColor: TColor; BaseColor: TColor = clNone): TRect;
+function DrawFrame(Canvas: TCanvas; Control: TControl; Rect: TRect; Style: TExFrameStyle;
+  FrameWidth: TFrameWidth; FrameColor, TopColor, BottomColor: TColor;
+  CheckBorderStyle: Boolean = False): TRect;
 var
+  HasStyle: Boolean;
   HighlightColor, ShadowColor: TColor;
-  {$ifdef VER230UP}
-  Elements: TElementEdges;
-  {$endif}
+  EdgeStyle: Cardinal;
+  StyleService: TCustomStyleServices;
 begin
-  {$ifdef VER230UP}
-  if TStyleManager.IsCustomStyleActive then
+  // has style
+  HasStyle := False;
+  if IsStyledControl(Control) then
+  begin
+    if CheckBorderStyle then
+      HasStyle := IsStyledBorderControl(Control)
+    else
+      HasStyle := True;
+    StyleService := StyleServices(Control);
+  end;
+
+  // setup colors
+  if HasStyle then
   begin
     FrameColor := StyleServices.GetSystemColor(FrameColor);
     TopColor := StyleServices.GetSystemColor(TopColor);
     BottomColor := StyleServices.GetSystemColor(BottomColor);
   end else
-  {$endif}
   begin
     FrameColor := ColorToRGB(FrameColor);
     TopColor := ColorToRGB(TopColor);
     BottomColor := ColorToRGB(BottomColor);
   end;
 
-  if BaseColor <> clNone then
-    {$ifdef VER230UP}
-    if TStyleManager.IsCustomStyleActive then
-      BaseColor := StyleServices.GetSystemColor(BaseColor)
-    else
-    {$endif}
-      BaseColor := ColorToRgb(BaseColor);
-
+  // draw
   case Style of
     TExFrameStyle.None:;
 
@@ -526,7 +532,8 @@ begin
       InflateRect(Rect, -FrameWidth, -FrameWidth);
     end;
 
-    TExFrameStyle.Up, TExFrameStyle.Down:
+    TExFrameStyle.Up,
+    TExFrameStyle.Down:
     begin
       if Style = TExFrameStyle.Up then
         Draw3dFrame(Canvas.Handle, Rect, FrameWidth, TopColor, BottomColor)
@@ -536,89 +543,95 @@ begin
       InflateRect(Rect, -FrameWidth, -FrameWidth);
     end;
 
-    TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump, TExFrameStyle.Etched,
-    TExFrameStyle.Chess, TExFrameStyle.LoweredColor, TExFrameStyle.RaisedColor,
-    TExFrameStyle.BumpColor, TExFrameStyle.EtchedColor, TExFrameStyle.ChessColor:
+    TExFrameStyle.Lowered,
+    TExFrameStyle.Raised,
+    TExFrameStyle.Bump,
+    TExFrameStyle.Etched:
     begin
-//      if Style in [TFrameStyle.fsLowered, TFrameStyle.fsRaised] and (BaseColor = clNone) then
-//      begin
-//        if Style = TFrameStyle.fsRaised then
-//          DrawEdge(Canvas.Handle, Rect, EDGE_RAISED, BF_SOFT or BF_RECT or BF_ADJUST)
-//        else
-//          DrawEdge(Canvas.Handle, Rect, EDGE_SUNKEN, BF_SOFT or BF_RECT or BF_ADJUST);
-//        InflateRect(Rect, -2, -2);
-//      end else
-//      begin
-      {$ifdef VER230UP}
-      if (TStyleManager.IsCustomStyleActive) and
-        (Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump, TExFrameStyle.Etched]) then
+      if HasStyle then
       begin
         case Style of
-          TExFrameStyle.Lowered: Elements := [eeSunken];
-          TExFrameStyle.Raised: Elements := [eeRaised];
-          TExFrameStyle.Bump: Elements := [eeBump];
-          TExFrameStyle.Etched: Elements := [eeEtched];
+          TExFrameStyle.Lowered:
+          begin
+            HighlightColor := clBtnShadow;
+            ShadowColor := cl3DLight;
+          end;
+          TExFrameStyle.Raised:
+          begin
+            HighlightColor := cl3DLight;
+            ShadowColor := cl3DDkShadow;
+          end;
+          TExFrameStyle.Bump:
+          begin
+            HighlightColor := cl3DLight;
+            ShadowColor := clBtnShadow;
+          end;
+          TExFrameStyle.Etched:
+          begin
+            HighlightColor := clBtnShadow;
+            ShadowColor := cl3DLight;
+          end;
         end;
-        DrawStyleEdge(Canvas.Handle, Rect, Elements, [efRect, efSoft]);
 
-        InflateRect(Rect, -2, -2);
-      end else
-      {$endif}
-      begin
-        if (Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised, TExFrameStyle.Bump,
-          TExFrameStyle.Etched, TExFrameStyle.Chess]) or (BaseColor = clNone) then
-        begin
-          {$ifdef VER230UP}
-          if TStyleManager.IsCustomStyleActive then
-            BaseColor := StyleServices.GetSystemColor(clBtnFace)
-          else
-          {$endif}
-            BaseColor := ColorToRgb(clBtnFace)
-        end;
-
-        // out
-        if Style in [TExFrameStyle.Lowered, TExFrameStyle.Raised,
-          TExFrameStyle.Bump, TExFrameStyle.Etched, TExFrameStyle.Chess]
-        then
-          HighlightColor := LuminanceColor(BaseColor, 255)
-        else
-          HighlightColor := LuminanceColor(BaseColor, 240);
-
-        if not (Style in [TExFrameStyle.Bump, TExFrameStyle.BumpColor,
-          TExFrameStyle.Etched, TExFrameStyle.EtchedColor, TExFrameStyle.Chess, TExFrameStyle.ChessColor])
-        then
-          ShadowColor := LuminanceColor(BaseColor, 99)
-        else
-          ShadowColor := LuminanceColor(BaseColor, 151);
-
-        if Style in [TExFrameStyle.Chess, TExFrameStyle.ChessColor] then
-          Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
-        else
-        if Style in [TExFrameStyle.Raised, TExFrameStyle.RaisedColor,
-          TExFrameStyle.Bump, TExFrameStyle.BumpColor]
-        then
-          Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
-        else
-          Draw3dFrame(Canvas.Handle, Rect, 1, ShadowColor, HighlightColor);
+        Draw3dFrame(Canvas.Handle, Rect, 1,
+          StyleService.GetSystemColor(HighlightColor), StyleService.GetSystemColor(ShadowColor));
         InflateRect(Rect, -1, -1);
 
-        // In
-        if not (Style in [TExFrameStyle.Bump, TExFrameStyle.BumpColor, TExFrameStyle.Etched,
-        TExFrameStyle.EtchedColor, TExFrameStyle.Chess, TExFrameStyle.ChessColor]) then
-        begin
-          HighlightColor := LuminanceColor(BaseColor, 214);
-          ShadowColor := LuminanceColor(BaseColor, 151);
+        case Style of
+          TExFrameStyle.Lowered:
+          begin
+            HighlightColor := cl3DDkShadow;
+            ShadowColor := clBtnHighlight;
+          end;
+          TExFrameStyle.Raised:
+          begin
+            HighlightColor := clBtnHighlight;
+            ShadowColor := clBtnShadow;
+          end;
+          TExFrameStyle.Bump:
+          begin
+            HighlightColor := clBtnShadow;
+            ShadowColor := cl3DLight;
+          end;
+          TExFrameStyle.Etched:
+          begin
+            HighlightColor := cl3DLight;
+            ShadowColor := clBtnShadow;
+          end;
         end;
 
-        if Style in [TExFrameStyle.Chess, TExFrameStyle.ChessColor] then
-          Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor)
-        else
-        if Style in [TExFrameStyle.Raised, TExFrameStyle.RaisedColor,
-          TExFrameStyle.Etched, TExFrameStyle.EtchedColor]
-        then
-          Draw3dFrame(Canvas.Handle, Rect, 1, HighlightColor, ShadowColor)
-        else
-          Draw3dFrame(Canvas.Handle, Rect, 1, ShadowColor, HighlightColor);
+        Draw3dFrame(Canvas.Handle, Rect, 1,
+          StyleService.GetSystemColor(HighlightColor), StyleService.GetSystemColor(ShadowColor));
+        InflateRect(Rect, -1, -1);
+      end else
+      begin
+        case Style of
+          TExFrameStyle.Lowered: EdgeStyle := EDGE_SUNKEN;
+          TExFrameStyle.Raised: EdgeStyle := EDGE_RAISED;
+          TExFrameStyle.Bump: EdgeStyle := EDGE_BUMP;
+          TExFrameStyle.Etched: EdgeStyle := EDGE_ETCHED;
+        end;
+        DrawEdge(Canvas.Handle, Rect, EdgeStyle, BF_RECT or BF_ADJUST);
+      end;
+    end;
+
+    TExFrameStyle.Chess:
+    begin
+      if HasStyle then
+      begin
+        ShadowColor := StyleService.GetSystemColor(clBtnHighlight);
+        HighlightColor := StyleService.GetSystemColor(clBtnShadow);
+        Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor);
+        InflateRect(Rect, -1, -1);
+        Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor);
+        InflateRect(Rect, -1, -1);
+      end else
+      begin
+        ShadowColor := clBtnHighlight;
+        HighlightColor := clBtnShadow;
+        Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor);
+        InflateRect(Rect, -1, -1);
+        Canvas.DrawChessFrame(Rect, ShadowColor, HighlightColor);
         InflateRect(Rect, -1, -1);
       end;
     end;

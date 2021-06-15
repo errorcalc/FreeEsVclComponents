@@ -46,6 +46,23 @@ type
     procedure ListDrawValue(const Value: string; ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
   end;
 
+  TEsCustomImageNameProperty = class(TStringProperty, ICustomPropertyListDrawing)
+  private const
+    MaxWidth = 64;
+    Border = 2;
+  protected
+    // rewrite me
+    function GetImageList: TCustomImageList; virtual;
+  public
+    function GetAttributes: TPropertyAttributes; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+
+    // ICustomPropertyListDrawing
+    procedure ListMeasureHeight(const Value: string; ACanvas: TCanvas; var AHeight: Integer);
+    procedure ListMeasureWidth(const Value: string; ACanvas: TCanvas; var AWidth: Integer);
+    procedure ListDrawValue(const Value: string; ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+  end;
+
 implementation
 
 uses
@@ -162,6 +179,83 @@ procedure TEsCustomImageIndexProperty.ListMeasureWidth(const Value: string; ACan
   var AWidth: Integer);
 begin
  if GetImageList <> nil then
+    AWidth := AWidth + Min(GetImageList.Height, MaxWidth) + Border * 2;
+end;
+
+{ TEsCustomImageNameProperty }
+
+function TEsCustomImageNameProperty.GetAttributes: TPropertyAttributes;
+begin
+  Result := inherited GetAttributes + [paValueList, paDialog] -
+    [paSortList, paMultiSelect, paAutoUpdate, paSubProperties, paReadOnly];
+end;
+
+function TEsCustomImageNameProperty.GetImageList: TCustomImageList;
+begin
+  if System.TypInfo.GetPropInfo(GetComponent(0), 'Images') <> nil then
+    Result := TCustomImageList(System.TypInfo.GetObjectProp(GetComponent(0), 'Images'))
+  else
+  if System.TypInfo.GetPropInfo(GetComponent(0), 'ImageList') <> nil then
+    Result := TCustomImageList(System.TypInfo.GetObjectProp(GetComponent(0), 'ImageList'))
+  else
+    Result := nil;
+end;
+
+procedure TEsCustomImageNameProperty.GetValues(Proc: TGetStrProc);
+var
+  I: Integer;
+begin
+  if GetImageList <> nil then
+    if GetImageList.IsImageNameAvailable then
+      for I := 0 to GetImageList.Count - 1 do
+        Proc(GetImageList.GetNameByIndex(I));
+end;
+
+procedure TEsCustomImageNameProperty.ListDrawValue(const Value: string;
+  ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
+var
+  R: TRect;
+  Index, H: Integer;
+  ClipRegion: HRGN;
+begin
+  R := ARect;
+  try
+    ACanvas.FillRect(R);
+    if GetImageList <> nil then
+    begin
+      H := R.Bottom - R.Top;
+      R.Right := R.Left + Min(MaxWidth, GetImageList.Width);
+
+      ClipRegion := CreateRectRgn(R.Left + Border, R.Top + Border,
+        R.Left + Border + Min(MaxWidth, GetImageList.Width), R.Top + Border + H);
+      try
+        SelectClipRgn(ACanvas.Handle, ClipRegion);
+        Index := GetImageList.GetIndexByName(Value);
+        if Index <> -1 then
+          GetImageList.Draw(ACanvas, R.Left + Border, R.Top + Border, Index, True);
+      finally
+        SelectClipRgn(ACanvas.Handle, 0);
+        DeleteObject(ClipRegion);
+      end;
+
+      R := Rect(R.Right + 4, R.Top, ARect.Right, R.Bottom);
+    end;
+  finally
+    DefaultPropertyListDrawValue(Value + ' [' + IntToStr(Index) + ']' , ACanvas, R, ASelected);
+  end;
+end;
+
+procedure TEsCustomImageNameProperty.ListMeasureHeight(const Value: string;
+  ACanvas: TCanvas; var AHeight: Integer);
+begin
+  if GetImageList <> nil then
+    AHeight := Max(ACanvas.TextHeight('Wg|'), Min(GetImageList.Height, MaxWidth) + Border * 2);
+end;
+
+procedure TEsCustomImageNameProperty.ListMeasureWidth(const Value: string;
+  ACanvas: TCanvas; var AWidth: Integer);
+begin
+  if GetImageList <> nil then
     AWidth := AWidth + Min(GetImageList.Height, MaxWidth) + Border * 2;
 end;
 

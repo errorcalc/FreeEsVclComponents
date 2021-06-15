@@ -99,6 +99,7 @@ type
     procedure DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
     procedure DrawInsideFrame(R: TRect; Width: Integer; Color: TColor = clNone);
     procedure DrawCorners(R: TRect; Width: Integer);
+    procedure FillRect(R: TRect; Color: TColor); overload;
     // support save/restore state
     function SaveState(const Objects: array of TGraphicsClass): ICanvasSaver; overload;
     function SaveState: ICanvasSaver; overload;
@@ -1054,6 +1055,8 @@ procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
 var
   Brush: HBRUSH;
   Bitmap: TBitmap;
+  Y: Integer;
+  X: Integer;
 begin
   Brush := 0;
   Bitmap := TBitmap.Create;
@@ -1680,6 +1683,20 @@ begin
     end
   else
     Pixels[R.Right, R.Bottom] := MakeColor24(Pixels[R.Right, R.Bottom], GetColor);
+end;
+
+procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
+  .FillRect(R: TRect; Color: TColor);
+var
+  Brush: TBrush;
+begin
+  Brush := TBrush.Create;
+  try
+    Brush.Color := Color;
+    Winapi.Windows.FillRect(Self.Handle, R, Brush.Handle);
+  finally
+    Brush.Free;
+  end;
 end;
 
 procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}

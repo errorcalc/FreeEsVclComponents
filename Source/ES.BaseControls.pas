@@ -24,6 +24,7 @@ unit ES.BaseControls;
 {$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
 {$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
 {$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
+{$IF CompilerVersion >= 34} {$DEFINE VER340UP} {$IFEND}
 
 // see function CalcClientRect
 {$define FAST_CALC_CLIENTRECT}
@@ -103,8 +104,12 @@ type
     procedure PaintWindow(DC: HDC); override;
     procedure PaintHandler(var Message: TWMPaint);
     procedure DrawBackground(DC: HDC); virtual;
+    procedure FillBackground(Handle: THandle); virtual;
     // other
     procedure UpdateText; dynamic;
+    {$ifdef VER240UP}
+    procedure UpdateStyleElements; override;
+    {$ifend}
     //
     property ParentBackground default True;
     property Transparent: Boolean read GetTransparent write SetTransparent default True;// analog of ParentBackground
@@ -181,6 +186,9 @@ type
   protected
     procedure Paint; override;
     function HasPadding: Boolean;
+    {$ifdef VER240UP}
+    procedure UpdateStyleElements; override;
+    {$ifend}
     // new
     procedure CalcContentMargins(var Margins: TContentMargins); virtual;
   public
@@ -300,7 +308,8 @@ begin
   end;
 end;
 
-procedure DrawControlHelper(Control: TControl; Options: THelperOptions; FrameWidth: Integer = 0);
+procedure DrawControlHelper(Control: TControl; Options: THelperOptions;
+  FrameWidth: Integer = 0);
 var
   Canvas: TCanvas;
   Padding: TPadding;
@@ -358,16 +367,24 @@ function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$IFDEF VER230UP}
+  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := (seClient in Control.StyleElements) and
+              (not StyleServices(Control).IsSystemStyle);
+  end;
+  {$else}
   if StyleServices.Enabled then
   begin
     Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
-  {$ENDIF}
+  {$endif}
+  {$endif}
 end;
 
 function CalcClientRect(Control: TControl): TRect;
@@ -573,6 +590,22 @@ begin
 end;*)
 
 // temp fix
+procedure TEsCustomControl.FillBackground(Handle: THandle);
+begin
+  if not IsStyledClientControl(Self) then
+  begin
+    FillRect(Handle, ClientRect, Brush.Handle)
+  end else
+  begin
+    {$ifdef VER340UP}
+    SetDCBrushColor(Handle, StyleServices(Self).GetSystemColor(Color));
+    {$else}
+    SetDCBrushColor(Handle, StyleServices.GetSystemColor(Color);
+    {$endif}
+    FillRect(Handle, ClientRect, GetStockObject(DC_BRUSH));
+  end;
+end;
+
 procedure TEsCustomControl.FixBufferedChildren(Reader: TReader);
 begin
   BufferedChildren := Reader.ReadBoolean;
@@ -631,7 +664,8 @@ begin
     begin
       DC := BeginPaint(Handle, PS);
       {$IFDEF VER230UP}
-      if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
+      if {$IFDEF VER340UP} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
+        not FIsCachedBuffer then
         UpdateRect := ClientRect
         // I had to use a crutch to ClientRect, due to the fact that
         // VCL.Styles.TCustomStyle.DoDrawParentBackground NOT use relative coordinates,
@@ -645,7 +679,8 @@ begin
     begin
       DC := Message.DC;
       {$IFDEF VER230UP}
-      if TStyleManager.IsCustomStyleActive and not FIsCachedBuffer then
+      if {$IFDEF VER340UP} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
+        not FIsCachedBuffer then
         UpdateRect := ClientRect
       else
       {$endif}
@@ -853,14 +888,7 @@ begin
           DrawBackground(BufferDC); //DrawParentImage(Self, BufferDC, False);
       end else
         if (not DoubleBuffered or (DC <> 0)) then
-          if not IsStyledClientControl(Self) then
-            FillRect(BufferDC, ClientRect, Brush.Handle)
-          else
-          begin
-            SetDCBrushColor(BufferDC,
-              ColorToRGB({$ifdef VER230UP}StyleServices.GetSystemColor(Color){$else}Color{$endif}));
-            FillRect(BufferDC, ClientRect, GetStockObject(DC_BRUSH));
-          end;
+          FillBackground(BufferDC);
 
     FCanvas.Lock;
     try
@@ -918,6 +946,13 @@ function TEsCustomControl.IsBufferedChildrenStored: Boolean;
 begin
   Result := not ParentBufferedChildren;
 end;
+
+{$ifdef VER240UP}
+procedure TEsCustomControl.UpdateStyleElements;
+begin
+  Invalidate;
+end;
+{$ifend}
 
 // ok
 procedure TEsCustomControl.SetBufferedChildren(const Value: Boolean);
@@ -1109,10 +1144,10 @@ begin
   ContentMargins.Reset;
   CalcContentMargins(ContentMargins);
 
-  Inc(Result.Left, ContentMargins.Left);
-  Inc(Result.Top, ContentMargins.Top);
-  Dec(Result.Right, ContentMargins.Right);
-  Dec(Result.Bottom, ContentMargins.Bottom);
+  Result.Left := Result.Left + ContentMargins.Left;
+  Result.Top := Result.Top + ContentMargins.Top;
+  Result.Right := Result.Right - ContentMargins.Right;
+  Result.Bottom := Result.Bottom - ContentMargins.Bottom;
 
   {$ifdef TEST_CONTROL_CONTENT_RECT}
   if Result.Left > Result.Right then
@@ -1182,6 +1217,13 @@ begin
   inherited;
 end;
 
+{$ifdef VER240UP}
+procedure  TEsGraphicControl.UpdateStyleElements;
+begin
+  Invalidate;
+end;
+{$endif}
+
 function TEsGraphicControl.GetPadding: TPadding;
 begin
   if FPadding = nil then
@@ -1201,7 +1243,8 @@ procedure TEsGraphicControl.PaddingChange(Sender: TObject);
 begin
   AdjustSize;
   Invalidate;
-  if (FPadding.Left = 0) and (FPadding.Top = 0) and (FPadding.Right = 0) and (FPadding.Bottom = 0) then
+  if (FPadding.Left = 0) and (FPadding.Top = 0) and
+     (FPadding.Right = 0) and (FPadding.Bottom = 0) then
     FreeAndNil(FPadding);
 end;
 

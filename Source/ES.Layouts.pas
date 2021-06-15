@@ -78,6 +78,9 @@ type
     {$if CompilerVersion > 23}
     property StyleElements;
     {$ifend}
+    {$if CompilerVersion > 26}
+    property StyleName;
+    {$ifend}
     property OnAlignInsertBefore;
     property OnAlignPosition;
     property OnCanResize;
@@ -114,15 +117,28 @@ type
     FFrameWidth: TFrameWidth;
     FFrameColor: TColor;
     FFrameStyle: TFrameStyle;
+    FCaptionVisible: Boolean;
+    FCaptionVertLayout: TVertLayout;
+    FCaptionHorzLayout: THorzLayout;
     procedure SetFrameColor(const Value: TColor);
     procedure SetFrameStyle(const Value: TFrameStyle);
     procedure SetFrameWidth(const Value: TFrameWidth);
+    procedure SetCaptionVisible(const Value: Boolean);
+    procedure SetCaptionHorzLayout(const Value: THorzLayout);
+    procedure SetCaptionVertLayout(const Value: TVertLayout);
   protected
     procedure Paint; override;
     procedure AdjustClientRect(var Rect: TRect); override;
+    procedure UpdateText; override;
   public
     constructor Create(AOwner: TComponent); override;
   published
+    property Caption;
+    property CaptionVertLayout: TVertLayout read FCaptionVertLayout write
+      SetCaptionVertLayout default TVertLayout.Center;
+    property CaptionHorzLayout: THorzLayout read FCaptionHorzLayout write
+      SetCaptionHorzLayout default THorzLayout.Center;
+    property CaptionVisible: Boolean read FCaptionVisible write SetCaptionVisible default False;
     property BevelKind;
     property BevelInner;
     property BevelOuter;
@@ -134,7 +150,7 @@ type
 implementation
 
 uses
-  ES.ExGraphics, ES.Utils, Vcl.Themes;
+  Winapi.Windows, ES.ExGraphics, ES.Utils, Vcl.Themes;
 
 procedure TEsCustomLayout.CMIsToolControl(var Message: TMessage);
 begin
@@ -175,20 +191,76 @@ begin
   FFrameColor := clBtnShadow;
   FFrameWidth := 1;
   FFrameStyle := TExFrameStyle.Raised;
+
+  FCaptionVertLayout := TVertLayout.Center;
+  FCaptionHorzLayout := THorzLayout.Center;
 end;
 
 procedure TEsPanel.Paint;
+const
+  HorzLayout: array[THorzLayout] of Integer = (DT_LEFT, DT_CENTER, DT_RIGHT);
+  VertLayout: array[TVertLayout] of Integer = (DT_TOP, DT_VCENTER, DT_BOTTOM);
+var
+  TextFlags: Integer;
+  Style: TCustomStyleServices;
+  Details: TThemedElementDetails;
+  FontColor: TColor;
+  R: TRect;
 begin
+  (* {$ifdef VER240UP}
+  if (seClient in Control.StyleElements) then
+  begin
+    FillBackground(Canvas.Handle);
+  end;
+  {$endif}*)
+
+  if FCaptionVisible then
+  begin
+    Canvas.Font := Font;
+    Canvas.Brush.Style := bsClear;
+
+    TextFlags := DT_SINGLELINE or HorzLayout[CaptionHorzLayout] or VertLayout[CaptionVertLayout];
+    TextFlags := DrawTextBiDiModeFlags(TextFlags);
+
+    R := ClientRect;
+
+    if IsStyledFontControl(Self) then
+    begin
+      Style := GetControlStyle(Self);
+      Details := Style.GetElementDetails(tpPanelBackground);
+      if not Style.GetElementColor(Details, ecTextColor, FontColor) or (FontColor = clNone) then
+        FontColor := Font.Color;
+      Style.DrawText(Canvas.Handle, Details, Caption, R, TTextFormatFlags(TextFlags), FontColor);
+    end else
+      DrawText(Canvas.Handle, Caption, -1, R, TextFlags);
+  end;
+
   if (csDesigning in ComponentState) and IsDrawHelper then
     DrawControlHelper(Self, [hoPadding, hoClientRect], GetFrameWidth(FrameStyle, FrameWidth));
 
   if FrameStyle <> TExFrameStyle.None then
-    if IsStyledBorderControl(Self) then
-      DrawFrame(Canvas, ClientRect, FrameStyle, FrameWidth, StyleServices.GetSystemColor(FrameColor),
-        StyleServices.GetSystemColor(clBtnHighlight), StyleServices.GetSystemColor(clBtnShadow))
-    else
-      DrawFrame(Canvas, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
+    DrawFrame(Canvas, Self, ClientRect, FrameStyle, FrameWidth,
+      FrameColor, clBtnHighlight, clBtnShadow, True);
+end;
 
+procedure TEsPanel.SetCaptionHorzLayout(const Value: THorzLayout);
+begin
+  if FCaptionHorzLayout <> Value then
+  begin
+    FCaptionHorzLayout := Value;
+    if FCaptionVisible then
+      Invalidate;
+  end;
+end;
+
+procedure TEsPanel.SetCaptionVertLayout(const Value: TVertLayout);
+begin
+  if FCaptionVertLayout <> Value then
+  begin
+    FCaptionVertLayout := Value;
+    if FCaptionVisible then
+      Invalidate;
+  end;
 end;
 
 procedure TEsPanel.SetFrameColor(const Value: TColor);
@@ -218,6 +290,21 @@ begin
     Realign;
     Invalidate;
   end;
+end;
+
+procedure TEsPanel.SetCaptionVisible(const Value: Boolean);
+begin
+  if FCaptionVisible <> Value then
+  begin
+    FCaptionVisible := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsPanel.UpdateText;
+begin
+  if FCaptionVisible then
+    Invalidate;
 end;
 
 end.

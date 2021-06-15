@@ -20,6 +20,9 @@ unit ES.Utils;
 {$IF CompilerVersion >= 23}
 {$DEFINE VER230UP}
 {$IFEND}
+{$IF CompilerVersion >= 34}
+{$DEFINE VER340UP}
+{$IFEND}
 
 interface
 
@@ -30,6 +33,9 @@ function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
 function IsStyledFontControl(Control: TControl): Boolean;
 function IsStyledBorderControl(Control: TControl): Boolean;
+function IsStyledControl(Control: TControl): Boolean;
+
+function GetControlStyle(Control: TControl): TCustomStyleServices;
 
 function ClientColorToRgb(Color: TColor; Control: TControl = nil): TColor;
 function BorderColorToRgb(Color: TColor; Control: TControl = nil): TColor;
@@ -66,6 +72,28 @@ begin
     Result := False;
 end;
 
+function IsStyledControl(Control: TControl): Boolean;
+begin
+  Result := False;
+
+  {$ifdef VER230UP}
+  if Control = nil then
+    Exit;
+
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := not StyleServices(Control).IsSystemStyle;
+  end;
+  {$else}
+  if StyleServices.Enabled then
+  begin
+    Result := TStyleManager.IsCustomStyleActive;
+  end;
+  {$endif}
+  {$endif}
+end;
+
 function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
@@ -74,11 +102,19 @@ begin
   if Control = nil then
     Exit;
 
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := (seClient in Control.StyleElements) and
+              (not StyleServices(Control).IsSystemStyle);
+  end;
+  {$else}
   if StyleServices.Enabled then
   begin
     Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
+  {$endif}
   {$endif}
 end;
 
@@ -90,11 +126,19 @@ begin
   if Control = nil then
     Exit;
 
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := (seFont in Control.StyleElements) and
+              (not StyleServices(Control).IsSystemStyle);
+  end;
+  {$else}
   if StyleServices.Enabled then
   begin
     Result := {$ifdef VER240UP}(seFont in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
   end;
+  {$endif}
   {$endif}
 end;
 
@@ -106,10 +150,36 @@ begin
   if Control = nil then
     Exit;
 
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := (seBorder in Control.StyleElements) and
+              (not StyleServices(Control).IsSystemStyle);
+  end;
+  {$else}
   if StyleServices.Enabled then
   begin
     Result := {$ifdef VER240UP}(seBorder in Control.StyleElements) and{$endif}
       TStyleManager.IsCustomStyleActive;
+  end;
+  {$endif}
+  {$endif}
+end;
+
+function GetControlStyle(Control: TControl): TCustomStyleServices;
+begin
+  if Control = nil then
+    TStyleManager.SystemStyle;
+
+  {$ifdef VER340UP}
+  if StyleServices(Control).Enabled then
+    Result := StyleServices(Control)
+  else
+    TStyleManager.SystemStyle;
+  {$else}
+  if StyleServices.Enabled then
+  begin
+    Result := TStyleManager.ActiveStyle;
   end;
   {$endif}
 end;
@@ -117,9 +187,15 @@ end;
 function ClientColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$ifdef VER230UP}
+  {$ifdef VER340UP}
+  if IsStyledClientControl(Control) then
+    Result := StyleServices(Control).GetSystemColor(Color)
+  else
+  {$else}
   if IsStyledClientControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
   {$endif}
     Result := ColorToRGB(Color);
 end;
@@ -127,9 +203,15 @@ end;
 function BorderColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$ifdef VER230UP}
+  {$ifdef VER340UP}
+  if IsStyledBorderControl(Control) then
+    Result := StyleServices(Control).GetSystemColor(Color)
+  else
+  {$else}
   if IsStyledBorderControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
   {$endif}
     Result := ColorToRGB(Color);
 end;
@@ -137,9 +219,15 @@ end;
 function FontColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$ifdef VER230UP}
+  {$ifdef VER340UP}
+  if IsStyledFontControl(Control) then
+    Result := StyleServices(Control).GetSystemColor(Color)
+  else
+  {$else}
   if IsStyledFontControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
+  {$endif}
   {$endif}
     Result := ColorToRGB(Color);
 end;

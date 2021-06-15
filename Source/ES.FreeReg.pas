@@ -42,7 +42,7 @@ begin
     // Switch
     TEsSwitch,
     // Images
-    TEsImage, TEsImageControl,
+    TEsImage, TEsImageControl, TEsVirtualImage, TEsVirtualImageControl,
     // Regex Controls
     TEsRegexEdit, TEsRegexButtonedEdit, TEsRegexLabeledEdit,
     // PaintBox
@@ -54,7 +54,9 @@ begin
 
   // ImageList support
   RegisterPropertyEditor(TypeInfo(TImageIndex), TEsImage, '', TEsCustomImageIndexProperty);
+  RegisterPropertyEditor(TypeInfo(TImageName), TEsImage, '', TEsCustomImageNameProperty);
   RegisterPropertyEditor(TypeInfo(TImageIndex), TEsImageControl, '', TEsCustomImageIndexProperty);
+  RegisterPropertyEditor(TypeInfo(TImageName), TEsImageControl, '', TEsCustomImageNameProperty);
 
   // Regex controls
   RegisterComponentEditor(TEsRegexEdit, TEsRegexEditorEditor);

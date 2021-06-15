@@ -80,6 +80,7 @@ type
     {$if CompilerVersion > 23}
     property StyleElements default [seClient, seBorder, seFont];
     {$ifend}
+    property StyleName;
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -142,6 +143,7 @@ type
     {$if CompilerVersion > 23}
     property StyleElements;
     {$ifend}
+    property StyleName;
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -241,8 +243,6 @@ var
   OnChange: TNotifyEvent;
   StoredFont: TFont;
 begin
-
-
   OnChange := Font.OnChange;
   StoredFont := TFont.Create;
   try
