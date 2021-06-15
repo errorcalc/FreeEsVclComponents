@@ -167,12 +167,6 @@ type
     function GetColor: TColor;
     function GetImageIndex: TImageIndex;
     function GetImages: TCustomImageList;
-
-    //function GetImageCollection: TCustomImageCollection;
-    //function GetImageName: string;
-    //function GetImageWidth: Integer;
-    //function GetImageHeight: Integer;
-
     function GetIncrementalDisplay: Boolean;
     function GetOnProgress: TProgressEvent;
     function GetSmoth: Boolean;
@@ -181,12 +175,6 @@ type
     procedure SetColor(const Value: TColor);
     procedure SetImageIndex(const Value: TImageIndex);
     procedure SetImages(const Value: TCustomImageList);
-
-    //procedure SetImageCollection(const Value: TCustomImageCollection);
-    //procedure SetImageName(const Value: string);
-    //procedure SetImageWidth(const Value: Integer);
-    //procedure SetImageHeight(const Value: Integer);
-
     procedure SetIncrementalDisplay(const Value: Boolean);
     procedure SetOnProgress(const Value: TProgressEvent);
     procedure SetSmoth(const Value: Boolean);
@@ -231,13 +219,6 @@ type
     property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
     {$ifend}
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
-    {$if CompilerVersion > 26}
-    // TImageCollection support
-    //property ImageCollection: TCustomImageCollection read GetImageCollection write SetImageCollection;
-    //property ImageName: string read GetImageName write SetImageName;
-    //property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
-    //property ImageHeight: Integer read GetImageHeight write SetImageHeight default 0;
-    {$ifend}
     property Smoth: Boolean read GetSmoth write SetSmoth default True;
     property IncrementalDisplay: Boolean read GetIncrementalDisplay write SetIncrementalDisplay default False;
     property Color: TColor read GetColor write SetColor default clWhite;
@@ -254,6 +235,7 @@ type
     {$if CompilerVersion > 23}
     property StyleElements;
     {$ifend}
+    property StyleName;
     property Touch;
     property Visible;
     property OnClick;
@@ -374,6 +356,7 @@ type
     {$if CompilerVersion > 23}
     property StyleElements;
     {$ifend}
+    property StyleName;
     property TabOrder;
     property TabStop;
     property Touch;
@@ -1174,12 +1157,12 @@ begin
       Bitmap := TBitmap.Create;
       Bitmap.SetSize(Max(0, Width), Max(0, Height));
       CurrentCanvas := Bitmap.Canvas;
-      CurrentCanvas.FillRect(ClientRect, ColorToRgb(Color));
+      CurrentCanvas.FillRect(ClientRect, ClientColorToRgb(Color, Self));
     end else
     begin
       CurrentCanvas := inherited Canvas;
       if not Transparent then
-        CurrentCanvas.FillRect(ClientRect, ColorToRgb(Color));
+        CurrentCanvas.FillRect(ClientRect, ClientColorToRgb(Color, Self));
     end;
 
     if (csDesigning in ComponentState) and IsDrawHelper and
@@ -1295,48 +1278,7 @@ procedure TEsImage.SetTransparentGraphic(const Value: Boolean);
 begin
   ImageProxy.TransparentGraphic := Value;
 end;
-{
-function TEsImage.GetImageCollection: TCustomImageCollection;
-begin
-  Result := ImageProxy.ImageCollection;
-end;
 
-function TEsImage.GetImageName: string;
-begin
-  Result := ImageProxy.ImageName;
-end;
-
-function TEsImage.GetImageWidth: Integer;
-begin
-  Result := ImageProxy.ImageWidth;
-end;
-
-function TEsImage.GetImageHeight: Integer;
-begin
-  Result := ImageProxy.ImageHeight;
-end;
-
-
-procedure TEsImage.SetImageCollection(const Value: TCustomImageCollection);
-begin
-  ImageProxy.ImageCollection := Value;
-end;
-
-procedure TEsImage.SetImageName(const Value: string);
-begin
-  ImageProxy.ImageName := Value;
-end;
-
-procedure TEsImage.SetImageWidth(const Value: Integer);
-begin
-  ImageProxy.ImageWidth := Value;
-end;
-
-procedure TEsImage.SetImageHeight(const Value: Integer);
-begin
-  ImageProxy.ImageHeight := Value;
-end;
-}
 { TEsImageControl }
 
 constructor TEsImageControl.Create(AOwner: TComponent);
@@ -1532,8 +1474,8 @@ begin
 
   if FrameStyle <> TExFrameStyle.None then
     if IsStyledBorderControl(Self) then
-      DrawFrame(inherited Canvas, nil, ClientRect, FrameStyle, FrameWidth, StyleServices.GetSystemColor(FrameColor),
-        StyleServices.GetSystemColor(clBtnHighlight), StyleServices.GetSystemColor(clBtnShadow))
+      DrawFrame(inherited Canvas, Self, ClientRect, FrameStyle, FrameWidth, FrameColor,
+        clBtnHighlight, clBtnShadow)
     else
       DrawFrame(inherited Canvas, nil, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
 
@@ -1972,12 +1914,12 @@ begin
       Bitmap := TBitmap.Create;
       Bitmap.SetSize(Max(0, Width), Max(0, Height));
       CurrentCanvas := Bitmap.Canvas;
-      CurrentCanvas.FillRect(ClientRect, ColorToRgb(Color));
+      CurrentCanvas.FillRect(ClientRect, ClientColorToRgb(Color, Self));
     end else
     begin
       CurrentCanvas := inherited Canvas;
       if not Transparent then
-        CurrentCanvas.FillRect(ClientRect, ColorToRgb(Color));
+        CurrentCanvas.FillRect(ClientRect, ClientColorToRgb(Color, Self));
     end;
 
     if (csDesigning in ComponentState) and IsDrawHelper and
@@ -2189,10 +2131,10 @@ begin
 
   if FrameStyle <> TExFrameStyle.None then
     if IsStyledBorderControl(Self) then
-      DrawFrame(Canvas, Self, ClientRect, FrameStyle, FrameWidth, StyleServices.GetSystemColor(FrameColor),
-        StyleServices.GetSystemColor(clBtnHighlight), StyleServices.GetSystemColor(clBtnShadow))
+      DrawFrame(inherited Canvas, Self, ClientRect, FrameStyle, FrameWidth, FrameColor,
+        clBtnHighlight, clBtnShadow)
     else
-      DrawFrame(Canvas, Self, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
+      DrawFrame(inherited Canvas, nil, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
 
   ImageProxy.Draw(Canvas, ContentRect);
 
