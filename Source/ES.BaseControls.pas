@@ -20,11 +20,7 @@
 
 unit ES.BaseControls;
 
-{$IF CompilerVersion >= 18} {$DEFINE VER180UP} {$IFEND}
-{$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
-{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
-{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
-{$IF CompilerVersion >= 34} {$DEFINE VER340UP} {$IFEND}
+{$I EsDefines.inc}
 
 // see function CalcClientRect
 {$define FAST_CALC_CLIENTRECT}
@@ -36,7 +32,7 @@ interface
 
 uses
   WinApi.Windows, System.Types, System.Classes, Vcl.Controls,
-  Vcl.Graphics, {$IFDEF VER230UP}Vcl.Themes,{$ENDIF} WinApi.Messages, WinApi.Uxtheme, Vcl.Forms;
+  Vcl.Graphics, Vcl.Forms, WinApi.Messages, WinApi.Uxtheme, Vcl.Themes;
 
 const
   CM_ESBASE = CM_BASE + $0800;
@@ -50,18 +46,24 @@ type
 
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
 
-  /// <summary> The best replacement for TCustomControl, supports transparency and without flicker </summary>
+  /// <summary>
+  /// The best replacement for TCustomControl, supports transparency and without flicker
+  /// </summary>
   TEsCustomControl = class(TWinControl)
   private
+    FIsCachedBuffer: Boolean;
+    FIsFullSizeBuffer: Boolean;
+    FIsCachedBackground: Boolean;
+
+
     // anti flicker and transparent magic
     FCanvas: TCanvas;
     CacheBitmap: HBITMAP;// Cache for buffer BitMap
     CacheBackground: HBITMAP;// Cache for background BitMap
-    FIsCachedBuffer: Boolean;
-    FIsCachedBackground: Boolean;
+
     FBufferedChildren: Boolean;
     FParentBufferedChildren: Boolean;
-    FIsFullSizeBuffer: Boolean;
+
     // paint events
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
@@ -99,7 +101,7 @@ type
     procedure DefineProperties(Filer: TFiler); override;
     // paint
     property Canvas: TCanvas read FCanvas;
-    procedure DeleteCache;{$IFDEF VER210UP}inline;{$ENDIF}
+    procedure DeleteCache;
     procedure Paint; virtual;
     procedure PaintWindow(DC: HDC); override;
     procedure PaintHandler(var Message: TWMPaint);
@@ -107,9 +109,9 @@ type
     procedure FillBackground(Handle: THandle); virtual;
     // other
     procedure UpdateText; dynamic;
-    {$ifdef VER240UP}
+    {$IFDEF STYLE_ELEMENTS}
     procedure UpdateStyleElements; override;
-    {$ifend}
+    {$ENDIF}
     //
     property ParentBackground default True;
     property Transparent: Boolean read GetTransparent write SetTransparent default True;// analog of ParentBackground
@@ -118,26 +120,57 @@ type
     destructor Destroy; override;
     procedure UpdateBackground(Repaint: Boolean); overload;
     procedure UpdateBackground; overload;
-    // ------------------ Properties for published -------------------------------------------------
+    // ------------------ Properties for published -----------------------------
+    /// <summary>
+    /// Standard double buffering, this control uses its own improved buffering, therefore this property is False by default.
+    /// If standard DoubleBuffering is enabled then improved buffering of child graphics controls has been disabled.
+    /// </summary>
     property DoubleBuffered default False;
-    {$IFDEF VER210UP}
+    /// <summary>
+    /// See the DoubleBuffering property description for details.
+    /// </summary>
     property ParentDoubleBuffered default False;
-    {$ENDIF}
-    // Painting for chidrens classes
+    /// <summary>
+    /// OnPaint event handler, called after the control content has been rendered.
+    /// </summary>
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
+    /// <summary>
+    /// OnPainting event handler, called before the control content has been rendered.
+    /// </summary>
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
-    // BufferedChildrens
+    /// <summary>
+    /// ParentDoubleBuffered property similar to ParentDoubleBuffered property but related to BufferedChildren.
+    /// </summary>
     property ParentBufferedChildren: Boolean read FParentBufferedChildren write SetParentBufferedChildren default True;
+    /// <summary>
+    /// BufferedChildren is an improved double buffering that suppresses flickering for child graphics controls.
+    /// </summary>
     property BufferedChildren: Boolean read FBufferedChildren write SetBufferedChildren stored IsBufferedChildrenStored;
-    // External prop
+    /// <summary>
+    /// If IsCachedBuffer is true, then the double buffering buffer will be persisted between draw calls, this is faster,
+    /// but causes more memory consumption.
+    /// </summary>
     property IsCachedBuffer: Boolean read FIsCachedBuffer write SetIsCachedBuffer default False;
+    /// <summary>
+    /// IsCachedBackground allows you to persist the background image between draw calls.
+    /// Accelerates rendering, but when the background changes, you must manually call Invalidate.
+    /// </summary>
     property IsCachedBackground: Boolean read FIsCachedBackground write SetIsCachedBackground default False;
+    /// <summary>
+    /// If True then control will be drawing the halt-tone frame, helps to more accurately position the control in the design time.
+    /// </summary>
     property IsDrawHelper: Boolean read FIsDrawHelper write SetIsDrawHelper default False;
+    /// <summary>
+    /// IsOpaque are analogue [csOpaque] in ControlStyle.
+    /// </summary>
     property IsOpaque: Boolean read GetIsOpaque write SetIsOpaque default False;
+    /// <summary>
+    /// If the property is active, then the bitmap buffer will be for the entire size of the control.
+    /// More cpu and mem usage, but for some code that does not take into account the context shift, this is a solution to problems.
+    /// </summary>
     property IsFullSizeBuffer: Boolean read FIsFullSizeBuffer write SetIsFullSizeBuffer default False;
   end;
 
-  {$IFDEF VER180UP}
   TContentMargins = record
   type
     TMarginSize = 0..MaxInt;
@@ -186,9 +219,9 @@ type
   protected
     procedure Paint; override;
     function HasPadding: Boolean;
-    {$ifdef VER240UP}
+    {$IFDEF STYLE_ELEMENTS}
     procedure UpdateStyleElements; override;
-    {$ifend}
+    {$ENDIF}
     // new
     procedure CalcContentMargins(var Margins: TContentMargins); virtual;
   public
@@ -202,7 +235,6 @@ type
   procedure DrawControlHelper(Control: TControl; Options: THelperOptions; FrameWidth: Integer = 0); overload;
   procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
     Padding: TPadding; Options: THelperOptions); overload;
-  {$ENDIF}
 
   function CalcClientRect(Control: TControl): TRect;
 
@@ -219,20 +251,8 @@ type
     property BorderWidth;
   end;
 
-// Old delphi support
-{$IFNDEF VER210UP}
-function RectWidth(const Rect: TRect): Integer;
-begin
-  Result := Rect.Right - Rect.Left;
-end;
 
-function RectHeight(const Rect: TRect): Integer;
-begin
-  Result := Rect.Bottom - Rect.Top;
-end;
-{$ENDIF}
-
-{$IFDEF VER210UP} {$REGION 'DrawControlHelper'}
+{$REGION 'DrawControlHelper'}
 procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
   Padding: TPadding; Options: THelperOptions);
   procedure Line(Canvas: TCanvas; x1, y1, x2, y2: Integer);
@@ -361,44 +381,39 @@ begin
       Canvas.Free;
   end;
 end;
-{$ENDREGION} {$ENDIF}
+{$ENDREGION}
 
 function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$ifdef VER230UP}
-  if Control = nil then
-    Exit;
-
-  {$ifdef VER340UP}
+  {$IFDEF STYLE_NAME}
   if StyleServices(Control).Enabled then
   begin
     Result := (seClient in Control.StyleElements) and
               (not StyleServices(Control).IsSystemStyle);
   end;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
-    Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
+    Result := {$IFDEF STYLE_ELEMENTS}(seClient in Control.StyleElements) and{$ENDIF}
       TStyleManager.IsCustomStyleActive;
   end;
-  {$endif}
-  {$endif}
+  {$ENDIF}
 end;
 
 function CalcClientRect(Control: TControl): TRect;
 var
-  {$ifdef FAST_CALC_CLIENTRECT}
+  {$IFDEF FAST_CALC_CLIENTRECT}
   Info: TWindowInfo;
-  {$endif}
+  {$ENDIF}
   IsFast: Boolean;
 begin
-  {$ifdef FAST_CALC_CLIENTRECT}
+  {$IFDEF FAST_CALC_CLIENTRECT}
   IsFast := True;
-  {$else}
+  {$ELSE}
   IsFast := False;
-  {$endif}
+  {$ENDIF}
 
   Result := Rect(0, 0, Control.Width, Control.Height);
 
@@ -462,7 +477,7 @@ begin
   SetViewportOrgEx(DC, P.X, P.Y, nil);
 end;
 
-procedure BitmapDeleteAndNil(var Bitmap: HBITMAP);{$IFDEF VER210UP}inline;{$ENDIF}
+procedure BitmapDeleteAndNil(var Bitmap: HBITMAP);
 begin
   if Bitmap <> 0 then
   begin
@@ -505,9 +520,7 @@ begin
 
   // init
   ControlStyle := ControlStyle - [csOpaque] + [csParentBackground];
-  {$IFDEF VER210UP}
   ParentDoubleBuffered := False;
-  {$ENDIF}
 
   CacheBitmap := 0;
   CacheBackground := 0;
@@ -564,7 +577,7 @@ begin
     Control := Controls[i];
     if (Control is TGraphicControl) and (csOpaque in Control.ControlStyle) and Control.Visible and
        (not (csDesigning in ComponentState) or not (csNoDesignVisible in ControlStyle)
-       {$IFDEF VER210UP}or not (csDesignerHide in Control.ControlState){$ENDIF})
+        or not (csDesignerHide in Control.ControlState))
     then
     begin
       // Necessary to draw a background if the control has a Property 'Transparent' and hasn't a Property 'Color'
@@ -579,16 +592,6 @@ begin
   end;
 end;
 
-(*procedure TEsCustomControl.EndCachedBackground;
-begin
-  FIsCachedBackground := StoredCachedBackground;
-end;
-
-procedure TEsCustomControl.EndCachedBuffer;
-begin
-  FIsCachedBuffer := StoredCachedBuffer;
-end;*)
-
 // temp fix
 procedure TEsCustomControl.FillBackground(Handle: THandle);
 begin
@@ -597,11 +600,11 @@ begin
     FillRect(Handle, ClientRect, Brush.Handle)
   end else
   begin
-    {$ifdef VER340UP}
+    {$IFDEF STYLE_NAME}
     SetDCBrushColor(Handle, StyleServices(Self).GetSystemColor(Color));
-    {$else}
+    {$ELSE}
     SetDCBrushColor(Handle, StyleServices.GetSystemColor(Color);
-    {$endif}
+    {$ENDIF}
     FillRect(Handle, ClientRect, GetStockObject(DC_BRUSH));
   end;
 end;
@@ -651,20 +654,19 @@ var
   SaveViewport: TPoint;
   Region: HRGN;
   DC: HDC;
-  IsBeginPaint: Boolean;
+  NeedBeginPaint: Boolean;
 begin
   BufferBitMap := 0;
   BufferDC := 0;
   DC := 0;
   Region := 0;
-  IsBeginPaint := Message.DC = 0;
+  NeedBeginPaint := Message.DC = 0;
 
   try
-    if IsBeginPaint then
+    if NeedBeginPaint then
     begin
       DC := BeginPaint(Handle, PS);
-      {$IFDEF VER230UP}
-      if {$IFDEF VER340UP} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
+      if {$IFDEF STYLE_NAME} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
         not FIsCachedBuffer then
         UpdateRect := ClientRect
         // I had to use a crutch to ClientRect, due to the fact that
@@ -672,18 +674,15 @@ begin
         // ie ignores SetViewportOrgEx!
         // This function uses ClientToScreen and ScreenToClient for coordinates calculation!
       else
-      {$endif}
         UpdateRect := PS.rcPaint;
     end
     else
     begin
       DC := Message.DC;
-      {$IFDEF VER230UP}
-      if {$IFDEF VER340UP} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
+      if {$IFDEF STYLE_NAME} not StyleServices(Self).IsSystemStyle {$ELSE} TStyleManager.IsCustomStyleActive {$ENDIF} and
         not FIsCachedBuffer then
         UpdateRect := ClientRect
       else
-      {$endif}
         if GetClipBox(DC, UpdateRect) = ERROR then
           UpdateRect := ClientRect;
     end;
@@ -775,7 +774,7 @@ begin
       //------------------------------------------------------------------------------------------------
     finally
       // end paint, if need
-      if IsBeginPaint then
+      if NeedBeginPaint then
         EndPaint(Handle, PS);
     end;
   end;
@@ -947,12 +946,12 @@ begin
   Result := not ParentBufferedChildren;
 end;
 
-{$ifdef VER240UP}
+{$IFDEF STYLE_ELEMENTS}
 procedure TEsCustomControl.UpdateStyleElements;
 begin
   Invalidate;
 end;
-{$ifend}
+{$ENDIF}
 
 // ok
 procedure TEsCustomControl.SetBufferedChildren(const Value: Boolean);
@@ -1051,7 +1050,6 @@ begin
   if DoubleBuffered then
   begin
     inherited;
-    // Message.Result := 1;
   end else
   begin
     if ControlCount <> 0 then
@@ -1060,25 +1058,19 @@ begin
   end;
 end;
 
-//procedure TEsCustomControl.WMNCHitTest(var Message: TWMNCHitTest);
-//begin
-//  if (FIsTransparentMouse) and not(csDesigning in ComponentState) then
-//    Message.Result := HTTRANSPARENT
-//  else
-//    inherited;
-//end;
-
 procedure TEsCustomControl.WMPaint(var Message: TWMPaint);
 begin
   ControlState := ControlState + [csCustomPaint];
 
   // buffered childen aviable only for not DoubleBuffered controls
   if BufferedChildren and (not FDoubleBuffered) and
-     not (csDesigning in ComponentState) then // fix for designer selection
+    not (csDesigning in ComponentState) { <- fix for designer selection} then
   begin
     PaintHandler(Message)// My new PaintHandler
   end else
+  begin
     inherited;
+  end;
 
   ControlState := ControlState - [csCustomPaint];
 end;
@@ -1091,12 +1083,11 @@ end;
 
 procedure TEsCustomControl.WMWindowPosChanged(var Message: TWMWindowPosChanged);
 begin
-  if not (csOpaque in ControlStyle) and ParentBackground{ and not CachedBackground }then
+  if not (csOpaque in ControlStyle) and ParentBackground then
     Invalidate;
-  Inherited;
+  inherited;
 end;
 
-{$IFDEF VER180UP}
 { TEsBaseLayout }
 
 constructor TEsBaseLayout.Create(AOwner: TComponent);
@@ -1149,12 +1140,12 @@ begin
   Result.Right := Result.Right - ContentMargins.Right;
   Result.Bottom := Result.Bottom - ContentMargins.Bottom;
 
-  {$ifdef TEST_CONTROL_CONTENT_RECT}
+  {$IFDEF TEST_CONTROL_CONTENT_RECT}
   if Result.Left > Result.Right then
     Result.Right := Result.Left;
   if Result.Top > Result.Bottom then
     Result.Bottom := Result.Top;
-  {$endif}
+  {$ENDIF}
 end;
 
 procedure TEsBaseLayout.Paint;
@@ -1203,12 +1194,12 @@ begin
   Dec(Result.Right, ContentMargins.Right);
   Dec(Result.Bottom, ContentMargins.Bottom);
 
-  {$ifdef TEST_CONTROL_CONTENT_RECT}
+  {$IFDEF TEST_CONTROL_CONTENT_RECT}
   if Result.Left > Result.Right then
     Result.Right := Result.Left;
   if Result.Top > Result.Bottom then
     Result.Bottom := Result.Top;
-  {$endif}
+  {$ENDIF}
 end;
 
 destructor TEsGraphicControl.Destroy;
@@ -1217,12 +1208,12 @@ begin
   inherited;
 end;
 
-{$ifdef VER240UP}
+{$IFDEF STYLE_ELEMENTS}
 procedure  TEsGraphicControl.UpdateStyleElements;
 begin
   Invalidate;
 end;
-{$endif}
+{$ENDIF}
 
 function TEsGraphicControl.GetPadding: TPadding;
 begin
@@ -1312,7 +1303,6 @@ function TContentMargins.Width: TMarginSize;
 begin
   Result := Left + Right;
 end;
-{$ENDIF}
 
 end.
 
