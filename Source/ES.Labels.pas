@@ -81,8 +81,10 @@ type
     property WordWrap;
     {$IFDEF VER240UP}
     property StyleElements default [seClient, seBorder, seFont];
-    {$IFEND}
+    {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
+    {$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -145,7 +147,9 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
+    {$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;

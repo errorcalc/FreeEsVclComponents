@@ -224,7 +224,6 @@ const
   VertLayout: array[TVertLayout] of Integer = (DT_TOP, DT_VCENTER, DT_BOTTOM);
 var
   TextFlags: Integer;
-  FontColor: TColor;
   R: TRect;
 begin
   (* {$ifdef VER240UP}

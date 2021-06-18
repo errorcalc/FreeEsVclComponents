@@ -48,6 +48,7 @@ type
     procedure ListDrawValue(const Value: string; ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
   end;
 
+  {$IFDEF VER340UP}
   TEsCustomImageNameProperty = class(TStringProperty, ICustomPropertyListDrawing)
   private const
     MaxWidth = 64;
@@ -64,6 +65,7 @@ type
     procedure ListMeasureWidth(const Value: string; ACanvas: TCanvas; var AWidth: Integer);
     procedure ListDrawValue(const Value: string; ACanvas: TCanvas; const ARect: TRect; ASelected: Boolean);
   end;
+  {$ENDIF}
 
 implementation
 
@@ -184,6 +186,8 @@ begin
     AWidth := AWidth + Min(GetImageList.Height, MaxWidth) + Border * 2;
 end;
 
+{$IFDEF VER340UP}
+
 { TEsCustomImageNameProperty }
 
 function TEsCustomImageNameProperty.GetAttributes: TPropertyAttributes;
@@ -261,6 +265,8 @@ begin
   if GetImageList <> nil then
     AWidth := AWidth + Min(GetImageList.Height, MaxWidth) + Border * 2;
 end;
+
+{$ENDIF}
 
 { TEsPicturePropertyFix }
 

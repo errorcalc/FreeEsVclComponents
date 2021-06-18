@@ -108,6 +108,7 @@ type
 
   TImageInterpolationMode = (HighQualityCubic, Fant, Linear, Cubic, NearestNeighbor);
 
+  {$IFDEF VER340UP}
   /// <summary> ONLY INTERNAL USE! </summary>
   TVirtualImageProxy = class(TComponent)
   private
@@ -152,6 +153,7 @@ type
     property Opacity: Byte read FOpacity write SetOpacity default 255;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
+  {$ENDIF}
 
   TEsImage = class(TEsGraphicControl)
   private
@@ -184,15 +186,21 @@ type
     function GetOpacity: Byte;
     procedure SetOpacity(const Value: Byte);
     procedure SetDoubleBuffered(const Value: Boolean);
+    {$IFDEF VER340UP}
     function GetImageName: TImageName;
     function IsImageNameStored: Boolean;
     procedure SetImageName(const Value: TImageName);
+    {$ENDIF}
   protected
     procedure Paint; override;
     procedure Loaded; override;
     procedure ImageProxyChange(Sender: TObject);
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
+    {$IFDEF VER310UP}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    {$ELSE}
+    procedure ChangeScale(M, D: Integer); override;
+    {$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -235,7 +243,9 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
+    {$ENDIF}
     property Touch;
     property Visible;
     property OnClick;
@@ -291,9 +301,11 @@ type
     function GetImages: TCustomImageList;
     procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
     procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    {$IFDEF VER340UP}
     function GetImageName: TImageName;
     function IsImageNameStored: Boolean;
     procedure SetImageName(const Value: TImageName);
+    {$ENDIF}
   protected
     procedure Paint; override;
     procedure Loaded; override;
@@ -356,7 +368,9 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
+    {$ENDIF}
     property TabOrder;
     property TabStop;
     property Touch;
@@ -386,6 +400,7 @@ type
     property OnResize;
   end;
 
+  {$IFDEF VER340UP}
   TEsCustomVirtualImage = class(TEsGraphicControl)
   private
     ImageProxy: TVirtualImageProxy;
@@ -628,6 +643,7 @@ type
     property OnResize;
     property Opacity;// +TEsCustomVirtualImageControl
   end;
+  {$ENDIF}
 
 function CalcImageRect(const R: TRect; const ImageWidth, ImageHeight: Integer;
   const Stretch: TImageStretch): TRect;
@@ -722,6 +738,7 @@ begin
   Canvas.Rectangle(Rect);
 end;
 
+{$IFDEF VER340UP}
 procedure DrawDesignStretchHint(const Canvas: TCanvas; ARect: TRect; const Proxy: TVirtualImageProxy);
 var
   HintString: string;
@@ -752,6 +769,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 { TImageProxy }
 
@@ -1045,10 +1063,17 @@ begin
   end;
 end;
 
+{$IFDEF VER310UP}
 procedure TEsImage.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
 end;
+{$ELSE}
+procedure TEsImage.ChangeScale(M, D: Integer);
+begin
+  inherited;
+end;
+{$ENDIF}
 
 function TEsImage.GetColor: TColor;
 begin
@@ -1086,10 +1111,12 @@ begin
   Result := ImageProxy.ImageIndex;
 end;
 
+{$IFDEF VER340UP}
 function TEsImage.GetImageName: TImageName;
 begin
   Result := ImageProxy.ImageName;
 end;
+{$ENDIF}
 
 function TEsImage.GetImages: TCustomImageList;
 begin
@@ -1148,10 +1175,12 @@ begin
   Invalidate;
 end;
 
+{$IFDEF VER340UP}
 function TEsImage.IsImageNameStored: Boolean;
 begin
   Result := ImageProxy.ImageName <> '';
 end;
+{$ENDIF}
 
 procedure TEsImage.Loaded;
 begin
@@ -1245,10 +1274,12 @@ begin
   ImageProxy.ImageIndex := Value;
 end;
 
+{$IFDEF VER340UP}
 procedure TEsImage.SetImageName(const Value: TImageName);
 begin
   ImageProxy.ImageName := Value;
 end;
+{$ENDIF}
 
 procedure TEsImage.SetImages(const Value: TCustomImageList);
 begin
@@ -1384,10 +1415,12 @@ begin
   Result := ImageProxy.ImageIndex;
 end;
 
+{$IFDEF VER340UP}
 function TEsImageControl.GetImageName: TImageName;
 begin
   Result := ImageProxy.ImageName;
 end;
+{$ENDIF}
 
 function TEsImageControl.GetImages: TCustomImageList;
 begin
@@ -1442,10 +1475,12 @@ begin
     Invalidate;
 end;
 
+{$IFDEF VER340UP}
 function TEsImageControl.IsImageNameStored: Boolean;
 begin
   Result := ImageProxy.ImageName <> '';
 end;
+{$ENDIF}
 
 procedure TEsImageControl.KeyUp(var Key: Word; Shift: TShiftState);
 begin
@@ -1560,10 +1595,12 @@ begin
   ImageProxy.ImageIndex := Value;
 end;
 
+{$IFDEF VER340UP}
 procedure TEsImageControl.SetImageName(const Value: TImageName);
 begin
   ImageProxy.ImageName := Value;
 end;
+{$ENDIF}
 
 procedure TEsImageControl.SetImages(const Value: TCustomImageList);
 begin
@@ -1611,6 +1648,8 @@ begin
   Inherited;
   Invalidate;
 end;
+
+{$IFDEF VER340UP}
 
 { TVirtualImageProxy }
 
@@ -1840,6 +1879,10 @@ begin
   end;
 end;
 
+{$ENDIF}
+
+{$IFDEF VER340UP}
+
 { TEsCustomVirtualImage }
 
 constructor TEsCustomVirtualImage.Create(AOwner: TComponent);
@@ -1900,12 +1943,21 @@ begin
   Result := ImageProxy.Stretch;
 end;
 
+{$IFDEF VER310UP}
 procedure TEsCustomVirtualImage.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   ImageProxy.ImageWidth := MulDiv(ImageProxy.ImageWidth, M, D);
   ImageProxy.ImageHeight := MulDiv(ImageProxy.ImageHeight, M, D);
   inherited;
 end;
+{$ELSE}
+procedure TEsCustomVirtualImage.ChangeScale(M, D: Integer);
+begin
+  ImageProxy.ImageWidth := MulDiv(ImageProxy.ImageWidth, M, D);
+  ImageProxy.ImageHeight := MulDiv(ImageProxy.ImageHeight, M, D);
+  inherited;
+end;
+{$ENDIF}
 
 procedure TEsCustomVirtualImage.ImageProxyChange(Sender: TObject);
 begin
@@ -2069,13 +2121,21 @@ begin
   end;
 end;
 
-procedure TEsCustomVirtualImageControl.ChangeScale(M, D: Integer;
-  isDpiChange: Boolean);
+{$IFDEF VER310UP}
+procedure TEsCustomVirtualImageControl.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   ImageProxy.ImageWidth := MulDiv(ImageProxy.ImageWidth, M, D);
   ImageProxy.ImageHeight := MulDiv(ImageProxy.ImageHeight, M, D);
   inherited;
 end;
+{$ELSE}
+procedure TEsCustomVirtualImageControl.ChangeScale(M, D: Integer);
+begin
+  ImageProxy.ImageWidth := MulDiv(ImageProxy.ImageWidth, M, D);
+  ImageProxy.ImageHeight := MulDiv(ImageProxy.ImageHeight, M, D);
+  inherited;
+end;
+{$ENDIF}
 
 function TEsCustomVirtualImageControl.GetImageCollection: TCustomImageCollection;
 begin
@@ -2250,6 +2310,8 @@ begin
   inherited;
   Invalidate;
 end;
+
+{$ENDIF}
 
 initialization
   {$IFDEF VER270UP}

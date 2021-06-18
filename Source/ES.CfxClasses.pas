@@ -417,7 +417,11 @@ begin
       HasStyle := IsStyledBorderControl(Control)
     else
       HasStyle := True;
+    {$IFDEF VER240}
     StyleService := StyleServices(Control);
+    {$ELSE}
+    StyleService := StyleServices;
+    {$ENDIF}
   end;
 
   // setup colors
