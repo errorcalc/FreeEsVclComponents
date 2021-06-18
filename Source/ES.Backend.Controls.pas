@@ -15,6 +15,8 @@
 
 unit ES.Backend.Controls;
 
+{$I EsDefines.inc}
+
 interface
 
 uses

@@ -14,6 +14,7 @@
 {******************************************************************************}
 unit ES.RegexControls;
 
+{$I EsDefines.inc}
 {$SCOPEDENUMS ON}
 
 interface

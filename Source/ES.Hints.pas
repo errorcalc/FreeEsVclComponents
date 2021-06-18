@@ -14,6 +14,7 @@
 {******************************************************************************}
 unit ES.Hints;
 
+{$I EsDefines.inc}
 {$SCOPEDENUMS ON}
 
 interface

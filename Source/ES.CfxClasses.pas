@@ -16,10 +16,7 @@ unit ES.CfxClasses;
 
 interface
 
-{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
-{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
-{$IF CompilerVersion >= 34} {$DEFINE VER340UP} {$IFEND}
-{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
+{$I EsDefines.inc}
 
 uses
   WinApi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
@@ -27,7 +24,7 @@ uses
   Vcl.Themes;
 
 type
-  {$scopedenums on}
+  {$SCOPEDENUMS ON}
   TVertLayout = (Top, Center, Bottom);
   THorzLayout = (Left, Center, Right);
   TImageAlign = (TopLeft, TopRight, BottomRight, BottomLeft, Center, Left, Right, Top, Bottom);
@@ -87,7 +84,7 @@ type
   {$ENDIF}
   {$ENDREGION}
 
-  {$scopedenums off}
+  {$SCOPEDENUMS OFF}
 
   TImageMargins = class(TMargins)
   private
@@ -362,95 +359,8 @@ type
 implementation
 
 uses
-  ES.BaseControls, ES.Utils, System.SysUtils, System.TypInfo, Vcl.GraphUtil, System.UIConsts, System.Types;
-
-{$REGION 'Delphi 2010/XE support'}
-{$ifndef VER230UP}
-
-type
-  TRectHelper = record helper for TRect
-  private
-    function GetHeight: Integer;
-    function GetWidth: Integer;
-    procedure SetHeight(const Value: Integer);
-    procedure SetWidth(const Value: Integer);
-  public
-    procedure Offset(const DX, DY: Integer); overload;
-    procedure Offset(const Point: TPoint); overload;
-    procedure Inflate(const DX, DY: Integer); overload;
-  published
-    property Width: Integer read GetWidth write SetWidth;
-    property Height: Integer read GetHeight write SetHeight;
-  end;
-
-  TPointHelper = record helper for TPoint
-  public
-    procedure Offset(const DX, DY : Integer); overload;
-    procedure Offset(const Point: TPoint); overload;
-  end;
-
-{ TPointHelper }
-
-procedure TPointHelper.Offset(const DX, DY: Integer);
-begin
-  Inc(Self.X, DX);
-  Inc(Self.Y, DY);
-end;
-
-procedure TPointHelper.Offset(const Point: TPoint);
-begin
-  Inc(Self.X, Point.X);
-  Inc(Self.Y, Point.Y);
-end;
-
-{ TRectHelper }
-
-function TRectHelper.GetHeight: Integer;
-begin
-  Result := Self.Bottom - Self.Top;
-end;
-
-function TRectHelper.GetWidth: Integer;
-begin
-  Result := Self.Right - Self.Left;
-end;
-
-procedure TRectHelper.Inflate(const DX, DY: Integer);
-begin
-  Self.Left := Self.Left - DX;
-  Self.Top := Self.Top - DY;
-  Self.Right := Self.Right + DX;
-  Self.Bottom := Self.Bottom + DY;
-end;
-
-procedure TRectHelper.Offset(const DX, DY: Integer);
-begin
-  Self.Left := Self.Left + DX;
-  Self.Top := Self.Top + DY;
-  Self.Right := Self.Right + DX;
-  Self.Bottom := Self.Bottom + DY;
-end;
-
-procedure TRectHelper.Offset(const Point: TPoint);
-begin
-  Self.Left := Self.Left + Point.X;
-  Self.Top := Self.Top + Point.Y;
-  Self.Right := Self.Right + Point.X;
-  Self.Bottom := Self.Bottom + Point.Y;
-end;
-
-procedure TRectHelper.SetHeight(const Value: Integer);
-begin
-  Self.Bottom := Self.Top + Value;
-end;
-
-procedure TRectHelper.SetWidth(const Value: Integer);
-begin
-  Self.Right := Self.Left + Value;
-end;
-
-{$endif}
-{$ENDREGION}
+  ES.BaseControls, ES.Utils, System.SysUtils, System.TypInfo, Vcl.GraphUtil, System.UIConsts,
+  System.Types;
 
 procedure Draw3dFrame(Handle: HDC; Rect: TRect; Width: Integer; TopColor, BottomColor: TColor);
   procedure OnePixel3d(Handle: HDC; Rect: TRect; TopColor, BottomColor: TColor);
@@ -498,6 +408,7 @@ var
   EdgeStyle: Cardinal;
   StyleService: TCustomStyleServices;
 begin
+  StyleService := nil;
   // has style
   HasStyle := False;
   if IsStyledControl(Control) then
@@ -571,6 +482,11 @@ begin
             HighlightColor := clBtnShadow;
             ShadowColor := cl3DLight;
           end;
+          else
+          begin
+            HighlightColor := 0;
+            ShadowColor := 0;
+          end;
         end;
 
         Draw3dFrame(Canvas.Handle, Rect, 1,
@@ -610,6 +526,8 @@ begin
           TExFrameStyle.Raised: EdgeStyle := EDGE_RAISED;
           TExFrameStyle.Bump: EdgeStyle := EDGE_BUMP;
           TExFrameStyle.Etched: EdgeStyle := EDGE_ETCHED;
+          else
+            EdgeStyle := 0;
         end;
         DrawEdge(Canvas.Handle, Rect, EdgeStyle, BF_RECT or BF_ADJUST);
       end;
@@ -869,10 +787,8 @@ begin
 end;
 
 procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: byte);
-{$ifdef VER230UP}
 const
   D: array[Boolean] of TThemedTextLabel = (ttlTextLabelDisabled, ttlTextLabelNormal);//TStyleFont = (sfPanelTextDisabled, sfPanelTextNormal);
-{$endif}
 var
   R, Temp: TRect;
   Format: TTextFormat;
@@ -882,13 +798,11 @@ var
   begin
     Rect.Offset(-Rect.Top, -Rect.Left);
     T := Format;
-    T := T + [tfCalcRect{$ifdef VER230UP}, tfWordEllipsis{$endif}];
-    {$ifdef VER230UP}
+    T := T + [tfCalcRect, tfWordEllipsis];
     if IsStyledFontControl(Control) then
       Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
         Rect, Text, T)
     else
-    {$endif}
       Canvas.TextRect(Rect, Text, T);
   end;
 begin
@@ -994,12 +908,10 @@ begin
   end;
 
   Canvas.Brush.Style := bsClear;
-  {$ifdef VER230UP}
   if IsStyledFontControl(Control) then
     Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
       R, Text, Format)
   else
-  {$endif}
     if Control.Enabled then
       Canvas.TextRect(R, Text, Format)
     else
@@ -1847,7 +1759,7 @@ begin
 end;
 
 initialization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   AddEnumElementAliases(TypeInfo(TVertLayout), ['vlTop', 'vlCenter', 'vlBottom']);
   AddEnumElementAliases(TypeInfo(THorzLayout), ['hlLeft', 'hlCenter', 'hlRight']);
   AddEnumElementAliases(TypeInfo(TImageAlign), ['iaTopLeft', 'iaTopRight', 'iaBottomRight', 'iaBottomLeft', 'iaCenter',
@@ -1859,7 +1771,7 @@ initialization
   {$ENDIF}
 
 finalization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   RemoveEnumElementAliases(TypeInfo(TVertLayout));
   RemoveEnumElementAliases(TypeInfo(THorzLayout));
   RemoveEnumElementAliases(TypeInfo(TImageAlign));

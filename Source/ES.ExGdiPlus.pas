@@ -16,6 +16,8 @@ unit ES.ExGdiPlus;
 
 interface
 
+{$I EsDefines.inc}
+
 uses
   WinApi.Windows, WinApi.GDIPApi, WinApi.GDIPObj, Vcl.Graphics, System.Types;
 
@@ -32,7 +34,10 @@ var
 begin
   BRG := ColorToRGB(Color);
 
-  Result := ((BRG shl 16) and $00FF0000) or ((BRG shr 16) and $000000FF) or (BRG and $0000FF00) or (Alpha shl 24);
+  Result := ((BRG shl 16) and $00FF0000) or
+    ((BRG shr 16) and $000000FF) or
+    (BRG and $0000FF00) or
+    (Alpha shl 24);
 end;
 
 function RectToGPRect(Rect: TRect): TGPRectF;

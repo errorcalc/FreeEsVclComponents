@@ -14,6 +14,8 @@
 {******************************************************************************}
 unit ES.FreeEditors;
 
+{$I EsDefines.inc}
+
 interface
 
 uses
@@ -218,6 +220,7 @@ var
   Index, H: Integer;
   ClipRegion: HRGN;
 begin
+  Index := 0;
   R := ARect;
   try
     ACanvas.FillRect(R);

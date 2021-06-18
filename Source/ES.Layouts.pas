@@ -14,6 +14,8 @@
 {******************************************************************************}
 unit ES.Layouts;
 
+{$I EsDefines.inc}
+
 interface
 
 uses
@@ -32,6 +34,7 @@ type
     constructor Create(AOwner: TComponent); override;
     property Color default clBtnFace;
     property DockManager;
+    property IsDrawHelper default True;
     property Locked: Boolean read FLocked write FLocked default False;
   end;
 
@@ -75,12 +78,12 @@ type
     property TabStop;
     property Touch;
     property Visible;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
-    {$if CompilerVersion > 26}
+    {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
-    {$ifend}
+    {$ENDIF}
     property OnAlignInsertBefore;
     property OnAlignPosition;
     property OnCanResize;
@@ -120,15 +123,18 @@ type
     FCaptionVisible: Boolean;
     FCaptionVertLayout: TVertLayout;
     FCaptionHorzLayout: THorzLayout;
+    FCaptionDistance: Integer;
     procedure SetFrameColor(const Value: TColor);
     procedure SetFrameStyle(const Value: TFrameStyle);
     procedure SetFrameWidth(const Value: TFrameWidth);
     procedure SetCaptionVisible(const Value: Boolean);
     procedure SetCaptionHorzLayout(const Value: THorzLayout);
     procedure SetCaptionVertLayout(const Value: TVertLayout);
+    procedure SetCaptionDistance(const Value: Integer);
   protected
     procedure Paint; override;
     procedure AdjustClientRect(var Rect: TRect); override;
+    procedure AdjustContentRect(var Rect: TRect); override;
     procedure UpdateText; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -139,12 +145,14 @@ type
     property CaptionHorzLayout: THorzLayout read FCaptionHorzLayout write
       SetCaptionHorzLayout default THorzLayout.Center;
     property CaptionVisible: Boolean read FCaptionVisible write SetCaptionVisible default False;
+    property CaptionDistance: Integer read FCaptionDistance write SetCaptionDistance default 2;
     property BevelKind;
     property BevelInner;
     property BevelOuter;
     property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.Raised;
     property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
     property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
+    property IsDrawHelper default False;
   end;
 
 implementation
@@ -154,7 +162,8 @@ uses
 
 procedure TEsCustomLayout.CMIsToolControl(var Message: TMessage);
 begin
-  if not FLocked then Message.Result := 1;
+  if not FLocked then
+    Message.Result := 1;
 end;
 
 constructor TEsCustomLayout.Create(AOwner: TComponent);
@@ -165,6 +174,7 @@ begin
   Width := 185;
   Height := 41;
   UseDockManager := True;
+  IsDrawHelper := True;
 end;
 
 procedure TEsCustomLayout.CreateParams(var Params: TCreateParams);
@@ -184,6 +194,15 @@ begin
   end;
 end;
 
+procedure TEsPanel.AdjustContentRect(var Rect: TRect);
+begin
+  inherited;
+  if FrameStyle <> TExFrameStyle.None then
+  begin
+    Rect.Inflate(-GetFrameWidth(FrameStyle, FrameWidth), -GetFrameWidth(FrameStyle, FrameWidth));
+  end;
+end;
+
 constructor TEsPanel.Create(AOwner: TComponent);
 begin
   inherited;
@@ -194,6 +213,9 @@ begin
 
   FCaptionVertLayout := TVertLayout.Center;
   FCaptionHorzLayout := THorzLayout.Center;
+  FCaptionDistance := 2;
+
+  IsDrawHelper := False;
 end;
 
 procedure TEsPanel.Paint;
@@ -202,8 +224,6 @@ const
   VertLayout: array[TVertLayout] of Integer = (DT_TOP, DT_VCENTER, DT_BOTTOM);
 var
   TextFlags: Integer;
-  Style: TCustomStyleServices;
-  Details: TThemedElementDetails;
   FontColor: TColor;
   R: TRect;
 begin
@@ -216,23 +236,26 @@ begin
 
   if FCaptionVisible then
   begin
-    Canvas.Font := Font;
-    Canvas.Brush.Style := bsClear;
-
     TextFlags := DT_SINGLELINE or HorzLayout[CaptionHorzLayout] or VertLayout[CaptionVertLayout];
     TextFlags := DrawTextBiDiModeFlags(TextFlags);
 
-    R := ClientRect;
+    R := ContentRect;
+    // fix text bounds
+    if CaptionVertLayout <> TVertLayout.Center then
+      if CaptionVertLayout = TVertLayout.Top then
+        R.Top := R.Top + CaptionDistance
+      else
+        R.Bottom := R.Bottom - CaptionDistance;
+    if CaptionHorzLayout <> THorzLayout.Center then
+      if CaptionHorzLayout = THorzLayout.Left then
+        R.Left := R.Left + CaptionDistance
+      else
+        R.Right := R.Right - CaptionDistance;
 
-    if IsStyledFontControl(Self) then
-    begin
-      Style := GetControlStyle(Self);
-      Details := Style.GetElementDetails(tpPanelBackground);
-      if not Style.GetElementColor(Details, ecTextColor, FontColor) or (FontColor = clNone) then
-        FontColor := Font.Color;
-      Style.DrawText(Canvas.Handle, Details, Caption, R, TTextFormatFlags(TextFlags), FontColor);
-    end else
-      DrawText(Canvas.Handle, Caption, -1, R, TextFlags);
+    Canvas.Font := Font;
+    Canvas.Font.Color := FontColorToRgb(Font.Color, Self);
+    Canvas.Brush.Style := bsClear;
+    DrawText(Canvas.Handle, Caption, -1, R, TextFlags);
   end;
 
   if (csDesigning in ComponentState) and IsDrawHelper then
@@ -241,6 +264,16 @@ begin
   if FrameStyle <> TExFrameStyle.None then
     DrawFrame(Canvas, Self, ClientRect, FrameStyle, FrameWidth,
       FrameColor, clBtnHighlight, clBtnShadow, True);
+end;
+
+procedure TEsPanel.SetCaptionDistance(const Value: Integer);
+begin
+  if (FCaptionDistance <> Value) and (Value >= 0) then
+  begin
+    FCaptionDistance := Value;
+    if FCaptionVisible then
+      Invalidate;
+  end;
 end;
 
 procedure TEsPanel.SetCaptionHorzLayout(const Value: THorzLayout);

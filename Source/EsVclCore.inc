@@ -11,12 +11,6 @@
 { You can order the development of VCL/FMX components to order                 }
 {******************************************************************************}
 
-// Disable using GdiPlus gaphic library
-// WARNING: Base functionality can degrade
-{.$define DISABLE_GDIPLUS}
-
-// see TEsBaseLayout.InternalRect
-{$define TEST_CONTROL_INTERNAL_RECT}
-
-// see CalcClientRect
-{$define FAST_CALC_CLIENTRECT}
+// Using GdiPlus gaphic library
+// WARNING: Base functionality can degrade if disabled
+{$DEFINE USE_GDIPLUS}

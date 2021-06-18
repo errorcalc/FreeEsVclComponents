@@ -14,20 +14,13 @@
 {******************************************************************************}
 unit ES.Utils;
 
-{$IF CompilerVersion >= 24}
-{$DEFINE VER240UP}
-{$IFEND}
-{$IF CompilerVersion >= 23}
-{$DEFINE VER230UP}
-{$IFEND}
-{$IF CompilerVersion >= 34}
-{$DEFINE VER340UP}
-{$IFEND}
+{$I EsDefines.inc}
 
 interface
 
 uses
-  WinApi.Windows, System.SysUtils, System.Classes, Vcl.Controls, WinApi.Messages, Vcl.Graphics, Vcl.Themes, Vcl.ImgList, WinApi.DwmApi;
+  WinApi.Windows, System.SysUtils, System.Classes, System.UITypes, Vcl.Controls,
+  WinApi.Messages, Vcl.Graphics, Vcl.Themes, Vcl.ImgList, WinApi.DwmApi;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -55,8 +48,8 @@ procedure DeserializeFromFile(Obj: TPersistent; FileName: string; Name: string =
 
 function ImageListGetBitmap(ImageList: TCustomImageList; Index: Integer; Bitmap: TBitmap; IsPremultiplied: Boolean = True): Boolean;
 
-function GetMainColor: Cardinal; overload;
-function GetMainColor(var Color: Cardinal): Boolean; overload;
+//function GetMainColor: Cardinal; overload;
+function GetMainColor(var Color: TAlphaColor): Boolean; overload;
 procedure InitMainColor;
 
 implementation
@@ -76,159 +69,146 @@ function IsStyledControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if StyleServices(Control).Enabled then
   begin
     Result := not StyleServices(Control).IsSystemStyle;
   end;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
     Result := TStyleManager.IsCustomStyleActive;
   end;
-  {$endif}
-  {$endif}
+  {$ENDIF}
 end;
 
 function IsStyledClientControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if StyleServices(Control).Enabled then
   begin
     Result := (seClient in Control.StyleElements) and
               (not StyleServices(Control).IsSystemStyle);
   end;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
-    Result := {$ifdef VER240UP}(seClient in Control.StyleElements) and{$endif}
+    Result := {$IFDEF VER240UP}(seClient in Control.StyleElements) and{$ENDIF}
       TStyleManager.IsCustomStyleActive;
   end;
-  {$endif}
-  {$endif}
+  {$ENDIF}
 end;
 
 function IsStyledFontControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if StyleServices(Control).Enabled then
   begin
     Result := (seFont in Control.StyleElements) and
               (not StyleServices(Control).IsSystemStyle);
   end;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
-    Result := {$ifdef VER240UP}(seFont in Control.StyleElements) and{$endif}
+    Result := {$IFDEF VER240UP}(seFont in Control.StyleElements) and{$ENDIF}
       TStyleManager.IsCustomStyleActive;
   end;
-  {$endif}
-  {$endif}
+  {$ENDIF}
 end;
 
 function IsStyledBorderControl(Control: TControl): Boolean;
 begin
   Result := False;
 
-  {$ifdef VER230UP}
   if Control = nil then
     Exit;
 
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if StyleServices(Control).Enabled then
   begin
     Result := (seBorder in Control.StyleElements) and
               (not StyleServices(Control).IsSystemStyle);
   end;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
-    Result := {$ifdef VER240UP}(seBorder in Control.StyleElements) and{$endif}
+    Result := {$IFDEF VER240UP}(seBorder in Control.StyleElements) and{$ENDIF}
       TStyleManager.IsCustomStyleActive;
   end;
-  {$endif}
-  {$endif}
+  {$ENDIF}
 end;
 
 function GetControlStyle(Control: TControl): TCustomStyleServices;
 begin
+  Result := TStyleManager.SystemStyle;
   if Control = nil then
-    TStyleManager.SystemStyle;
+    Exit;
 
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if StyleServices(Control).Enabled then
     Result := StyleServices(Control)
   else
     TStyleManager.SystemStyle;
-  {$else}
+  {$ELSE}
   if StyleServices.Enabled then
   begin
     Result := TStyleManager.ActiveStyle;
   end;
-  {$endif}
+  {$ENDIF}
 end;
 
 function ClientColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
-  {$ifdef VER230UP}
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if IsStyledClientControl(Control) then
     Result := StyleServices(Control).GetSystemColor(Color)
   else
-  {$else}
+  {$ELSE}
   if IsStyledClientControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
-  {$endif}
-  {$endif}
+  {$ENDIF}
     Result := ColorToRGB(Color);
 end;
 
 function BorderColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
-  {$ifdef VER230UP}
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if IsStyledBorderControl(Control) then
     Result := StyleServices(Control).GetSystemColor(Color)
   else
-  {$else}
+  {$ELSE}
   if IsStyledBorderControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
-  {$endif}
-  {$endif}
+  {$ENDIF}
     Result := ColorToRGB(Color);
 end;
 
 function FontColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
-  {$ifdef VER230UP}
-  {$ifdef VER340UP}
+  {$IFDEF VER340UP}
   if IsStyledFontControl(Control) then
     Result := StyleServices(Control).GetSystemColor(Color)
   else
-  {$else}
+  {$ELSE}
   if IsStyledFontControl(Control) then
     Result := StyleServices.GetSystemColor(Color)
   else
-  {$endif}
-  {$endif}
+  {$ENDIF}
     Result := ColorToRGB(Color);
 end;
 
@@ -452,16 +432,16 @@ end;
 var
   MainColor: Cardinal = $FF000000;
 
-function GetMainColor: Cardinal;
+function GetDwmMainColor: TAlphaColor;
 begin
   if MainColor = $FF000000 then
     InitMainColor;
   Result := MainColor;
 end;
 
-function GetMainColor(var Color: Cardinal): Boolean;
+function GetMainColor(var Color: TAlphaColor): Boolean;
 begin
-  Color := GetMainColor;
+  Color := GetDwmMainColor;
   Result := Color <> 0;
 end;
 
@@ -469,7 +449,8 @@ procedure InitMainColor;
 var
   DwnOpaqueBlend: BOOL;
 begin
-  if (not CheckWin32Version(6, 0)) or (DwmGetColorizationColor(MainColor, DwnOpaqueBlend) <> S_OK) then
+  // windows 8
+  if (not CheckWin32Version(6, 2)) or (DwmGetColorizationColor(MainColor, DwnOpaqueBlend) <> S_OK) then
     MainColor := 0;
 end;
 

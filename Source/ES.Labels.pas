@@ -14,6 +14,8 @@
 {******************************************************************************}
 unit ES.Labels;
 
+{$I EsDefines.inc}
+
 interface
 
 uses
@@ -77,9 +79,9 @@ type
     property LinkStyle: TLinkLabelStyle read FLinkStyle write SetLinkStyle default TLinkLabelStyle.Underline;
     property Visible;
     property WordWrap;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements default [seClient, seBorder, seFont];
-    {$ifend}
+    {$IFEND}
     property StyleName;
     property OnClick;
     property OnContextPopup;
@@ -140,9 +142,9 @@ type
     property Layout;
     property Visible;
     property WordWrap;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
+    {$ENDIF}
     property StyleName;
     property OnClick;
     property OnContextPopup;
@@ -210,9 +212,9 @@ end;
 constructor TEsLinkLabel.Create(AOwner: TComponent);
 begin
   inherited;
-  {$if CompilerVersion > 23}
+  {$IFDEF VER240UP}
   StyleElements := [seClient, seBorder, seFont];
-  {$ifend}
+  {$ENDIF}
   Cursor := crHandPoint;
   FLinkColor := clHotLight;
 end;

@@ -16,18 +16,15 @@ unit ES.ExGraphics;
 
 interface
 
-{$IF CompilerVersion >= 21} {$DEFINE VER210UP} {$IFEND}
-{$IF CompilerVersion >= 23} {$DEFINE VER230UP} {$IFEND}
-{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
-
+{$I 'EsDefines.inc'}
 {$I 'EsVclCore.inc'}
 
 uses
-  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes{$ifdef VER230UP}, Vcl.Imaging.PngImage{$endif}
-  {$ifdef VER230UP},WinApi.GdipObj, WinApi.GdipApi{$endif};
+  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes, Vcl.Imaging.PngImage
+  {$IFDEF USE_GDIPLUS}, WinApi.GdipObj, WinApi.GdipApi{$ENDIF};
 
 type
-  {$scopedenums on}
+  {$SCOPEDENUMS ON}
   TStretchMode = (Normal, Tile, HorzFit, VertFit, HorzTile, VertTile, HorzTileFit, VertTileFit);
 
   {$REGION 'deprecated names'}
@@ -71,18 +68,10 @@ type
     procedure Restore;
   end;
 
-  {$ifdef VER210UP}
   TEsCanvasHelper = class helper for TCanvas
-  {$else}
-  TEsCanvas = class(TCanvas)
-  private
-    procedure Line(X1, Y1, X2, Y2);
-  {$endif}
   public
-    {$ifdef VER230UP}
     procedure DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255; HighQuality: Boolean = False); overload;
     procedure DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255; HighQuality: Boolean = False); overload;
-    {$endif}
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap); overload;
     /// <summary> Only for 32bit premultipled bitmaps!</summary>
     procedure StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap; Opacity: Byte); overload;
@@ -91,9 +80,7 @@ type
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap); overload;
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Opacity: Byte); overload;
     procedure DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255); overload;
-    {$ifdef VER230UP}
     procedure DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string; Format: TTextFormat);
-    {$endif}
     procedure Line(X1, Y1, X2, Y2: Integer);
     procedure DrawChessFrame(R: TRect; Color1, Color2: TColor); overload;
     procedure DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
@@ -110,41 +97,32 @@ type
   private
   protected
     property Palette;
-    {$ifdef VER210UP}
     property AlphaFormat;
-    {$endif}
     property PixelFormat;
   public
     Constructor Create; override;
-    {$ifndef VER210UP}
+    {$IFDEF OLD_BITMAP_PROC}
     procedure PreMultiplyAlpha;
     procedure UnPreMultiplyAlpha;
-    {$endif}
+    {$ENDIF}
     procedure LoadFromResourceName(Instance: THandle; const ResName: String; ResType: PChar); overload;
   end;
 
   // Utils
   function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD; Inline;
   function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; Inline;
-  {$ifdef VER230UP}
   procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
-  HighQality: Boolean = False; EgdeFill: Boolean = False);
-  {$endif}
-  {$ifdef VER210UP}
+    HighQality: Boolean = False; EgdeFill: Boolean = False);
   procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
   procedure BitmapAssignToPngImage(PngImage: TPngImage; Bitmap: TBitmap; IsPremultipledBitmap: Boolean = True);
-  {$endif}
   procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); Inline;
-  {$ifndef DISABLE_GDIPLUS}
+  {$IFDEF USE_GDIPLUS}
   function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
-  {$endif}
+  {$ENDIF}
 
   procedure GaussianBlur(Bitmap: TBitmap; Radius: Real);
-  {$ifdef VER230UP}
   /// <summary>A cool procedure for a really fast Blur!</summary>
   procedure FastBlur(Bitmap: TBitmap; Radius: Real; BlurScale: Integer; HighQuality: Boolean = True);
-  {$endif}
-
   /// <summary>Draw halftone bitmap to canvas</summary>
   procedure DrawHalftoneBitmap(Canvas: TCanvas; X, Y: Integer; Bitmap: TBitmap;
    Value: Byte; Color: TColor = clBlack);
@@ -189,20 +167,19 @@ begin
   Result := ((BRG shl 16) and $00FF0000) or ((BRG shr 16) and $000000FF) or (BRG and $0000FF00) or (Alpha shl 24);
 end;
 
-{$ifdef VER230UP}
 procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
   HighQality: Boolean = False; EgdeFill: Boolean = False);
 var
-  {$ifndef DISABLE_GDIPLUS}
+  {$IFDEF USE_GDIPLUS}
   Graphics: TGPGraphics;
   GdiPBitmap: TGPBitmap;
   Attr: TGPImageAttributes;
   M: TColorMatrix;
-  {$else}
+  {$ELSE}
   BF: TBlendFunction;
-  {$endif}
+  {$ENDIF}
 begin
-  {$ifndef DISABLE_GDIPLUS}
+  {$IFDEF USE_GDIPLUS}
   if Bitmap.Empty then
     Exit;
 
@@ -255,22 +232,20 @@ begin
     Graphics.Free;
     GdiPBitmap.Free;
   end;
-  {$else}
+  {$ELSE}
   if Bitmap.Empty then
     Exit;
 
   BF.BlendOp := AC_SRC_OVER;
   BF.BlendFlags := 0;
-  BF.SourceConstantAlpha := Alpha;
+  BF.SourceConstantAlpha := Opacity;
   BF.AlphaFormat := AC_SRC_ALPHA;
 
   AlphaBlend(Handle, ARect.Left, ARect.Top, ARect.Right - ARect.Left, ARect.Bottom - ARect.Top,
     Bitmap.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, BF);
-  {$endif}
+  {$ENDIF}
 end;
-{$endif}
 
-{$ifdef VER210UP}
 procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
 var
   X, Y: Integer;
@@ -420,20 +395,17 @@ begin
     end;
   end;
 end;
-{$endif}
 
 procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); Inline;
 begin
   // standart TPngImage.AssignTo works is bad!
-  {$ifdef VER230UP}
   if Graphic is TPngImage then
     PngImageAssignToBitmap(Bitmap, TPngImage(Graphic))
   else
-  {$endif}
     Bitmap.Assign(Graphic);
 end;
 
-{$ifndef DISABLE_GDIPLUS}
+{$IFDEF USE_GDIPLUS}
 function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
 begin
 
@@ -451,7 +423,7 @@ begin
   end else
     Result := TGPBitmap.Create(Bitmap.Handle, Bitmap.Palette);
 end;
-{$endif}
+{$ENDIF}
 
 //--------------------------------------------------------------------------------------------------
 // *** Begin changed GBlur2.pas ***
@@ -612,7 +584,6 @@ end;
 
 // *** End changed GBlur2.pas ***
 
-{$ifdef VER230UP}
 procedure FastBlur(Bitmap: TBitmap; Radius: Real; BlurScale: Integer; HighQuality: Boolean = True);
   function Max(A, B: Integer): Integer;
   begin
@@ -647,7 +618,6 @@ begin
     Mipmap.Free;
   end;
 end;
-{$endif}
 
 procedure DrawHalftoneBitmap(Canvas: TCanvas; X, Y: Integer; Bitmap: TBitmap;
    Value: Byte; Color: TColor = clBlack);
@@ -955,10 +925,9 @@ begin
   Pen.Assign(Value);
 end;
 
-{ TEsCanvas && TEsCanvasHelper }
+{ TEsCanvasHelper }
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap);
+procedure TEsCanvasHelper.StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap);
 begin
   if Bitmap.PixelFormat = pf32bit then
     StretchDraw(DestRect, SrcRect, BitMap, 255)
@@ -967,8 +936,7 @@ begin
       Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, RectWidth(SrcRect), RectHeight(SrcRect), SRCCOPY);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap; Opacity: byte);
+procedure TEsCanvasHelper.StretchDraw(DestRect, SrcRect: TRect; Bitmap: TBitmap; Opacity: byte);
 var
   BF: TBlendFunction;
 begin
@@ -987,27 +955,23 @@ begin
     Bitmap.Canvas.Handle, SrcRect.Left, SrcRect.Top, SrcRect.Right - SrcRect.Left, SrcRect.Bottom - SrcRect.Top, BF);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap);
+procedure TEsCanvasHelper.DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap);
 begin
   DrawNinePatch(Dest, Bounds, Bitmap, 255);
 end;
 
-{$ifdef VER230UP}
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255; HighQuality: Boolean = False);
+procedure TEsCanvasHelper.DrawHighQuality(ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255; HighQuality: Boolean = False);
 begin
   DrawBitmapHighQuality(Handle, ARect, Bitmap, Opacity, HighQuality);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255; HighQuality: Boolean = False);
-{$ifndef DISABLE_GDIPLUS}
+procedure TEsCanvasHelper.DrawHighQuality(ARect: TRect; Graphic: TGraphic; Opacity: Byte = 255; HighQuality: Boolean = False);
+{$IFDEF USE_GDIPLUS}
 var
   Bitmap: TBitmap;
-{$endif}
+{$ENDIF}
 begin
-  {$ifndef DISABLE_GDIPLUS}
+  {$IFDEF USE_GDIPLUS}
   if Graphic is TBitmap then
     DrawHighQuality(ARect, TBitmap(Graphic), Opacity, HighQuality)
   else
@@ -1020,15 +984,12 @@ begin
       Bitmap.Free;
     end;
   end;
-  {$else}
-  StretchDraw(ARect, Graphic, Alpha);
-  {$endif}
+  {$ELSE}
+  StretchDraw(ARect, Graphic, Opacity);
+  {$ENDIF}
 end;
 
-{$endif}
-
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  Draw(X, Y: Integer; Graphic: TGraphic; Opacity: Byte);
+procedure TEsCanvasHelper.Draw(X, Y: Integer; Graphic: TGraphic; Opacity: Byte);
 var
   Bitmap: TBitmap;
 begin
@@ -1050,13 +1011,10 @@ begin
   end;
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}.
-  DrawChessFrame(R: TRect; Color1, Color2: TColor);
+procedure TEsCanvasHelper.DrawChessFrame(R: TRect; Color1, Color2: TColor);
 var
   Brush: HBRUSH;
   Bitmap: TBitmap;
-  Y: Integer;
-  X: Integer;
 begin
   Brush := 0;
   Bitmap := TBitmap.Create;
@@ -1077,8 +1035,7 @@ begin
   end;
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawCorners(R: TRect; Width: Integer);
+procedure TEsCanvasHelper.DrawCorners(R: TRect; Width: Integer);
 begin
   MoveTo(R.Left, R.Top + Width - 1);
   LineTo(R.Left, R.Top);
@@ -1102,8 +1059,7 @@ begin
   Result := (RectWidth(Rect) > 0) and (RectHeight(Rect) > 0);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Opacity: byte);
+procedure TEsCanvasHelper.DrawNinePatch(Dest: TRect; Bounds: TRect; Bitmap: TBitmap; Opacity: byte);
 var
   dx, dy: Integer;
   D, S: TRect;
@@ -1243,9 +1199,7 @@ begin
     StretchDraw(D, S, Bitmap, Opacity);
 end;
 
-{$ifdef VER230UP}
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string;
+procedure TEsCanvasHelper.DrawThemeText(Details: TThemedElementDetails; Rect: TRect; Text: string;
   Format: TTextFormat);
 var
   Opt: TStyleTextOptions;
@@ -1256,10 +1210,8 @@ begin
     StyleServices.DrawText(Handle, Details, Text, Rect, Format, Opt);
   end;
 end;
-{$endif}
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawInsideFrame(R: TRect; Width: Integer; Color: TColor = clNone);
+procedure TEsCanvasHelper.DrawInsideFrame(R: TRect; Width: Integer; Color: TColor = clNone);
 var
   ColorPen: HPen;
 begin
@@ -1314,10 +1266,7 @@ end;
 //end;
 
 // REFACTOR ME PLEASE !!!
-// TOOOOOOOOOO LONG PROCEDURE
-// FFFFUUUUU!!!!1111
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawNinePatch(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
+procedure TEsCanvasHelper.DrawNinePatch(Dest, Bounds: TRect; Bitmap: TBitmap; Mode: TStretchMode;
   Opacity: Byte);
 var
   dx, dy: Integer;
@@ -1555,8 +1504,7 @@ begin
   end;
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
+procedure TEsCanvasHelper.DrawTransparentFrame(R: TRect; Color1, Color2: TColor; Opacity: Integer = -1; const Mask: ShortString = '12');
 var
   C1, C2, DrawColor: TColor;
   Temp, X, Y: Integer;
@@ -1685,8 +1633,7 @@ begin
     Pixels[R.Right, R.Bottom] := MakeColor24(Pixels[R.Right, R.Bottom], GetColor);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .FillRect(R: TRect; Color: TColor);
+procedure TEsCanvasHelper.FillRect(R: TRect; Color: TColor);
 var
   Brush: TBrush;
 begin
@@ -1699,21 +1646,18 @@ begin
   end;
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .Line(X1, Y1, X2, Y2: Integer);
+procedure TEsCanvasHelper.Line(X1, Y1, X2, Y2: Integer);
 begin
   MoveTo(X1, Y1);
   LineTo(X2, Y2);
 end;
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .RestoreState(var State: ICanvasSaver);
+procedure TEsCanvasHelper.RestoreState(var State: ICanvasSaver);
 begin
   State := nil;
 end;
 
-function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SaveState(const Objects: array of TGraphicsClass): ICanvasSaver;
+function TEsCanvasHelper.SaveState(const Objects: array of TGraphicsClass): ICanvasSaver;
 var
   Saver: TCanvasSaver;
   I: Integer;
@@ -1734,8 +1678,7 @@ begin
   Result := Saver;
 end;
 
-function {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .SaveState: ICanvasSaver;
+function TEsCanvasHelper.SaveState: ICanvasSaver;
 begin
   SaveState([TPen, TBrush, TFont]);
 end;
@@ -1743,8 +1686,7 @@ end;
 type
   THackGraphic = class(TGraphic);
 
-procedure {$ifdef VER210UP}TEsCanvasHelper{$else}TEsCanvas{$endif}
-  .StretchDraw(Rect: TRect; Graphic: TGraphic; Opacity: Byte);
+procedure TEsCanvasHelper.StretchDraw(Rect: TRect; Graphic: TGraphic; Opacity: Byte);
 var
   Bitmap: TBitmap;
 begin
@@ -1779,8 +1721,7 @@ end;
 
 {TEsBitMap}
 
-{$ifdef VER210UP} {$REGION 'Old delphi support'} {$endif}
-{$ifndef VER210UP}
+{$IFDEF OLD_BITMAP_PROC}
 procedure TEsBitMap.PreMultiplyAlpha;
 var
   x, y: integer;
@@ -1822,15 +1763,12 @@ begin
       end;
     end;
 end;
-{$endif}
-{$ifdef VER210UP} {$ENDREGION} {$endif}
+{$ENDIF}
 
 constructor TEsBitMap.Create;
 begin
   inherited;
-  {$ifdef VER210UP}
   self.AlphaFormat := afDefined;
-  {$endif}
   self.PixelFormat := pf32bit;
 end;
 
@@ -1848,13 +1786,13 @@ begin
 end;
 
 initialization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   AddEnumElementAliases(TypeInfo(TStretchMode), ['smNormal', 'smTile', 'smHorzFit', 'smVertFit', 'smHorzTile', 'smVertTile',
     'smHorzTileFit', 'smVertTileFit']);
   {$ENDIF}
 
 finalization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   RemoveEnumElementAliases(TypeInfo(TStretchMode));
   {$ENDIF}
 

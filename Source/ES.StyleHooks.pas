@@ -14,9 +14,10 @@
 {******************************************************************************}
 unit ES.StyleHooks;
 
+{$I EsDefines.inc}
+
 interface
 
-{$if CompilerVersion >= 23}
 uses
   Vcl.Forms, WinApi.Messages, Vcl.Styles, Vcl.Themes, Vcl.Controls;
 
@@ -27,11 +28,9 @@ type
     // perhaps it is improves performance, but create graphical artifacts!
     procedure WMEraseBkgnd(var Msg: TMessage); message WM_ERASEBKGND;
   end;
-{$ifend}
 
 implementation
 
-{$if CompilerVersion >= 23}
 uses
   Vcl.Graphics, WinApi.Windows;
 
@@ -72,6 +71,5 @@ initialization
 
 finalization
   TCustomStyleEngine.UnRegisterStyleHook(TScrollBox, TFixScrollBoxStyleHook);
-{$ifend}
 
 end.

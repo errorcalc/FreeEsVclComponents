@@ -15,6 +15,8 @@
 
 unit ES.Core.Utils;
 
+{$I EsDefines.inc}
+
 interface
 
 uses

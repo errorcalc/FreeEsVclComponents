@@ -67,7 +67,6 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Margins.Right = 8
     Margins.Bottom = 8
     Align = alBottom
-    IsDrawHelper = True
     ParentBackground = False
     TabOrder = 3
     object CancelButton: TButton

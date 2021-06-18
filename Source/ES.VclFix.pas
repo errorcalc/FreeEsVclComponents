@@ -16,15 +16,10 @@ unit ES.VclFix;
 
 interface
 
-{$IF CompilerVersion >= 23}
-{$DEFINE VER230UP}
-{$IFEND}
-{$IF CompilerVersion >= 24}
-{$DEFINE VER240UP}
-{$IFEND}
+{$I EsDefines.inc}
 
 uses
-  Vcl.ComCtrls, {$ifdef VER230UP}WinApi.Messages, WinApi.CommCtrl{$else}WinApi.Messages, Vcl.CommCtrl{$endif};
+  Vcl.ComCtrls, WinApi.Messages, WinApi.CommCtrl;
 
 type
   TCustomListView = class(Vcl.ComCtrls.TCustomListView)
@@ -42,14 +37,14 @@ type
 implementation
 
 uses
-  Vcl.Themes, Vcl.Controls {$IFDEF VER230UP}, ES.StyleHooks{$ENDIF};
+  Vcl.Themes, Vcl.Controls, ES.StyleHooks;
 
 { TCustomListView }
 
 procedure TCustomListView.LVMSetExtendedListViewStyle(var Message: TMessage);
 begin
-  if (GetComCtlVersion >= ComCtlVersionIE6) and ThemeControl(Self) {$ifdef VER230UP}
-    and (StyleServices.IsSystemStyle {$ifdef VER240UP} or not(seClient in Self.StyleElements){$endif}){$endif} then
+  if (GetComCtlVersion >= ComCtlVersionIE6) and ThemeControl(Self) and
+    (StyleServices.IsSystemStyle {$IFDEF VER240UP}or not(seClient in Self.StyleElements){$ENDIF}) then
   begin
     Message.LParam := Message.LParam or LVS_EX_DOUBLEBUFFER;
     DefaultHandler(Message);
@@ -66,8 +61,8 @@ end;
 
 procedure TListView.LVMSetExtendedListViewStyle(var Message: TMessage);
 begin
-  if (GetComCtlVersion >= ComCtlVersionIE6) and ThemeControl(Self) {$ifdef VER230UP}
-    and (StyleServices.IsSystemStyle {$ifdef VER240UP} or not(seClient in Self.StyleElements){$endif}){$endif} then
+  if (GetComCtlVersion >= ComCtlVersionIE6) and ThemeControl(Self) and
+    (StyleServices.IsSystemStyle {$IFDEF VER240UP}or not(seClient in Self.StyleElements){$ENDIF}) then
   begin
     Message.LParam := Message.LParam or LVS_EX_DOUBLEBUFFER;
     DefaultHandler(Message);

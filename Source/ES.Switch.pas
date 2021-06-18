@@ -14,8 +14,8 @@
 {******************************************************************************}
 unit ES.Switch;
 
+{$I EsDefines.inc}
 {$SCOPEDENUMS ON}
-{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 interface
 
@@ -178,9 +178,9 @@ type
     IsAnimating: Boolean;
     CanAutoCheck: Boolean;
     IsDrawFocusRect: Boolean;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     procedure UpdateStyleElements; override;
-    {$ifend}
+    {$ENDIF}
     procedure Paint; override;
     procedure Loaded; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -189,11 +189,11 @@ type
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure Click; override;
     procedure CreateWnd; override;
-    {$if CompilerVersion >= 31}
+    {$IFDEF VER310UP}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
-    {$else}
+    {$ELSE}
     procedure ChangeScale(M, D: Integer); override;
-    {$ifend}
+    {$ENDIF}
     // for external styles
     function CreateStyle: TSwitchStyle; dynamic;
     function FrameColorForState(State: TSwitchState): TAlphaColor; virtual;
@@ -283,9 +283,9 @@ type
     property ParentBackground;
     property PopupMenu;
     property ShowHint;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
+    {$ENDIF}
     property TabOrder;
     property TabStop;
     property Visible;
@@ -401,21 +401,21 @@ begin
     RealCalc;
 end;
 
-{$if CompilerVersion >= 31}
+{$IFDEF VER310UP}
 procedure TEsCustomSwitch.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   SwitchWidth := MulDiv(SwitchWidth, M, D);
   SwitchHeight := MulDiv(SwitchHeight, M, D);
 end;
-{$else}
+{$ELSE}
 procedure TEsCustomSwitch.ChangeScale(M, D: Integer);
 begin
   inherited;
   SwitchWidth := MulDiv(SwitchWidth, M, D);
   SwitchHeight := MulDiv(SwitchHeight, M, D);
 end;
-{$ifend}
+{$ENDIF}
 
 procedure TEsCustomSwitch.ChangeState;
 begin
@@ -1029,14 +1029,14 @@ begin
     Result := SwitchRect.Right - ThumbSize.Width;
 end;
 
-{$if CompilerVersion > 23}
+{$IFDEF VER240UP}
 procedure TEsCustomSwitch.UpdateStyleElements;
 begin
   inherited;
   // Colors.UpdateColors;
   Invalidate;
 end;
-{$ifend}
+{$ENDIF}
 
 procedure TEsCustomSwitch.WMKillFocus(var Message: TWMKillFocus);
 begin
@@ -1137,7 +1137,7 @@ begin
         if IsStyledClientControl(FControl) then
           LMainColor := RgbToArgb(StyleServices.GetSystemColor(clHighlight))
         else
-          if not GetMainColor(Cardinal(LMainColor)) then
+          if not GetMainColor(LMainColor) then
             LMainColor := RgbToArgb(ColorToRGB(clHighlight));
       end else
         LMainColor := RgbToArgb(ClientColorToRGB(FMainColor, FControl), 0);
@@ -1206,13 +1206,13 @@ begin
 end;
 
 initialization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   AddEnumElementAliases(TypeInfo(TSwitchAlignment), ['saLeft', 'saRight']);
   AddEnumElementAliases(TypeInfo(TSwitchLayout), ['slFixed', 'slAutoSize', 'slClient']);
   {$ENDIF}
 
 finalization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   RemoveEnumElementAliases(TypeInfo(TSwitchAlignment));
   RemoveEnumElementAliases(TypeInfo(TSwitchLayout));
   {$ENDIF}

@@ -32,6 +32,8 @@
 
 unit ES.Backend.Selection;
 
+{$I EsDefines.inc}
+
 interface
 
 uses

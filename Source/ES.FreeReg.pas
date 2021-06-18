@@ -14,6 +14,8 @@
 {******************************************************************************}
 unit ES.FreeReg;
 
+{$I EsDefines.inc}
+
 interface
 
 {$I 'FreeEsVclComponents.inc'}

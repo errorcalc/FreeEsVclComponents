@@ -14,9 +14,7 @@
 {******************************************************************************}
 unit ES.Indicators;
 
-{$IF CompilerVersion >= 24} {$DEFINE VER240UP} {$IFEND}
-{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
-{$SCOPEDENUMS ON}
+{$I EsDefines.inc}
 
 interface
 
@@ -130,9 +128,9 @@ type
     function GetPointPos(RealX: Double; Lenght: Integer): Integer; virtual;
     function GetScreenPos(X: Double; Number: Integer): Integer; virtual;
     procedure Paint; override;
-    {$ifdef VER240UP}
+    {$IFDEF VER240UP}
     procedure UpdateStyleElements; override;
-    {$endif}
+    {$ENDIF}
     procedure DoPlacement; dynamic;
     procedure Loaded; override;
     procedure SetParent(AParent: TWinControl); override;
@@ -167,7 +165,7 @@ type
     //
     property IsCachedBuffer;// TEsCustomControl
     property IsCachedBackground;// TEsCustomControl
-    property IsDrawHelper;// TEsCustomControl
+    property IsDrawHelper default True;// TEsCustomControl
     property IsOpaque;// TEsCustomControl
     //
     property BorderWidth;
@@ -186,9 +184,9 @@ type
     property TabOrder;
     property TabStop;
     property Touch;
-    {$ifdef VER240UP}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$endif}
+    {$ENDIF}
     property OnClick;
     property OnCanResize;
     property OnContextPopup;
@@ -303,6 +301,7 @@ begin
   FMax := 100;
   FMin := 0;
   FPosition := 0;
+  IsDrawHelper := True;
 end;
 
 procedure TEsActivityBar.DelayExecuteHandler(Sender: TObject);
@@ -814,13 +813,13 @@ begin
   end;
 end;
 
-{$ifdef VER240UP}
+{$IFDEF VER240UP}
 procedure TEsActivityBar.UpdateStyleElements;
 begin
   inherited;
   Invalidate;
 end;
-{$endif}
+{$ENDIF}
 
 procedure TEsActivityBar.WMSize(var Message: TWMSize);
 begin
@@ -829,7 +828,7 @@ begin
 end;
 
 initialization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   AddEnumElementAliases(TypeInfo(TActivityPointType), ['ptBox', 'ptCircle']);
   AddEnumElementAliases(TypeInfo(TActivityPlacement), ['apNone', 'apTop', 'apBottom']);
   AddEnumElementAliases(TypeInfo(TActivityAnimationType), ['atWindowsX', 'atBar', 'atSin', 'atProgress']);
@@ -837,7 +836,7 @@ initialization
   {$ENDIF}
 
 finalization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   RemoveEnumElementAliases(TypeInfo(TActivityPointType));
   RemoveEnumElementAliases(TypeInfo(TActivityPlacement));
   RemoveEnumElementAliases(TypeInfo(TActivityAnimationType));

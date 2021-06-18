@@ -14,8 +14,8 @@
 {******************************************************************************}
 unit ES.Images;
 
+{$I EsDefines.inc}
 {$SCOPEDENUMS ON}
-{$IF CompilerVersion >= 27} {$DEFINE SUPPORT_ENUMS_ALIASES} {$IFEND}
 
 interface
 
@@ -23,10 +23,10 @@ uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls, Vcl.Graphics,
   WinApi.Messages, ES.ExGraphics, ES.BaseControls, ES.CfxClasses, Vcl.ImgList,
   System.UITypes
-  {$if CompilerVersion > 26}, Vcl.BaseImageCollection, Vcl.ImageCollection, System.Messaging{$ifend};
+  {$IFDEF VER340UP}, Vcl.BaseImageCollection, Vcl.ImageCollection, System.Messaging{$ENDIF};
 
 type
-  TImageStretch = (None, Center, Fit, Fill, Uniform, Mixed);
+  TImageStretch = (None, Center, Fit, Fill, Uniform, Mixed, FitFill);
 
   {$REGION 'deprecated names'}
   {$IFDEF SUPPORT_ENUMS_ALIASES}
@@ -49,9 +49,9 @@ type
     FSmoth: Boolean;
     FPicture: TPicture;
     FImages: TCustomImageList;
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     FImageName: TImageName;
-    {$ifend}
+    {$ENDIF}
     FImageIndex: TImageIndex;
     FStretch: TImageStretch;
     FOnProgress: TProgressEvent;
@@ -62,9 +62,9 @@ type
     FTransparent: Boolean;
     FOpacity: Byte;
     procedure SetImageIndex(const Value: TImageIndex);
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     procedure SetImageName(const Value: TImageName);
-    {$ifend}
+    {$ENDIF}
     procedure SetImages(const Value: TCustomImageList);
     procedure SetStretch(const Value: TImageStretch);
     procedure SetPicture(const Value: TPicture);
@@ -91,9 +91,9 @@ type
     procedure Draw(Canvas: TCanvas; ARect: TRect);
     property Picture: TPicture read FPicture write SetPicture;
     property Images: TCustomImageList read FImages write SetImages;
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     property ImageName: TImageName read FImageName write SetImageName;
-    {$ifend}
+    {$ENDIF}
     property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
     property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.None;
     property Smoth: Boolean read FSmoth write SetSmoth default True;
@@ -215,9 +215,9 @@ type
     property Picture: TPicture read GetPicture write SetPicture;
     property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     property Images: TCustomImageList read GetImages write SetImages;
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
-    {$ifend}
+    {$ENDIF}
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     property Smoth: Boolean read GetSmoth write SetSmoth default True;
     property IncrementalDisplay: Boolean read GetIncrementalDisplay write SetIncrementalDisplay default False;
@@ -232,9 +232,9 @@ type
     property AlignWithMargins;
     property Margins;
     property ShowHint;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
+    {$ENDIF}
     property StyleName;
     property Touch;
     property Visible;
@@ -336,9 +336,9 @@ type
     property Picture: TPicture read GetPicture write SetPicture;
     property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     property Images: TCustomImageList read GetImages write SetImages;
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
-    {$ifend}
+    {$ENDIF}
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     property Smoth: Boolean read GetSmoth write SetSmoth default True;
     property IncrementalDisplay: Boolean read GetIncrementalDisplay write SetIncrementalDisplay default False;
@@ -353,9 +353,9 @@ type
     property AlignWithMargins;
     property Margins;
     property ShowHint;
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
+    {$ENDIF}
     property StyleName;
     property TabOrder;
     property TabStop;
@@ -476,12 +476,12 @@ type
     property PopupMenu;
     property ShowHint;
     property Stretch;// +TEsCustomVirtualImage
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
-    {$if CompilerVersion > 26}
+    {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
-    {$ifend}
+    {$ENDIF}
     property Touch;
     property Transparent;// +TEsCustomVirtualImage
     property Visible;
@@ -594,12 +594,12 @@ type
     property PopupMenu;
     property ShowHint;
     property Stretch;// +TEsCustomVirtualImageControl
-    {$if CompilerVersion > 23}
+    {$IFDEF VER240UP}
     property StyleElements;
-    {$ifend}
-    {$if CompilerVersion > 26}
+    {$ENDIF}
+    {$IFDEF VER340UP}
     property StyleName;
-    {$ifend}
+    {$ENDIF}
     property TabOrder;
     property TabStop;
     property Touch;
@@ -649,7 +649,7 @@ begin
 
   if ((Stretch in [TImageStretch.Fit, TImageStretch.Uniform]) or
     ((Stretch = TImageStretch.Mixed) and ((dw < ImageWidth) or (dh < ImageHeight)))) and
-    ((ImageWidth <> 0) and (ImageHeight <> 0))  then
+    ((ImageWidth <> 0) and (ImageHeight <> 0)) then
   begin
     WidthHeight := ImageWidth / ImageHeight;
 
@@ -662,8 +662,22 @@ begin
       h := dh;
       w := Round(dh * WidthHeight);
     end;
-  end else
-  if Stretch = TImageStretch.Fill then
+  end
+  else if (Stretch = TImageStretch.FitFill) and ((ImageWidth <> 0) and (ImageHeight <> 0)) then
+  begin
+    WidthHeight := ImageWidth / ImageHeight;
+
+    if dh < Round(dw / WidthHeight) then
+    begin
+      w := dw;
+      h := Round(dw / WidthHeight);
+    end else
+    begin
+      h := dh;
+      w := Round(dh * WidthHeight);
+    end;
+  end
+  else if Stretch = TImageStretch.Fill then
   begin
     w := dw;
     h := dh;
@@ -675,7 +689,8 @@ begin
 
   Result := Rect(R.Left, R.Top, R.Left + w, R.Top + h);
 
-  if Stretch in [TImageStretch.Fit, TImageStretch.Mixed, TImageStretch.Center] then
+  if Stretch in [TImageStretch.Fit, TImageStretch.Mixed, TImageStretch.Center,
+    TImageStretch.FitFill] then
   begin
     Result.Offset((dw - w) div 2, (dh - h) div 2);
   end;
@@ -722,7 +737,7 @@ begin
       Canvas.Font.Color := clBlack;
       Canvas.Font.Size := 7;
       Canvas.Brush.Style := bsClear;
-      HintString := 'If (ImageWidth = 0) or (ImageHeight = 0) then only these Stretch are valid: Fil, Fill';
+      HintString := 'If (ImageWidth = 0) or (ImageHeight = 0) then only these Stretch are valid: Fit, Fill';
       R := ARect;
       Canvas.TextRect(R, HintString, [tfWordBreak, tfCalcRect]);
       // bg
@@ -901,16 +916,16 @@ begin
   if FImageIndex <> Value then
   begin
     FImageIndex := Value;
-    {$if CompilerVersion > 26}
+    {$IFDEF VER340UP}
     // TVirtualImageList support
     if (FImages <> nil) and FImages.IsImageNameAvailable then
       FImageName := FImages.GetNameByIndex(FImageIndex);
-    {$ifend}
+    {$ENDIF}
     Change;
   end;
 end;
 
-{$if CompilerVersion > 26}
+{$IFDEF VER340UP}
 procedure TImageProxy.SetImageName(const Value: TImageName);
 begin
   if FImageName <> Value then
@@ -921,7 +936,7 @@ begin
     Change;
   end;
 end;
-{$ifend}
+{$ENDIF}
 
 procedure TImageProxy.SetImages(const Value: TCustomImageList);
 begin
@@ -2237,12 +2252,12 @@ begin
 end;
 
 initialization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   AddEnumElementAliases(TypeInfo(TImageStretch), ['isNone', 'isCenter', 'isFit', 'isFill', 'isUniform' , 'isMixed']);
   {$ENDIF}
 
 finalization
-  {$IFDEF SUPPORT_ENUMS_ALIASES}
+  {$IFDEF VER270UP}
   RemoveEnumElementAliases(TypeInfo(TImageStretch));
   {$ENDIF}
 
