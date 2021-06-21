@@ -1,16 +1,19 @@
 {******************************************************************************}
-{                            EsVclComponents v3.0                              }
-{                           errorsoft(c) 2009-2018                             }
+{                                                                              }
+{                       EsVclComponents/EsVclCore v4.0                         }
+{                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
-{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{    errorsoft@mail.ru | github.com/errorcalc | habrahabr.ru/user/error1024    }
+{          You can write to me in the Telegram messenger: @errorsoft           }
 {                                                                              }
-{         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
+{           Star me github: github.com/errorcalc/FreeEsVclComponents           }
 {                                                                              }
-{ You can order developing vcl/fmx components, please submit requests to mail. }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
+{                 You can order developing vcl/fmx components,                 }
+{               please submit your requests to mail or telegram.               }
+{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
+{                                                                              }
 {******************************************************************************}
 unit ES.Images;
 
@@ -46,62 +49,62 @@ type
   TImageProxy = class(TComponent)
   private
     ImageChangeLink: TChangeLink;
-    FSmoth: Boolean;
-    FPicture: TPicture;
-    FImages: TCustomImageList;
+    FBackgroundColor: TColor;
+    FImageIndex: TImageIndex;
     {$IFDEF VER340UP}
     FImageName: TImageName;
     {$ENDIF}
-    FImageIndex: TImageIndex;
+    FImages: TCustomImageList;
+    FIncrementalDisplay: Boolean;
+    FOpacity: Byte;
+    FPicture: TPicture;
+    FSmoth: Boolean;
     FStretch: TImageStretch;
+    FTransparent: Boolean;
+    FTransparentGraphic: Boolean;
     FOnProgress: TProgressEvent;
     FOnChange: TNotifyEvent;
-    FIncrementalDisplay: Boolean;
-    FBackgroundColor: TColor;
-    FTransparentGraphic: Boolean;
-    FTransparent: Boolean;
-    FOpacity: Byte;
+    procedure SetBackgroundColor(const Value: TColor);
     procedure SetImageIndex(const Value: TImageIndex);
     {$IFDEF VER340UP}
     procedure SetImageName(const Value: TImageName);
     {$ENDIF}
     procedure SetImages(const Value: TCustomImageList);
-    procedure SetStretch(const Value: TImageStretch);
+    procedure SetOpacity(const Value: Byte);
     procedure SetPicture(const Value: TPicture);
     procedure SetSmoth(const Value: Boolean);
-    procedure SetBackgroundColor(const Value: TColor);
-    procedure SetTransparentGraphic(const Value: Boolean);
+    procedure SetStretch(const Value: TImageStretch);
     procedure SetTransparent(const Value: Boolean);
-    procedure SetOpacity(const Value: Byte);
+    procedure SetTransparentGraphic(const Value: Boolean);
   private
+    function HasImageList: Boolean;
+    procedure Change;
+    procedure ImageListChange(Sender: TObject);
     procedure PictureChanged(Sender: TObject);
     procedure PictureProgress(Sender: TObject; Stage: TProgressStage;
       PercentDone: Byte; RedrawNow: Boolean; const Rect: TRect; const Msg: string);
-    function HasImageList: Boolean;
-    procedure ImageListChange(Sender: TObject);
-    procedure Change;
   protected
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     function GetRect(R: TRect): TRect;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create; reintroduce; virtual;
     destructor Destroy; override;
     function ImageHeight: Integer;
     function ImageWidth: Integer;
     procedure Draw(Canvas: TCanvas; ARect: TRect);
-    property Picture: TPicture read FPicture write SetPicture;
-    property Images: TCustomImageList read FImages write SetImages;
+    property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor default clWhite;
+    property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
     {$IFDEF VER340UP}
     property ImageName: TImageName read FImageName write SetImageName;
     {$ENDIF}
-    property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
-    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.None;
-    property Smoth: Boolean read FSmoth write SetSmoth default True;
+    property Images: TCustomImageList read FImages write SetImages;
     property IncrementalDisplay: Boolean read FIncrementalDisplay write FIncrementalDisplay default False;
-    property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor default clWhite;
-    property TransparentGraphic: Boolean read FTransparentGraphic write SetTransparentGraphic default False;
-    property Transparent: Boolean read FTransparent write SetTransparent default True;
     property Opacity: Byte read FOpacity write SetOpacity default 255;
+    property Picture: TPicture read FPicture write SetPicture;
+    property Smoth: Boolean read FSmoth write SetSmoth default True;
+    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.None;
+    property Transparent: Boolean read FTransparent write SetTransparent default True;
+    property TransparentGraphic: Boolean read FTransparentGraphic write SetTransparentGraphic default False;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
@@ -114,28 +117,28 @@ type
   private
     CollectionChangedMessageID: Integer;
     FImageCollection: TCustomImageCollection;
-    FImageWidth: Integer;
     FImageHeight: Integer;
-    FImageName: string;
     FImageIndex: TImageIndex;
-    FStretch: TImageStretch;
+    FImageName: string;
+    FImageWidth: Integer;
+    FInterpolationMode: TImageInterpolationMode;
     FOnChange: TNotifyEvent;
     FOpacity: Byte;
-    FInterpolationMode: TImageInterpolationMode;
-    procedure SetImageIndex(const Value: TImageIndex);
+    FStretch: TImageStretch;
     procedure SetImageCollection(const Value: TCustomImageCollection);
-    procedure SetImageName(const Value: string);
     procedure SetImageHeight(const Value: Integer);
+    procedure SetImageIndex(const Value: TImageIndex);
+    procedure SetImageName(const Value: string);
     procedure SetImageWidth(const Value: Integer);
-    procedure SetStretch(const Value: TImageStretch);
-    procedure SetOpacity(const Value: Byte);
     procedure SetInterpolationMode(const Value: TImageInterpolationMode);
+    procedure SetOpacity(const Value: Byte);
+    procedure SetStretch(const Value: TImageStretch);
   private
+    function GetRect(R: TRect): TRect;
     function HasImageCollection: Boolean;
+    procedure Change;
     procedure CollectionChangedMessageHandler(const Sender: TObject;
       const Message: System.Messaging.TMessage);
-    procedure Change;
-    function GetRect(R: TRect): TRect;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
@@ -143,103 +146,114 @@ type
     destructor Destroy; override;
     procedure Draw(Canvas: TCanvas; ARect: TRect); virtual;
     property ImageCollection: TCustomImageCollection read FImageCollection write SetImageCollection;
+    property ImageHeight: Integer read FImageHeight write SetImageHeight default 0;
     property ImageIndex: TImageIndex read FImageIndex write SetImageIndex default -1;
     property ImageName: string read FImageName write SetImageName;
     property ImageWidth: Integer read FImageWidth write SetImageWidth default 0;
-    property ImageHeight: Integer read FImageHeight write SetImageHeight default 0;
-    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.Fit;
     property InterpolationMode: TImageInterpolationMode read FInterpolationMode
       write SetInterpolationMode default TImageInterpolationMode.HighQualityCubic;
-    property Opacity: Byte read FOpacity write SetOpacity default 255;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property Opacity: Byte read FOpacity write SetOpacity default 255;
+    property Stretch: TImageStretch read FStretch write SetStretch default TImageStretch.Fit;
   end;
   {$ENDIF}
 
   TEsImage = class(TEsGraphicControl)
   private
-    ImageProxy: TImageProxy;
     DrawCount: Integer;
+    ImageProxy: TImageProxy;
     FDoubleBuffered: Boolean;
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
-    function GetPicture: TPicture;
-    procedure SetPicture(const Value: TPicture);
-    function GetStretch: TImageStretch;
-    procedure SetStretch(const Value: TImageStretch);
-    function GetColor: TColor;
+    FFrameWidth: TFrameWidth;
+    FFrameColor: TColor;
+    FFrameStyle: TFrameStyle;
+    FBorderWidth: Integer;
+    procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
+    function GetCanvas: TCanvas;
+    //function GetColor: TColor;
     function GetImageIndex: TImageIndex;
     function GetImages: TCustomImageList;
     function GetIncrementalDisplay: Boolean;
     function GetOnProgress: TProgressEvent;
+    function GetOpacity: Byte;
+    function GetPicture: TPicture;
     function GetSmoth: Boolean;
+    function GetStretch: TImageStretch;
     function GetTransparent: Boolean;
     function GetTransparentGraphic: Boolean;
-    procedure SetColor(const Value: TColor);
+    //procedure SetColor(const Value: TColor);
+    procedure SetDoubleBuffered(const Value: Boolean);
     procedure SetImageIndex(const Value: TImageIndex);
     procedure SetImages(const Value: TCustomImageList);
     procedure SetIncrementalDisplay(const Value: Boolean);
     procedure SetOnProgress(const Value: TProgressEvent);
+    procedure SetOpacity(const Value: Byte);
+    procedure SetPicture(const Value: TPicture);
     procedure SetSmoth(const Value: Boolean);
+    procedure SetStretch(const Value: TImageStretch);
     procedure SetTransparent(const Value: Boolean);
     procedure SetTransparentGraphic(const Value: Boolean);
-    function GetCanvas: TCanvas;
-    function GetOpacity: Byte;
-    procedure SetOpacity(const Value: Byte);
-    procedure SetDoubleBuffered(const Value: Boolean);
+    procedure SetFrameColor(const Value: TColor);
+    procedure SetFrameStyle(const Value: TFrameStyle);
+    procedure SetFrameWidth(const Value: TFrameWidth);
+    procedure SetBorderWidth(const Value: Integer);
     {$IFDEF VER340UP}
     function GetImageName: TImageName;
     function IsImageNameStored: Boolean;
     procedure SetImageName(const Value: TImageName);
     {$ENDIF}
   protected
-    procedure Paint; override;
-    procedure Loaded; override;
-    procedure ImageProxyChange(Sender: TObject);
+    procedure CalcContentMargins(var Margins: TContentMargins); override;
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
     {$IFDEF VER310UP}
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     {$ELSE}
     procedure ChangeScale(M, D: Integer); override;
     {$ENDIF}
+    procedure ImageProxyChange(Sender: TObject);
+    procedure Loaded; override;
+    procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property Canvas: TCanvas read GetCanvas;
     procedure BeginDraw;
     procedure EndDraw;
     procedure RecreateBitmap;
+    property Canvas: TCanvas read GetCanvas;
   published
     property Align;
+    property AlignWithMargins;
     property Anchors;
     property AutoSize;
+    property BorderWidth: Integer read FBorderWidth write SetBorderWidth default 0;
+    property Color default clBtnFace;//: TColor read GetColor write SetColor default clBtnFace;
     property Constraints;
+    property DoubleBuffered: Boolean read FDoubleBuffered write SetDoubleBuffered default False;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-    property ParentShowHint;
-    //
-    property DoubleBuffered: Boolean read FDoubleBuffered write SetDoubleBuffered default False;
-    property Picture: TPicture read GetPicture write SetPicture;
-    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
-    property Images: TCustomImageList read GetImages write SetImages;
+    property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
+    property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
+    property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     {$IFDEF VER340UP}
     property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
     {$ENDIF}
-    property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
-    property Smoth: Boolean read GetSmoth write SetSmoth default True;
+    property Images: TCustomImageList read GetImages write SetImages;
     property IncrementalDisplay: Boolean read GetIncrementalDisplay write SetIncrementalDisplay default False;
-    property Color: TColor read GetColor write SetColor default clWhite;
-    property TransparentGraphic: Boolean read GetTransparentGraphic write SetTransparentGraphic default False;
-    property Transparent: Boolean read GetTransparent write SetTransparent default True;
-    property Opacity: Byte read GetOpacity write SetOpacity default 255;
     property IsDrawHelper default True;
-    //
-    property Padding;
-    property PopupMenu;
-    property AlignWithMargins;
     property Margins;
+    property Opacity: Byte read GetOpacity write SetOpacity default 255;
+    property Padding;
+    property ParentShowHint;
+    property ParentColor;
+    property Picture: TPicture read GetPicture write SetPicture;
+    property PopupMenu;
     property ShowHint;
+    property Smoth: Boolean read GetSmoth write SetSmoth default True;
+    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
@@ -247,6 +261,8 @@ type
     property StyleName;
     {$ENDIF}
     property Touch;
+    property Transparent: Boolean read GetTransparent write SetTransparent default True;
+    property TransparentGraphic: Boolean read GetTransparentGraphic write SetTransparentGraphic default False;
     property Visible;
     property OnClick;
     property OnContextPopup;
@@ -262,9 +278,9 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
-    property OnProgress: TProgressEvent read GetOnProgress write SetOnProgress;
     property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
+    property OnProgress: TProgressEvent read GetOnProgress write SetOnProgress;
     property OnStartDock;
     property OnStartDrag;
   end;
@@ -277,15 +293,16 @@ type
     FFrameWidth: TFrameWidth;
     FFrameColor: TColor;
     FFrameStyle: TFrameStyle;
-    function GetOpacity: Byte;
     function GetCanvas: TCanvas;
+    function GetImageIndex: TImageIndex;
+    function GetImages: TCustomImageList;
     function GetIncrementalDisplay: Boolean;
     function GetOnProgress: TProgressEvent;
+    function GetOpacity: Byte;
     function GetPicture: TPicture;
     function GetSmoth: Boolean;
     function GetStretch: TImageStretch;
     function GetTransparentGraphic: Boolean;
-    procedure SetOpacity(const Value: Byte);
     procedure SetFrameColor(const Value: TColor);
     procedure SetFrameStyle(const Value: TFrameStyle);
     procedure SetFrameWidth(const Value: TFrameWidth);
@@ -293,78 +310,68 @@ type
     procedure SetImages(const Value: TCustomImageList);
     procedure SetIncrementalDisplay(const Value: Boolean);
     procedure SetOnProgress(const Value: TProgressEvent);
+    procedure SetOpacity(const Value: Byte);
     procedure SetPicture(const Value: TPicture);
     procedure SetSmoth(const Value: Boolean);
     procedure SetStretch(const Value: TImageStretch);
     procedure SetTransparentGraphic(const Value: Boolean);
-    function GetImageIndex: TImageIndex;
-    function GetImages: TCustomImageList;
-    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
     procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
     {$IFDEF VER340UP}
     function GetImageName: TImageName;
     function IsImageNameStored: Boolean;
     procedure SetImageName(const Value: TImageName);
     {$ENDIF}
   protected
-    procedure Paint; override;
-    procedure Loaded; override;
-    procedure ImageProxyChange(Sender: TObject);
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
     procedure CalcContentMargins(var Margins: TContentMargins); override;
+    procedure ImageProxyChange(Sender: TObject);
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure Loaded; override;
+    procedure Paint; override;
     procedure PaintWindow(DC: HDC); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property Canvas: TCanvas read GetCanvas;
     procedure BeginDraw;
     procedure EndDraw;
     procedure RecreateBitmap;
+    property Canvas: TCanvas read GetCanvas;
   published
     property Align;
+    property AlignWithMargins;
     property Anchors;
     property AutoSize;
-    // property BufferedChildrens;// TEsCustomControl
-    property BevelKind;
-    property BevelInner;
-    property BevelOuter;
     property BorderWidth;
+    property Color default clBtnFace;//nodefault;
     property Constraints;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-    property ParentShowHint;
-    property ParentColor default False;
-    property IsCachedBuffer;// TEsCustomControl
-    property IsCachedBackground;// TEsCustomControl
-    property IsFullSizeBuffer;// TEsCustomControl
-    //
-    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
     property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
     property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
-    //
-    property Picture: TPicture read GetPicture write SetPicture;
-    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
-    property Images: TCustomImageList read GetImages write SetImages;
+    property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     {$IFDEF VER340UP}
     property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
     {$ENDIF}
-    property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
-    property Smoth: Boolean read GetSmoth write SetSmoth default True;
+    property Images: TCustomImageList read GetImages write SetImages;
     property IncrementalDisplay: Boolean read GetIncrementalDisplay write SetIncrementalDisplay default False;
-    property Color default clBtnFace;//nodefault;
-    property TransparentGraphic: Boolean read GetTransparentGraphic write SetTransparentGraphic default False;
-    property Transparent;
-    property Opacity: Byte read GetOpacity write SetOpacity default 255;
+    property IsCachedBackground;// TEsCustomControl
+    property IsCachedBuffer;// TEsCustomControl
     property IsDrawHelper default True;
-    //
-    property Padding;
-    property PopupMenu;
-    property AlignWithMargins;
+    property IsFullSizeBuffer;// TEsCustomControl
     property Margins;
+    property Opacity: Byte read GetOpacity write SetOpacity default 255;
+    property Padding;
+    property ParentColor default True;
+    property ParentShowHint;
+    property Picture: TPicture read GetPicture write SetPicture;
+    property PopupMenu;
     property ShowHint;
+    property Smoth: Boolean read GetSmoth write SetSmoth default True;
+    property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.None;
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
@@ -374,7 +381,10 @@ type
     property TabOrder;
     property TabStop;
     property Touch;
+    property Transparent;
+    property TransparentGraphic: Boolean read GetTransparentGraphic write SetTransparentGraphic default False;
     property Visible;
+    property OnCanResize;
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -382,6 +392,8 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
+    property OnEnter;
+    property OnExit;
     property OnGesture;
     property OnMouseActivate;
     property OnMouseDown;
@@ -389,15 +401,12 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
-    property OnProgress: TProgressEvent read GetOnProgress write SetOnProgress;
     property OnPaint;
     property OnPainting;
+    property OnProgress: TProgressEvent read GetOnProgress write SetOnProgress;
+    property OnResize;
     property OnStartDock;
     property OnStartDrag;
-    property OnCanResize;
-    property OnEnter;
-    property OnExit;
-    property OnResize;
   end;
 
   {$IFDEF VER340UP}
@@ -409,6 +418,21 @@ type
     FTransparent: Boolean;
     FOnPaint: TPaintEvent;
     FOnPainting: TPaintEvent;
+    FFrameWidth: TFrameWidth;
+    FFrameColor: TColor;
+    FFrameStyle: TFrameStyle;
+    FBorderWidth: Integer;
+    function GetImageCollection: TCustomImageCollection;
+    function GetImageHeight: Integer;
+    function GetImageIndex: TImageIndex;
+    function GetImageName: string;
+    function GetImageWidth: Integer;
+    function GetInterpolationMode: TImageInterpolationMode;
+    function GetOpacity: Byte;
+    function GetStretch: TImageStretch;
+    function IsImageNameStored: Boolean;
+    procedure SetColor(const Value: TColor);
+    procedure SetDoubleBuffered(const Value: Boolean);
     procedure SetImageCollection(const Value: TCustomImageCollection);
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageIndex(const Value: TImageIndex);
@@ -418,52 +442,50 @@ type
     procedure SetOpacity(const Value: Byte);
     procedure SetStretch(const Value: TImageStretch);
     procedure SetTransparent(const Value: Boolean);
-    function IsImageNameStored: Boolean;
-    procedure SetColor(const Value: TColor);
-    function GetImageCollection: TCustomImageCollection;
-    function GetImageHeight: Integer;
-    function GetImageWidth: Integer;
-    function GetImageIndex: TImageIndex;
-    function GetImageName: string;
-    function GetInterpolationMode: TImageInterpolationMode;
-    function GetOpacity: Byte;
-    function GetStretch: TImageStretch;
-    procedure SetDoubleBuffered(const Value: Boolean);
+    procedure SetFrameColor(const Value: TColor);
+    procedure SetFrameStyle(const Value: TFrameStyle);
+    procedure SetFrameWidth(const Value: TFrameWidth);
+    procedure SetBorderWidth(const Value: Integer);
   protected
-    procedure Paint; override;
+    procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure ImageProxyChange(Sender: TObject);
+    procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    /// <summary> Allows for less blinking with an opaque background </summary>
-    property DoubleBuffered: Boolean read FDoubleBuffered write SetDoubleBuffered default False;
+    property BorderWidth: Integer read FBorderWidth write SetBorderWidth default 0;
     /// <summary> The color that is visible under the semi-transparent image </summary>
     property Color: TColor read FColor write SetColor default clBtnFace;
+    /// <summary> Allows for less blinking with an opaque background </summary>
+    property DoubleBuffered: Boolean read FDoubleBuffered write SetDoubleBuffered default False;
+    property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
+    property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
     /// <summary> Component with source images </summary>
     property ImageCollection: TCustomImageCollection read GetImageCollection write SetImageCollection;
-    /// <summary> Manually set width </summary>
-    property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Manually set height </summary>
     property ImageHeight: Integer read GetImageHeight write SetImageHeight default 0;
     /// <summary> Index in source image collection </summary>
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     /// <summary> Name in source image collection </summary>
     property ImageName: string read GetImageName write SetImageName stored IsImageNameStored;
+    /// <summary> Manually set width </summary>
+    property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Interpolation mode affects the quality and speed of scaling </summary>
     property InterpolationMode: TImageInterpolationMode read GetInterpolationMode write SetInterpolationMode default TImageInterpolationMode.HighQualityCubic;
     /// <summary> IsDrawHelper specifies the drawing of the design time helper </summary>
     property IsDrawHelper default True;
     /// <summary> Transparency level for the output image </summary>
     property Opacity: Byte read GetOpacity write SetOpacity default 255;
-    /// <summary> Called before drawing </summary>
-    property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
-    /// <summary> Called after drawing </summary>
-    property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
     /// <summary> Image location </summary>
     property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.Fit;
     /// <summary> Transparent specifies the draw background </summary>
     property Transparent: Boolean read FTransparent write SetTransparent default True;
+    /// <summary> Called before drawing </summary>
+    property OnPainting: TPaintEvent read FOnPainting write FOnPainting;
+    /// <summary> Called after drawing </summary>
+    property OnPaint: TPaintEvent read FOnPaint write FOnPaint;
   end;
 
   TEsVirtualImage = class(TEsCustomVirtualImage)
@@ -471,21 +493,26 @@ type
     property Align;
     property AlignWithMargins;
     property Anchors;
+    property BorderWidth;// +TEsCustomVirtualImage
     property Color;// +TEsCustomVirtualImage
     property Constraints;
     property DoubleBuffered;// +TEsCustomVirtualImage
     property DragCursor;
     property DragKind;
     property DragMode;
+    property Enabled;
+    property FrameColor;// +TEsCustomVirtualImage
+    property FrameStyle;// +TEsCustomVirtualImage
+    property FrameWidth;// +TEsCustomVirtualImage
     property ImageCollection;// +TEsCustomVirtualImage
-    property ImageWidth;// +TEsCustomVirtualImage
     property ImageHeight;// +TEsCustomVirtualImage
     property ImageIndex;// +TEsCustomVirtualImage
     property ImageName;// +TEsCustomVirtualImage
+    property ImageWidth;// +TEsCustomVirtualImage
     property InterpolationMode;// +TEsCustomVirtualImage
     property IsDrawHelper;// +TEsCustomVirtualImage
     property Margins;
-    property Enabled;
+    property Opacity;// +TEsCustomVirtualImage
     property Padding;// +TEsCustomVirtualImage
     property ParentShowHint;
     property PopupMenu;
@@ -514,11 +541,10 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnPaint;
+    property OnPainting;
     property OnStartDock;
     property OnStartDrag;
-    property OnPainting;
-    property OnPaint;
-    property Opacity;// +TEsCustomVirtualImage
   end;
 
   TEsCustomVirtualImageControl = class(TEsBaseLayout)
@@ -545,30 +571,33 @@ type
     procedure SetOpacity(const Value: Byte);
     procedure SetStretch(const Value: TImageStretch);
   private
-    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
-    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
     procedure SetFrameColor(const Value: TColor);
     procedure SetFrameStyle(const Value: TFrameStyle);
     procedure SetFrameWidth(const Value: TFrameWidth);
+    procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
+    procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
   protected
-    procedure Paint; override;
+    procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure ImageProxyChange(Sender: TObject);
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
-    procedure CalcContentMargins(var Margins: TContentMargins); override;
+    procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
+    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
+    property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
     /// <summary> Component with source images </summary>
     property ImageCollection: TCustomImageCollection read GetImageCollection write SetImageCollection;
-    /// <summary> Manually set width </summary>
-    property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Manually set height </summary>
     property ImageHeight: Integer read GetImageHeight write SetImageHeight default 0;
     /// <summary> Index in source image collection </summary>
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     /// <summary> Name in source image collection </summary>
     property ImageName: string read GetImageName write SetImageName stored IsImageNameStored;
+    /// <summary> Manually set width </summary>
+    property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Interpolation mode affects the quality and speed of scaling </summary>
     property InterpolationMode: TImageInterpolationMode read GetInterpolationMode write SetInterpolationMode default TImageInterpolationMode.HighQualityCubic;
     /// <summary> IsDrawHelper specifies the drawing of the design time helper </summary>
@@ -577,9 +606,6 @@ type
     property Opacity: Byte read GetOpacity write SetOpacity default 255;
     /// <summary> Image location </summary>
     property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.Fit;
-    property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
-    property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
-    property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
   end;
 
   TEsVirtualImageControl = class(TEsCustomVirtualImageControl)
@@ -592,20 +618,24 @@ type
     property DragCursor;
     property DragKind;
     property DragMode;
+    property Enabled;
+    property FrameColor;
+    property FrameStyle;
+    property FrameWidth;
     property ImageCollection;// +TEsCustomVirtualImageControl
-    property ImageWidth;// +TEsCustomVirtualImageControl
     property ImageHeight;// +TEsCustomVirtualImageControl
     property ImageIndex;// +TEsCustomVirtualImageControl
     property ImageName;// +TEsCustomVirtualImageControl
+    property ImageWidth;// +TEsCustomVirtualImageControl
     property InterpolationMode;// +TEsCustomVirtualImageControl
-    property IsDrawHelper;// +TEsCustomVirtualImageControl
-    property FrameStyle;
-    property FrameColor;
-    property FrameWidth;
+    property IsCachedBackground;// TEsCustomControl
+    property IsCachedBuffer;// TEsCustomControl
+    property IsDrawHelper default True;
+    property IsFullSizeBuffer;// TEsCustomControl
     property Margins;
-    property Enabled;
+    property Opacity;// +TEsCustomVirtualImageControl
+    property ParentColor default True;
     property ParentShowHint;
-    property ParentColor default False;
     property PopupMenu;
     property ShowHint;
     property Stretch;// +TEsCustomVirtualImageControl
@@ -627,6 +657,8 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
+    property OnEnter;
+    property OnExit;
     property OnGesture;
     property OnMouseActivate;
     property OnMouseDown;
@@ -634,14 +666,11 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnPaint;
+    property OnPainting;
+    property OnResize;
     property OnStartDock;
     property OnStartDrag;
-    property OnPainting;
-    property OnPaint;
-    property OnEnter;
-    property OnExit;
-    property OnResize;
-    property Opacity;// +TEsCustomVirtualImageControl
   end;
   {$ENDIF}
 
@@ -1021,9 +1050,13 @@ begin
   inherited;
   ImageProxy := TImageProxy.Create;
   ImageProxy.OnChange := ImageProxyChange;
+  ImageProxy.BackgroundColor := Color;
+  FFrameColor := clBtnShadow;
+  FFrameWidth := 1;
   IsDrawHelper := True;
   Width := 100;
   Height := 100;
+
 end;
 
 destructor TEsImage.Destroy;
@@ -1046,6 +1079,19 @@ begin
     ImageProxyChange(nil);
 end;
 
+procedure TEsImage.CalcContentMargins(var Margins: TContentMargins);
+begin
+  inherited;
+  if FrameStyle <> TExFrameStyle.None then
+  begin
+    Margins.Inflate(GetFrameWidth(FrameStyle, FrameWidth), GetFrameWidth(FrameStyle, FrameWidth));
+  end;
+  if BorderWidth <> 0 then
+  begin
+    Margins.Inflate(BorderWidth, BorderWidth);
+  end;
+end;
+
 function TEsImage.CanAutoSize(var NewWidth, NewHeight: Integer): Boolean;
 begin
   Result := True;
@@ -1063,6 +1109,12 @@ begin
   end;
 end;
 
+procedure TEsImage.CMColorChanged(var Message: TMessage);
+begin
+  ImageProxy.BackgroundColor := Color;
+  inherited;
+end;
+
 {$IFDEF VER310UP}
 procedure TEsImage.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
@@ -1075,10 +1127,10 @@ begin
 end;
 {$ENDIF}
 
-function TEsImage.GetColor: TColor;
+{function TEsImage.GetColor: TColor;
 begin
   Result := ImageProxy.BackgroundColor;
-end;
+end;}
 
 function TEsImage.GetOpacity: Byte;
 begin
@@ -1217,11 +1269,18 @@ begin
       CurrentCanvas.DrawCorners(ImageProxy.GetRect(ContentRect), 10);
     end;
 
+    if FrameStyle <> TExFrameStyle.None then
+      if IsStyledBorderControl(Self) then
+        DrawFrame(CurrentCanvas, Self, ClientRect, FrameStyle, FrameWidth, FrameColor,
+          clBtnHighlight, clBtnShadow)
+      else
+        DrawFrame(CurrentCanvas, nil, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
+
     if Assigned(FOnPainting) then
-      FOnPainting(Self, CurrentCanvas, ClientRect);
+      FOnPainting(Self, CurrentCanvas, ContentRect);
     ImageProxy.Draw(CurrentCanvas, ContentRect);
     if Assigned(FOnPaint) then
-      FOnPaint(Self, CurrentCanvas, ClientRect);
+      FOnPaint(Self, CurrentCanvas, ContentRect);
 
     if csDesigning in ComponentState then
     begin
@@ -1231,7 +1290,7 @@ begin
     end;
 
     if Bitmap <> nil then
-      inherited Canvas.Draw(0, 0, Bitmap);
+      inherited Canvas.Draw(ClientRect.Left, ClientRect.Top, Bitmap);
   finally
     Bitmap.Free;
   end;
@@ -1251,10 +1310,19 @@ begin
   ImageProxy.Opacity := Value;
 end;
 
-procedure TEsImage.SetColor(const Value: TColor);
+procedure TEsImage.SetBorderWidth(const Value: Integer);
+begin
+  if (FBorderWidth <> Value) and (Value >= 0) then
+  begin
+    FBorderWidth := Value;
+    Invalidate;
+  end;
+end;
+
+{procedure TEsImage.SetColor(const Value: TColor);
 begin
   ImageProxy.BackgroundColor := Value;
-end;
+end;}
 
 procedure TEsImage.SetDoubleBuffered(const Value: Boolean);
 begin
@@ -1265,6 +1333,33 @@ begin
       ControlStyle := ControlStyle + [csOpaque]
     else
       ControlStyle := ControlStyle - [csOpaque];
+    Invalidate;
+  end;
+end;
+
+procedure TEsImage.SetFrameColor(const Value: TColor);
+begin
+  if FFrameColor <> Value then
+  begin
+    FFrameColor := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsImage.SetFrameStyle(const Value: TFrameStyle);
+begin
+  if FFrameStyle <> Value then
+  begin
+    FFrameStyle := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsImage.SetFrameWidth(const Value: TFrameWidth);
+begin
+  if FFrameWidth <> Value then
+  begin
+    FFrameWidth := Value;
     Invalidate;
   end;
 end;
@@ -1336,7 +1431,7 @@ begin
   FFrameColor := clBtnShadow;
   FFrameWidth := 1;
   // ParentColor := False;
-  Color := clBtnFace;
+  //Color := clBtnFace;
   Transparent := True;
   Width := 100;
   Height := 100;
@@ -1893,6 +1988,8 @@ begin
   Color := clBtnFace;
   IsDrawHelper := True;
   Transparent := True;
+  FFrameColor := clBtnShadow;
+  FFrameWidth := 1;
   Width := 100;
   Height := 100;
 end;
@@ -1901,6 +1998,19 @@ destructor TEsCustomVirtualImage.Destroy;
 begin
   ImageProxy.Free;
   inherited;
+end;
+
+procedure TEsCustomVirtualImage.CalcContentMargins(var Margins: TContentMargins);
+begin
+  inherited;
+  if FrameStyle <> TExFrameStyle.None then
+  begin
+    Margins.Inflate(GetFrameWidth(FrameStyle, FrameWidth), GetFrameWidth(FrameStyle, FrameWidth));
+  end;
+  if BorderWidth <> 0 then
+  begin
+    Margins.Inflate(BorderWidth, BorderWidth);
+  end;
 end;
 
 function TEsCustomVirtualImage.GetImageCollection: TCustomImageCollection;
@@ -1997,6 +2107,14 @@ begin
       CurrentCanvas.DrawCorners(ImageProxy.GetRect(ContentRect), 10);
     end;
 
+    if FrameStyle <> TExFrameStyle.None then
+      if IsStyledBorderControl(Self) then
+        DrawFrame(CurrentCanvas, Self, ClientRect, FrameStyle, FrameWidth, FrameColor,
+          clBtnHighlight, clBtnShadow)
+      else
+        DrawFrame(CurrentCanvas, nil, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
+
+
     if Assigned(FOnPainting) then
       FOnPainting(Self, CurrentCanvas, ClientRect);
     ImageProxy.Draw(CurrentCanvas, ContentRect);
@@ -2012,9 +2130,18 @@ begin
     end;
 
     if Bitmap <> nil then
-      inherited Canvas.Draw(0, 0, Bitmap);
+      inherited Canvas.Draw(ClientRect.Left, ClientRect.Top, Bitmap);
   finally
     Bitmap.Free;
+  end;
+end;
+
+procedure TEsCustomVirtualImage.SetBorderWidth(const Value: Integer);
+begin
+  if (FBorderWidth <> Value) and (Value >= 0) then
+  begin
+    FBorderWidth := Value;
+    Invalidate;
   end;
 end;
 
@@ -2036,6 +2163,33 @@ begin
       ControlStyle := ControlStyle + [csOpaque]
     else
       ControlStyle := ControlStyle - [csOpaque];
+    Invalidate;
+  end;
+end;
+
+procedure TEsCustomVirtualImage.SetFrameColor(const Value: TColor);
+begin
+  if FFrameColor <> Value then
+  begin
+    FFrameColor := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsCustomVirtualImage.SetFrameStyle(const Value: TFrameStyle);
+begin
+  if FFrameStyle <> Value then
+  begin
+    FFrameStyle := Value;
+    Invalidate;
+  end;
+end;
+
+procedure TEsCustomVirtualImage.SetFrameWidth(const Value: TFrameWidth);
+begin
+  if FFrameWidth <> Value then
+  begin
+    FFrameWidth := Value;
     Invalidate;
   end;
 end;
@@ -2096,7 +2250,7 @@ begin
   inherited;
   ImageProxy := TVirtualImageProxy.Create;
   ImageProxy.OnChange := ImageProxyChange;
-  Color := clBtnFace;
+  //Color := clBtnFace;
   IsDrawHelper := True;
   Transparent := True;
   FFrameColor := clBtnShadow;

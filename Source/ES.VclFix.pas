@@ -17,6 +17,7 @@ unit ES.VclFix;
 interface
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 uses
   Vcl.ComCtrls, WinApi.Messages, WinApi.CommCtrl;

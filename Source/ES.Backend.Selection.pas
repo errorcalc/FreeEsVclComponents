@@ -33,6 +33,7 @@
 unit ES.Backend.Selection;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 

@@ -34,8 +34,8 @@ requires
   vcl,
   vclimg,
   EsVclCore,
-  EsCore,
-  vclwinx;
+  EsCore
+  {$IF CompilerVersion >= 34}, vclwinx{$IFEND};
 
 contains
   ES.Switch in 'Source\ES.Switch.pas',

@@ -1,20 +1,24 @@
 {******************************************************************************}
-{                            EsVclComponents v3.0                              }
-{                           errorsoft(c) 2009-2018                             }
+{                                                                              }
+{                       EsVclComponents/EsVclCore v4.0                         }
+{                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
-{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{    errorsoft@mail.ru | github.com/errorcalc | habrahabr.ru/user/error1024    }
+{          You can write to me in the Telegram messenger: @errorsoft           }
 {                                                                              }
-{         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
+{           Star me github: github.com/errorcalc/FreeEsVclComponents           }
 {                                                                              }
-{ You can order developing vcl/fmx components, please submit requests to mail. }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
+{                 You can order developing vcl/fmx components,                 }
+{               please submit your requests to mail or telegram.               }
+{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
+{                                                                              }
 {******************************************************************************}
 unit ES.Labels;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
@@ -264,14 +268,15 @@ begin
     if LinkState = lsNormal then
       Font.Color := FontColorToRgb(LinkColor, Self)
     else if LinkState = lsHot then
-      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), 30)
+      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), 60)
     else
-      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), -30);
+      Font.Color := HighlightColor(FontColorToRgb(LinkColor, Self), -60);
 
     inherited;
   finally
     Font.Assign(StoredFont);
     Font.OnChange := OnChange;
+    StoredFont.Free;
   end;
 end;
 

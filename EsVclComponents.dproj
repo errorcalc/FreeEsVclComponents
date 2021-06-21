@@ -124,7 +124,6 @@
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="EsVclCore.dcp"/>
         <DCCReference Include="EsCore.dcp"/>
-        <DCCReference Include="vclwinx.dcp"/>
         <DCCReference Include="Source\ES.Switch.pas"/>
         <DCCReference Include="Source\ES.NinePatch.pas"/>
         <DCCReference Include="Source\ES.Layouts.pas"/>

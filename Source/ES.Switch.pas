@@ -354,7 +354,7 @@ begin
   FreeAndNil(Animation);
   IsAnimating := True;
   Animation := TIntegerAnimation.Create;
-  Animation.Mode := amCubic;
+  Animation.Mode := TAnimationMode.Cubic;
   Animation.ReverseMode := True;
   Animation.OnProcess := AnimationProcess;
   Animation.OnFinish := AnimationFinish;
@@ -405,15 +405,15 @@ end;
 procedure TEsCustomSwitch.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
-  SwitchWidth := MulDiv(SwitchWidth, M, D);
-  SwitchHeight := MulDiv(SwitchHeight, M, D);
+  FSwitchWidth := MulDiv(FSwitchWidth, M, D);
+  FSwitchHeight := MulDiv(FSwitchHeight, M, D);
 end;
 {$ELSE}
 procedure TEsCustomSwitch.ChangeScale(M, D: Integer);
 begin
   inherited;
-  SwitchWidth := MulDiv(SwitchWidth, M, D);
-  SwitchHeight := MulDiv(SwitchHeight, M, D);
+  FSwitchWidth := MulDiv(FSwitchWidth, M, D);
+  FSwitchHeight := MulDiv(FSwitchHeight, M, D);
 end;
 {$ENDIF}
 
@@ -1122,7 +1122,7 @@ begin
     begin
       if FFrameColor = clDefault then
       begin
-        if Assigned(FControl) and not (StyleServices.Enabled and IsStyledClientControl(FControl))  then
+        if Assigned(FControl) and not IsStyledClientControl(FControl)  then
           LFrameColor := RgbToArgb(ColorToRGB(TEsSwitch(FControl).Font.Color), 0)
         else
           LFrameColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0);
@@ -1135,10 +1135,10 @@ begin
       if FMainColor = clDefault then
       begin
         if IsStyledClientControl(FControl) then
-          LMainColor := RgbToArgb(StyleServices.GetSystemColor(clHighlight))
+          LMainColor := RgbToArgb(ClientColorToRGB(clHighlight, FControl))
         else
           if not GetMainColor(LMainColor) then
-            LMainColor := RgbToArgb(ColorToRGB(clHighlight));
+            LMainColor := RgbToArgb(ClientColorToRGB(clHighlight, FControl));
       end else
         LMainColor := RgbToArgb(ClientColorToRGB(FMainColor, FControl), 0);
       LMainColor := LMainColor and $00FFFFFF;

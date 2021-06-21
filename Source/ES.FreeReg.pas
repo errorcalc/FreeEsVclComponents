@@ -67,18 +67,15 @@ begin
   RegisterComponentEditor(TEsRegexButtonedEdit, TEsRegexEditorEditor);
   RegisterComponentEditor(TEsRegexLabeledEdit, TEsRegexEditorEditor);
 
-  // AlphaControls/alphaskins is bad.
-  // I has too much head pain, because of them!
   // Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
-  // I think in hell there is a personal cauldron...
-  {$ifdef FixLoadPng}
+  {$IFDEF FixLoadPng}
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsNinePatchImage, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageLabel, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageLayout, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPngImage), TEsImageStaticText, '', TEsPngPropertyFix);
   RegisterPropertyEditor(TypeInfo(TPicture), TEsImage, '', TEsPicturePropertyFix);
   RegisterPropertyEditor(TypeInfo(TPicture), TEsImageControl, '', TEsPicturePropertyFix);
-  {$endif}
+  {$ENDIF}
 end;
 
 end.

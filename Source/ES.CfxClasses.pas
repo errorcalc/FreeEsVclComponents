@@ -17,6 +17,7 @@ unit ES.CfxClasses;
 interface
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 uses
   WinApi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
@@ -24,7 +25,6 @@ uses
   Vcl.Themes;
 
 type
-  {$SCOPEDENUMS ON}
   TVertLayout = (Top, Center, Bottom);
   THorzLayout = (Left, Center, Right);
   TImageAlign = (TopLeft, TopRight, BottomRight, BottomLeft, Center, Left, Right, Top, Bottom);
@@ -83,8 +83,6 @@ type
   end;
   {$ENDIF}
   {$ENDREGION}
-
-  {$SCOPEDENUMS OFF}
 
   TImageMargins = class(TMargins)
   private
@@ -304,7 +302,7 @@ type
   end;
 
   // Internal use only
-  TAnimationMode = (amLinear, amCubic);
+  TAnimationMode = (Linear, Cubic);
 
   // Internal use only
   TCustomAnimation = class
@@ -417,7 +415,7 @@ begin
       HasStyle := IsStyledBorderControl(Control)
     else
       HasStyle := True;
-    {$IFDEF VER240}
+    {$IFDEF VER340UP}
     StyleService := StyleServices(Control);
     {$ELSE}
     StyleService := StyleServices;
@@ -425,11 +423,11 @@ begin
   end;
 
   // setup colors
-  if HasStyle then
+  if HasStyle and IsStyledBorderControl(Control) then
   begin
-    FrameColor := StyleServices.GetSystemColor(FrameColor);
-    TopColor := StyleServices.GetSystemColor(TopColor);
-    BottomColor := StyleServices.GetSystemColor(BottomColor);
+    FrameColor := StyleService.GetSystemColor(FrameColor);
+    TopColor := StyleService.GetSystemColor(TopColor);
+    BottomColor := StyleService.GetSystemColor(BottomColor);
   end else
   begin
     FrameColor := ColorToRGB(FrameColor);
@@ -779,6 +777,9 @@ end;
 
 { TTextNinePatchObject }
 
+type
+  TFontControl = class(TControl);
+
 constructor TTextNinePatchObject.Create;
 begin
   inherited;
@@ -791,8 +792,6 @@ begin
 end;
 
 procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: byte);
-const
-  D: array[Boolean] of TThemedTextLabel = (ttlTextLabelDisabled, ttlTextLabelNormal);//TStyleFont = (sfPanelTextDisabled, sfPanelTextNormal);
 var
   R, Temp: TRect;
   Format: TTextFormat;
@@ -800,14 +799,9 @@ var
   var
     T: TTextFormat;
   begin
-    Rect.Offset(-Rect.Top, -Rect.Left);
     T := Format;
     T := T + [tfCalcRect, tfWordEllipsis];
-    if IsStyledFontControl(Control) then
-      Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
-        Rect, Text, T)
-    else
-      Canvas.TextRect(Rect, Text, T);
+    Canvas.TextRect(Rect, Text, T);
   end;
 begin
   inherited Draw(Canvas, Rect, Opacity);
@@ -912,21 +906,19 @@ begin
   end;
 
   Canvas.Brush.Style := bsClear;
-  if IsStyledFontControl(Control) then
-    Canvas.DrawThemeText(StyleServices.GetElementDetails(D[Control.Enabled]),
-      R, Text, Format)
-  else
-    if Control.Enabled then
-      Canvas.TextRect(R, Text, Format)
-    else
-    begin
-      R.Offset(1, 1);
-      Canvas.Font.Color := clBtnHighlight;
-      Canvas.TextRect(R, Text, Format);
-      R.Offset(-1, -1);
-      Canvas.Font.Color := clBtnShadow;
-      Canvas.TextRect(R, Text, Format);
-    end;
+  if Control.Enabled then
+  begin
+    Canvas.Font.Color := FontColorToRgb(TFontControl(Control).Font.Color, Control);
+    Canvas.TextRect(R, Text, Format)
+  end else
+  begin
+    R.Offset(1, 1);
+    Canvas.Font.Color := FontColorToRgb(clBtnHighlight, Control);
+    Canvas.TextRect(R, Text, Format);
+    R.Offset(-1, -1);
+    Canvas.Font.Color := FontColorToRgb(clBtnShadow, Control);
+    Canvas.TextRect(R, Text, Format);
+  end;
   Canvas.Brush.Style := bsSolid;
 end;
 
@@ -1607,7 +1599,7 @@ begin
   Timer := TEsTimer.Create(10, TimerProc, False);
   //FOnProcess := OnProcess;
   FNormalizedTime := 0;
-  FMode := amLinear;
+  FMode := TAnimationMode.Linear;
   //Timer.Enabled := Enabled;
 end;
 
@@ -1629,8 +1621,8 @@ begin
     t := FNormalizedTime;
 
   case FMode of
-    amLinear: Result := t;
-    amCubic: Result := t * t * t; //( 1 - Sqrt(t * t * t * t * t));
+    TAnimationMode.Linear: Result := t;
+    TAnimationMode.Cubic: Result := t * t * t; //( 1 - Sqrt(t * t * t * t * t));
   end;
 
   if ReverseMode then

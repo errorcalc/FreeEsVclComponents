@@ -17,6 +17,7 @@ unit ES.ExGdiPlus;
 interface
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 uses
   WinApi.Windows, WinApi.GDIPApi, WinApi.GDIPObj, Vcl.Graphics, System.Types;

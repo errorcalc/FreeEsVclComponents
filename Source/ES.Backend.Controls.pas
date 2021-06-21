@@ -16,6 +16,7 @@
 unit ES.Backend.Controls;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 

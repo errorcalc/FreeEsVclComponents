@@ -15,6 +15,7 @@
 unit ES.StyleHooks;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 

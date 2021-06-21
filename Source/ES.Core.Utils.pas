@@ -16,6 +16,7 @@
 unit ES.Core.Utils;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 

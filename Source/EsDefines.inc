@@ -1,4 +1,15 @@
 // Compiler verisons
+{$LEGACYIFEND ON}
+
+// 2010
+{$IFDEF VER210}
+  ERROR, DELPHI2010 VERSION HERE: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2
+{$ENDIF}
+
+// XE1
+{$IFDEF VER220}
+  ERROR, DELPHIXE VERSION HERE: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2
+{$ENDIF}
 
 // XE2
 {$IFDEF VER230}
@@ -127,7 +138,7 @@
 {$ENDIF}
 
 // Next versions
-{$IF CompilerVersion >= 34}
+{$IFNDEF VER230UP}
   {$DEFINE VER230UP}
   {$DEFINE VER240UP}
   {$DEFINE VER250UP}
@@ -140,7 +151,7 @@
   {$DEFINE VER320UP}
   {$DEFINE VER330UP}
   {$DEFINE VER340UP}
-{$IFEND}
+{$ENDIF}
 
 // Vcl
 (*

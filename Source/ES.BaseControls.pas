@@ -190,6 +190,7 @@ type
     procedure WMEraseBkgnd(var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
+    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
     procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
     // Handle other messages
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
@@ -517,6 +518,25 @@ begin
   {$ENDIF}
 end;
 
+function IsStyledBorderControl(Control: TControl): Boolean;
+begin
+  Result := False;
+
+  {$IFDEF STYLE_NAME}
+  if StyleServices(Control).Enabled then
+  begin
+    Result := (seBorder in Control.StyleElements) and
+              (not StyleServices(Control).IsSystemStyle);
+  end;
+  {$ELSE}
+  if StyleServices.Enabled then
+  begin
+    Result := {$IFDEF STYLE_ELEMENTS}(seBorder in Control.StyleElements) and{$ENDIF}
+      TStyleManager.IsCustomStyleActive;
+  end;
+  {$ENDIF}
+end;
+
 function CalcClientRect(Control: TControl): TRect;
 var
   {$IFDEF FAST_CALC_CLIENTRECT}
@@ -708,6 +728,8 @@ begin
 end;
 
 procedure TEsCustomControl.FillBackground(Handle: THandle);
+var
+  RGBColor, OldColor: TColor;
 begin
   if not IsStyledClientControl(Self) then
   begin
@@ -715,11 +737,16 @@ begin
   end else
   begin
     {$IFDEF STYLE_NAME}
-    SetDCBrushColor(Handle, StyleServices(Self).GetSystemColor(Color));
+    RGBColor := StyleServices(Self).GetSystemColor(Color);
     {$ELSE}
-    SetDCBrushColor(Handle, StyleServices.GetSystemColor(Color));
+    RGBColor := StyleServices.GetSystemColor(Color);
     {$ENDIF}
+    if RGBColor and $FF000000 <> 0 then
+      RGBColor := ColorToRGB(Color);
+
+    OldColor := SetDCBrushColor(Handle, RGBColor);
     FillRect(Handle, ClientRect, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(Handle, OldColor);
   end;
 end;
 
@@ -955,6 +982,49 @@ begin
     if ControlCount <> 0 then
       DrawBackgroundForOpaqueControls(Message.DC);
     Message.Result := 1;
+  end;
+end;
+
+procedure TEsCustomControl.WMNCPaint(var Message: TWMNCPaint);
+var
+  DC: HDC;
+  RectClient, RectWindow: TRect;
+  RGBColor, OldColor: TColor;
+begin
+  if (BevelKind = bkNone) and (BorderWidth > 0) then
+  begin
+    DC := GetWindowDC(Handle);
+    try
+      Winapi.Windows.GetClientRect(Handle, RectClient);
+      Winapi.Windows.GetWindowRect(Handle, RectWindow);
+      MapWindowPoints(0, Handle, RectWindow, 2);
+      OffsetRect(RectClient, -RectWindow.Left, -RectWindow.Top);
+      OffsetRect(RectWindow, -RectWindow.Left, -RectWindow.Top);
+      ExcludeClipRect(DC, RectClient.Left, RectClient.Top, RectClient.Right, RectClient.Bottom);
+
+      if not IsStyledBorderControl(Self) then
+      begin
+        FillRect(DC, RectWindow, Brush.Handle)
+      end else
+      begin
+        {$IFDEF STYLE_NAME}
+        RGBColor := StyleServices(Self).GetSystemColor(Color);
+        {$ELSE}
+        RGBColor := StyleServices.GetSystemColor(Color);
+        {$ENDIF}
+        if RGBColor and $FF000000 <> 0 then
+          RGBColor := ColorToRGB(Color);
+
+        OldColor := SetDCBrushColor(DC, RGBColor);
+        FillRect(DC, RectWindow, GetStockObject(DC_BRUSH));
+        SetDCBrushColor(DC, OldColor);
+      end;
+    finally
+      ReleaseDC(Handle, DC);
+    end;
+  end else
+  begin
+    Inherited;
   end;
 end;
 

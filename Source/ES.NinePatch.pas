@@ -1,20 +1,24 @@
 {******************************************************************************}
-{                            EsVclComponents v3.0                              }
-{                           errorsoft(c) 2009-2018                             }
+{                                                                              }
+{                       EsVclComponents/EsVclCore v4.0                         }
+{                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
-{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{    errorsoft@mail.ru | github.com/errorcalc | habrahabr.ru/user/error1024    }
+{          You can write to me in the Telegram messenger: @errorsoft           }
 {                                                                              }
-{         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
+{           Star me github: github.com/errorcalc/FreeEsVclComponents           }
 {                                                                              }
-{ You can order developing vcl/fmx components, please submit requests to mail. }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
+{                 You can order developing vcl/fmx components,                 }
+{               please submit your requests to mail or telegram.               }
+{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
+{                                                                              }
 {******************************************************************************}
 unit ES.NinePatch;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
@@ -83,6 +87,12 @@ type
     //
     property IsDrawHelper;
     //
+    {$IFDEF VER240UP}
+    property StyleElements;
+    {$ENDIF}
+    {$IFDEF VER340UP}
+    property StyleName;
+    {$ENDIF}
     property Align;
     property Anchors;
     property Constraints;
@@ -135,6 +145,9 @@ type
     property ParentFont;
     {$IFDEF VER240UP}
     property StyleElements;
+    {$ENDIF}
+    {$IFDEF VER340UP}
+    property StyleName;
     {$ENDIF}
     property OnClick;
     property OnContextPopup;
@@ -276,6 +289,9 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
+    property StyleName;
+    {$ENDIF}
     property OnAlignInsertBefore;
     property OnAlignPosition;
     property OnCanResize;
@@ -366,9 +382,9 @@ begin
   NinePatch.OverlayAlign := TImageAlign.TopLeft;
   NinePatch.OverlaySpace := False;
   NinePatch.Control := Self;
-  FImage := TPngImage.Create;
+  FImage := TFixPngImage.Create;
   FImage.OnChange := PictureChange;
-  FOverlay := TPngImage.Create;
+  FOverlay := TFixPngImage.Create;
   FOverlay.OnChange := PictureChange;
   FOpacity := 255;
 end;
@@ -454,6 +470,7 @@ end;
 procedure TEsNinePatchImage.PictureChange(Sender: TObject);
 begin
   NinePatch.AssignImage(FImage);
+  NinePatch.AssignOverlay(FOverlay);
 end;
 
 procedure TEsNinePatchImage.SetOpacity(const Value: byte);
@@ -813,7 +830,7 @@ end;
 constructor TEsImageStaticText.Create(AOwner: TComponent);
 begin
   inherited;
-  ControlStyle := ControlStyle + [csSetCaption];
+  ControlStyle := ControlStyle + [csSetCaption] - [csAcceptsControls];
   OverlayAlign := TImageAlign.Left;
   OverlaySpace := True;
   ShowCaption := True;

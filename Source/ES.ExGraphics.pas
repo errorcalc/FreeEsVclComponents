@@ -18,13 +18,13 @@ interface
 
 {$I 'EsDefines.inc'}
 {$I 'EsVclCore.inc'}
+{$SCOPEDENUMS ON}
 
 uses
   WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes, Vcl.Imaging.PngImage
   {$IFDEF USE_GDIPLUS}, WinApi.GdipObj, WinApi.GdipApi{$ENDIF};
 
 type
-  {$SCOPEDENUMS ON}
   TStretchMode = (Normal, Tile, HorzFit, VertFit, HorzTile, VertTile, HorzTileFit, VertTileFit);
 
   {$REGION 'deprecated names'}

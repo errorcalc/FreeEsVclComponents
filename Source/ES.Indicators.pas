@@ -1,20 +1,24 @@
 {******************************************************************************}
-{                            EsVclComponents v2.0                              }
-{                           ErrorSoft(c) 2009-2018                             }
+{                                                                              }
+{                       EsVclComponents/EsVclCore v4.0                         }
+{                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
-{           errorsoft@mail.ru | vk.com/errorsoft | github.com/errorcalc        }
-{              errorsoft@protonmail.ch | habrahabr.ru/user/error1024           }
+{    errorsoft@mail.ru | github.com/errorcalc | habrahabr.ru/user/error1024    }
+{          You can write to me in the Telegram messenger: @errorsoft           }
 {                                                                              }
-{         Open this on github: github.com/errorcalc/FreeEsVclComponents        }
+{           Star me github: github.com/errorcalc/FreeEsVclComponents           }
 {                                                                              }
-{ You can order developing vcl/fmx components, please submit requests to mail. }
-{ Вы можете заказать разработку VCL/FMX компонента на заказ.                   }
+{                 You can order developing vcl/fmx components,                 }
+{               please submit your requests to mail or telegram.               }
+{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
+{                                                                              }
 {******************************************************************************}
 unit ES.Indicators;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
@@ -59,7 +63,6 @@ type
   TAnimationTime = 1..100000;
   TAnimationDelay = 0..100000;
   TTimerInterval = 1..1000;
-
 
   TEsActivityBar = class(TEsCustomControl)
   const
@@ -187,6 +190,9 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
+    property StyleName;
+    {$ENDIF}
     property OnClick;
     property OnCanResize;
     property OnContextPopup;
@@ -308,7 +314,10 @@ procedure TEsActivityBar.DelayExecuteHandler(Sender: TObject);
 begin
   TTimer(Sender).Enabled := False;
   TTimer(Sender).OnTimer := AnimationExecuteHandler;
-  TTimer(Sender).Interval := FTimerInterval;
+  if not (csDesigning in ComponentState) then
+    TTimer(Sender).Interval := FTimerInterval
+  else
+    TTimer(Sender).Interval := 77;
   OldTime := GetTickCount;
   TTimer(Sender).Enabled := True;
 end;
@@ -530,7 +539,7 @@ begin
     if FActive then
     begin
       if IsStyledClientControl(Self) then
-        CurrentColor := ColorToRGB(StyleServices.GetSystemColor(PointColor))
+        CurrentColor := ClientColorToRgb(PointColor, Self)
       else
         CurrentColor := PointColor;
 

@@ -43,6 +43,7 @@ procedure TFormMain.EsPaintBoxPaint(Sender: TObject; Canvas: TCanvas;
 var
   I, r: Integer;
 begin
+  Canvas.Brush.Color := clBlack;
   Canvas.FillRect(Rect);
   for I := 0 to High(Circles) do
   begin
@@ -62,7 +63,7 @@ begin
     Circles[I].x := Random(PaintBox.Width);
     Circles[I].y := Random(PaintBox.Height);
     Circles[I].color := RGB(Random(256), Random(20), Random(256));
-    Circles[I].radius := Random(120);
+    Circles[I].radius := Random(50);
   end;
 end;
 
@@ -70,6 +71,7 @@ procedure TFormMain.PaintBoxPaint(Sender: TObject);
 var
   I, r: Integer;
 begin
+  Canvas.Brush.Color := clBlack;
   Canvas.FillRect(TPaintBox(Sender).BoundsRect);
   for I := 0 to High(Circles) do
   begin
@@ -87,7 +89,7 @@ begin
   for I := 0 to High(Circles) do
   begin
     Circles[I].radius := Circles[I].radius + 1;
-    if Circles[I].radius > 120 then
+    if Circles[I].radius > 50 then
       Circles[I].radius := 0;
   end;
   PaintBox.Invalidate;

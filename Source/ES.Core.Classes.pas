@@ -16,13 +16,12 @@
 unit ES.Core.Classes;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
 uses
   System.SysUtils, System.Variants, System.Classes, System.Types;
-
-{$SCOPEDENUMS ON}
 
 type
   /// <summary> Analog of TBounds/TMargins, independent of VCL or FMX</summary>

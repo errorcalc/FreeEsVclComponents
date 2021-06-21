@@ -15,6 +15,7 @@
 unit ES.Utils;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
@@ -174,11 +175,19 @@ function ClientColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$IFDEF VER340UP}
   if IsStyledClientControl(Control) then
-    Result := StyleServices(Control).GetSystemColor(Color)
+  begin
+    Result := StyleServices(Control).GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ELSE}
   if IsStyledClientControl(Control) then
-    Result := StyleServices.GetSystemColor(Color)
+  begin
+    Result := StyleServices.GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ENDIF}
     Result := ColorToRGB(Color);
@@ -188,11 +197,19 @@ function BorderColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$IFDEF VER340UP}
   if IsStyledBorderControl(Control) then
-    Result := StyleServices(Control).GetSystemColor(Color)
+  begin
+    Result := StyleServices(Control).GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ELSE}
   if IsStyledBorderControl(Control) then
-    Result := StyleServices.GetSystemColor(Color)
+  begin
+    Result := StyleServices.GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ENDIF}
     Result := ColorToRGB(Color);
@@ -202,11 +219,19 @@ function FontColorToRgb(Color: TColor; Control: TControl): TColor;
 begin
   {$IFDEF VER340UP}
   if IsStyledFontControl(Control) then
-    Result := StyleServices(Control).GetSystemColor(Color)
+  begin
+    Result := StyleServices(Control).GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ELSE}
   if IsStyledFontControl(Control) then
-    Result := StyleServices.GetSystemColor(Color)
+  begin
+    Result := StyleServices.GetSystemColor(Color);
+    if Result and $FF000000 <> 0 then
+      Result := ColorToRGB(Color);
+  end
   else
   {$ENDIF}
     Result := ColorToRGB(Color);

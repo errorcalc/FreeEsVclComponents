@@ -236,7 +236,7 @@ uses
 function GetNormalEditColor(Control: TWinControl): TColor;
 begin
   if IsStyledClientControl(Control) then
-    Result := StyleServices.GetStyleColor(scEdit)
+    Result := GetControlStyle(Control).GetStyleColor(scEdit)
   else
     Result := TEdit(Control).Color;
 
@@ -281,7 +281,7 @@ begin
     if ColorValid = clDefault then
       Hue := 80// green
     else
-      Exit(ColorToRgb(ColorValid));
+      Exit(ClientColorToRgb(ColorValid, Control));
   end else
   begin
     if (IndicateState <> TIndicateState.All) and (IndicateState <> TIndicateState.Invalid) then
@@ -289,7 +289,7 @@ begin
     if ColorInvalid = clDefault then
       Hue := 0// red
     else
-      Exit(ColorToRgb(ColorInvalid));
+      Exit(ClientColorToRgb(ColorInvalid, Control));
   end;
 
   Intensity := IfThen(Control.Enabled, ColorIntensity, ColorIntensity div 2);

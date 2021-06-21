@@ -15,6 +15,7 @@
 unit ES.PaintBox;
 
 {$I EsDefines.inc}
+{$SCOPEDENUMS ON}
 
 interface
 
