@@ -1,7 +1,7 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'MainForm'
+  Caption = 'ActivityBar Sample'
   ClientHeight = 376
   ClientWidth = 647
   Color = clBtnFace
@@ -32,10 +32,8 @@ object MainForm: TMainForm
       Top = 11
       Width = 621
       Height = 342
-      BufferedChildrens = True
-      IsDrawHelper = True
       ParentBackground = False
-      ParentBufferedChildrens = False
+      ParentBufferedChildren = False
       ParentDoubleBuffered = True
       TabOrder = 0
       object EsImageStaticText1: TEsImageStaticText
@@ -70,7 +68,6 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
-        IsDrawHelper = True
         TabOrder = 0
         TextLayout = Top
         Caption = 'Main'
@@ -221,7 +218,6 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
-        IsDrawHelper = True
         TabOrder = 1
         TextLayout = Top
         Caption = 'Visual'
@@ -373,7 +369,6 @@ object MainForm: TMainForm
           016F5757EFA7D3E16907A1AAA3A3D593EA37C13DF9FEFE318FB3F9458F1A9E46
           518ECF1F035453285C0C8F91CB0000000049454E44AE426082}
         PaddingWithImage = True
-        IsDrawHelper = True
         TabOrder = 2
         TextLayout = Top
         Caption = 'Animation'

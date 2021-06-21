@@ -1,4 +1,4 @@
-unit U9PathLayout;
+unit Main;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.BaseControls, ES.Layouts, ES.NinePatch;
 
 type
-  TForm2 = class(TForm)
+  TFormMain = class(TForm)
     EsImageLayout1: TEsImageLayout;
     EsImageLabel1: TEsImageLabel;
     EsImageLabel2: TEsImageLabel;
@@ -22,7 +22,7 @@ type
   end;
 
 var
-  Form2: TForm2;
+  FormMain: TFormMain;
 
 implementation
 

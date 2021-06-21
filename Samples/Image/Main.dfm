@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'MainForm'
+  Caption = 'Images Demo'
   ClientHeight = 605
   ClientWidth = 770
   Color = clBtnFace
@@ -5502,19 +5502,6 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label4: TLabel
-        Left = 371
-        Top = 22
-        Width = 19
-        Height = 21
-        Caption = 'VS'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -17
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
       object EsImage2: TEsImage
         Left = 243
         Top = 58
@@ -7459,10 +7446,10 @@ object MainForm: TMainForm
         Top = 14
         Width = 256
         Height = 256
-        Stretch = Fit
-        Images = ImageList
         ImageIndex = 0
+        Images = ImageList
         Smoth = False
+        Stretch = Fit
       end
       object EsImage6: TEsImage
         Left = 3
@@ -7470,8 +7457,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 0
+        Images = ImageList
       end
       object EsImage7: TEsImage
         Left = 41
@@ -7479,8 +7466,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 1
+        Images = ImageList
       end
       object EsImage8: TEsImage
         Left = 79
@@ -7488,8 +7475,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 2
+        Images = ImageList
       end
       object EsImage9: TEsImage
         Left = 117
@@ -7497,8 +7484,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 3
+        Images = ImageList
       end
       object EsImage10: TEsImage
         Left = 155
@@ -7506,8 +7493,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 4
+        Images = ImageList
       end
       object EsImage11: TEsImage
         Left = 193
@@ -7515,8 +7502,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 5
+        Images = ImageList
       end
       object EsImage12: TEsImage
         Left = 231
@@ -7524,8 +7511,8 @@ object MainForm: TMainForm
         Width = 32
         Height = 32
         AutoSize = True
-        Images = ImageList
         ImageIndex = 6
+        Images = ImageList
       end
       object Label5: TLabel
         Left = 3
@@ -10147,8 +10134,8 @@ object MainForm: TMainForm
           Width = 74
           Height = 74
           BorderWidth = 2
-          FrameStyle = Flat
           FrameColor = clBlue
+          FrameStyle = Flat
           FrameWidth = 2
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000001680000
@@ -12354,6 +12341,8 @@ object MainForm: TMainForm
           Top = 24
           Width = 209
           Height = 73
+          Color = clNavy
+          ParentColor = False
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
@@ -12781,9 +12770,8 @@ object MainForm: TMainForm
             BF705DB8FECEAB01302F5C17AE7FD275019817AE7FE4F5FF008C0127887278D9
             540000000049454E44AE426082}
           Stretch = Center
-          Color = clNavy
-          Transparent = False
           TabOrder = 0
+          Transparent = False
           OnClick = EsImageControl14Click
         end
         object EsImageControl11: TEsImageControl
@@ -12791,6 +12779,8 @@ object MainForm: TMainForm
           Top = 24
           Width = 209
           Height = 73
+          Color = clBlue
+          ParentColor = False
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
@@ -13019,10 +13009,9 @@ object MainForm: TMainForm
             125A626A9127F137626AA1455E8296985AE449FC1F17D4709A4D29BDF9000000
             0049454E44AE426082}
           Stretch = Center
-          Color = clBlue
-          Transparent = False
           TabOrder = 1
           TabStop = True
+          Transparent = False
           OnClick = EsImageControl14Click
         end
         object EsImageControl12: TEsImageControl
@@ -13030,6 +13019,8 @@ object MainForm: TMainForm
           Top = 24
           Width = 209
           Height = 73
+          Color = clTeal
+          ParentColor = False
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
@@ -13228,10 +13219,9 @@ object MainForm: TMainForm
             765000336DFB9FA58199B62A696960A6AD4A5AB9C04C5BDAAA92A58199B62A69
             FF0F14A3DA2CB4C7770E0000000049454E44AE426082}
           Stretch = Center
-          Color = clTeal
-          Transparent = False
           TabOrder = 2
           TabStop = True
+          Transparent = False
           OnClick = EsImageControl14Click
         end
       end
@@ -15960,7 +15950,7 @@ object MainForm: TMainForm
     Left = 676
     Top = 16
     Bitmap = {
-      494C010107001800340020002000FFFFFFFF1910FFFFFFFFFFFFFFFF424D3600
+      494C010107001800040020002000FFFFFFFF1910FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001001800000000000060
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

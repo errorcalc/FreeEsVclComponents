@@ -425,7 +425,7 @@ type
     function GetImageCollection: TCustomImageCollection;
     function GetImageHeight: Integer;
     function GetImageIndex: TImageIndex;
-    function GetImageName: string;
+    function GetImageName: TImageName;
     function GetImageWidth: Integer;
     function GetInterpolationMode: TImageInterpolationMode;
     function GetOpacity: Byte;
@@ -436,7 +436,7 @@ type
     procedure SetImageCollection(const Value: TCustomImageCollection);
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageIndex(const Value: TImageIndex);
-    procedure SetImageName(const Value: string);
+    procedure SetImageName(const Value: TImageName);
     procedure SetImageWidth(const Value: Integer);
     procedure SetInterpolationMode(const Value: TImageInterpolationMode);
     procedure SetOpacity(const Value: Byte);
@@ -469,7 +469,7 @@ type
     /// <summary> Index in source image collection </summary>
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     /// <summary> Name in source image collection </summary>
-    property ImageName: string read GetImageName write SetImageName stored IsImageNameStored;
+    property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
     /// <summary> Manually set width </summary>
     property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Interpolation mode affects the quality and speed of scaling </summary>
@@ -556,7 +556,7 @@ type
     function GetImageCollection: TCustomImageCollection;
     function GetImageHeight: Integer;
     function GetImageIndex: TImageIndex;
-    function GetImageName: string;
+    function GetImageName: TImageName;
     function GetImageWidth: Integer;
     function GetInterpolationMode: TImageInterpolationMode;
     function GetOpacity: Byte;
@@ -565,7 +565,7 @@ type
     procedure SetImageCollection(const Value: TCustomImageCollection);
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageIndex(const Value: TImageIndex);
-    procedure SetImageName(const Value: string);
+    procedure SetImageName(const Value: TImageName);
     procedure SetImageWidth(const Value: Integer);
     procedure SetInterpolationMode(const Value: TImageInterpolationMode);
     procedure SetOpacity(const Value: Byte);
@@ -595,7 +595,7 @@ type
     /// <summary> Index in source image collection </summary>
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;
     /// <summary> Name in source image collection </summary>
-    property ImageName: string read GetImageName write SetImageName stored IsImageNameStored;
+    property ImageName: TImageName read GetImageName write SetImageName stored IsImageNameStored;
     /// <summary> Manually set width </summary>
     property ImageWidth: Integer read GetImageWidth write SetImageWidth default 0;
     /// <summary> Interpolation mode affects the quality and speed of scaling </summary>
@@ -741,12 +741,15 @@ begin
   end;
 end;
 
-procedure DrawDesignImageFrame(Canvas: TCanvas; Rect: TRect);
+procedure DrawDesignImageFrame(Canvas: TCanvas; Rect: TRect; IsWinControl: Boolean);
 begin
   Canvas.Brush.Style := bsClear;
 
   Canvas.Pen.Color := RGB(67, 67, 67);
-  Canvas.Pen.Style := psDashDot;
+  if IsWinControl then
+    Canvas.Pen.Style := psSolid
+  else
+    Canvas.Pen.Style := psDashDot;
   Canvas.Rectangle(Rect);
 
   Canvas.Pen.Color := RGB(160, 160, 255);
@@ -754,15 +757,18 @@ begin
   Canvas.Rectangle(Rect);
 end;
 
-procedure DrawDesignVirtualImageFrame(Canvas: TCanvas; Rect: TRect);
+procedure DrawDesignVirtualImageFrame(Canvas: TCanvas; Rect: TRect; IsWinControl: Boolean);
 begin
   Canvas.Brush.Style := bsClear;
 
   Canvas.Pen.Color := RGB(67, 67, 67);
-  Canvas.Pen.Style := psDashDot;
+  if IsWinControl then
+    Canvas.Pen.Style := psSolid
+  else
+    Canvas.Pen.Style := psDashDot;
   Canvas.Rectangle(Rect);
 
-  Canvas.Pen.Color := RGB(100, 255, 100);
+  Canvas.Pen.Color := RGB(255, 100, 80);
   Canvas.Pen.Style := psDot;
   Canvas.Rectangle(Rect);
 end;
@@ -1284,7 +1290,7 @@ begin
 
     if csDesigning in ComponentState then
     begin
-      DrawDesignImageFrame(CurrentCanvas, ClientRect);
+      DrawDesignImageFrame(CurrentCanvas, ClientRect, False);
       if IsDrawHelper then
         DrawControlHelper(CurrentCanvas, ClientRect, 0, Padding, [hoPadding]);
     end;
@@ -1598,7 +1604,7 @@ begin
   if csDesigning in ComponentState then
   begin
     CalcFrameWidth := GetFrameWidth(FrameStyle, FrameWidth);
-    DrawDesignImageFrame(inherited Canvas, ClientRect);
+    DrawDesignImageFrame(inherited Canvas, ClientRect, True);
     if IsDrawHelper then
       DrawControlHelper(inherited Canvas,
         Rect(CalcFrameWidth, CalcFrameWidth, ClientWidth - CalcFrameWidth, ClientHeight - CalcFrameWidth),
@@ -2028,7 +2034,7 @@ begin
   Result := ImageProxy.ImageIndex;
 end;
 
-function TEsCustomVirtualImage.GetImageName: string;
+function TEsCustomVirtualImage.GetImageName: TImageName;
 begin
   Result := ImageProxy.ImageName;
 end;
@@ -2123,7 +2129,7 @@ begin
 
     if csDesigning in ComponentState then
     begin
-      DrawDesignVirtualImageFrame(CurrentCanvas, ClientRect);
+      DrawDesignVirtualImageFrame(CurrentCanvas, ClientRect, False);
       if IsDrawHelper then
         DrawControlHelper(CurrentCanvas, ClientRect, 0, Padding, [hoPadding]);
       DrawDesignStretchHint(CurrentCanvas, ClientRect, ImageProxy);
@@ -2209,7 +2215,7 @@ begin
   ImageProxy.ImageIndex := Value;
 end;
 
-procedure TEsCustomVirtualImage.SetImageName(const Value: string);
+procedure TEsCustomVirtualImage.SetImageName(const Value: TImageName);
 begin
   ImageProxy.ImageName := Value;
 end;
@@ -2306,7 +2312,7 @@ begin
   Result := ImageProxy.ImageIndex;
 end;
 
-function TEsCustomVirtualImageControl.GetImageName: string;
+function TEsCustomVirtualImageControl.GetImageName: TImageName;
 begin
   Result := ImageProxy.ImageName;
 end;
@@ -2369,7 +2375,7 @@ begin
 
   if csDesigning in ComponentState then
   begin
-    DrawDesignVirtualImageFrame(Canvas, ClientRect);
+    DrawDesignVirtualImageFrame(Canvas, ClientRect, True);
     if IsDrawHelper then
       DrawControlHelper(Canvas, ClientRect, 0, Padding, [hoPadding]);
     DrawDesignStretchHint(Canvas, ClientRect, ImageProxy);
@@ -2427,7 +2433,7 @@ begin
   ImageProxy.ImageIndex := Value;
 end;
 
-procedure TEsCustomVirtualImageControl.SetImageName(const Value: string);
+procedure TEsCustomVirtualImageControl.SetImageName(const Value: TImageName);
 begin
   ImageProxy.ImageName := Value;
 end;

@@ -25,6 +25,7 @@ package EsCore;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'errorsoft library core'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '320'}
@@ -33,8 +34,6 @@ requires
   rtl;
 
 contains
-  ES.Backend.Controls in '..\..\Source\ES.Backend.Controls.pas',
-  ES.Backend.Selection in '..\..\Source\ES.Backend.Selection.pas',
   ES.Core.Classes in '..\..\Source\ES.Core.Classes.pas',
   ES.Core.Utils in '..\..\Source\ES.Core.Utils.pas';
 

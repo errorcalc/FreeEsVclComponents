@@ -175,7 +175,7 @@ type
 implementation
 
 uses
-  WinApi.Windows, WinApi.ShellAPI, ES.Core.Classes, ES.ExGraphics,
+  System.UITypes, WinApi.Windows, WinApi.ShellAPI, ES.Core.Classes, ES.ExGraphics,
   ES.Utils, System.SysUtils, Vcl.ClipBrd, ES.Hints;
 
 { TEsLinkLabel }

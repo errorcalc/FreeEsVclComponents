@@ -83,3 +83,47 @@ Added lost x64 support
 
 [15.12.2018]
 Added packages for any versions rad studio by default
+
+[21.06.2021]
+*** New components ***
+Two new components for Delphi 10.4 Sydney: TEsVirtualImage, TEsVirtualImageControl. 
+These components are similar to TEsImage and TEsImageControl but with support for TimageCollection.
+TEsVirtualImage and TEsVirtualImageControl provide additional capabilities such as:
+* Adjustable opacity
+* Configurable pixel interpolation mode
+* New stretch modes
+* Ability to set a frame with style
+* Ability to set background color
+* Border support
+* And of course - TEsVirtualImageControl doesn't flicker
+*** Rewrited ES.BaseControls.pas ***
+This module had a long history and support for XP and Delphi 7. 
+This resulted in a bit of confusing code and a lot of IFDEFs, and the module was really hard to support.
+Starting with this release, the minimum supported version of Windows is Windows 7, as well as Delphi XE2.
+The end of support for XP allowed for many optimizations, as well as many rendering enhancements:
+* Faster DWM buffering is now used by default.
+* The code has been cleaned up and some documentation has appeared.
+* Improved style support.
+* And more…
+*** Full support individual control styling ***
+In Delphi 10.4 added support for setting different styles for different controls using the StyleName property.
+Full support for this feature has been added to the library, all components support individual styling.
+*** TVirtualImageList support ***
+All components supporting TImageList received support for the ImageName property.
+Yes - you can use TEsImage to display icons from TVirtualImageList / TVirtualImageList to TСontrolList.
+*** Improved TEsPanel ***
+TEsPanel now supports Caption when CaptionVisible is activated.
+Disabled by default, because usually no need an Caption.
+*** Other improvements ***
+* Work on quality
+* Cleaning up the code
+* Improved support for styles
+* Fixes for HiDPI
+* Removing multiple IFDEFs and their associated code
+* TEsImage now also supports custom frameTEsImage now also supports custom frame
+* Improving Samples
+*** What's next? ***
+I recommend watching the Sydney Update example for new features. 
+It is located in the examples folder, but is not part of the project group so that
+users of previous Delphi versions have no problems. You can open it manually.
+

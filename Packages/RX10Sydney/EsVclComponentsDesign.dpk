@@ -25,6 +25,7 @@ package EsVclComponentsDesign;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'errorsoft free vcl library design-time'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '340'}
@@ -32,14 +33,14 @@ package EsVclComponentsDesign;
 requires
   rtl,
   designide,
-  vcl,
-  vclimg,
   EsVclCore,
+  EsCore,
   EsVclComponents;
 
 contains
-  ES.FreeReg in '..\..\Source\ES.FreeReg.pas',
   ES.FreeEditors in '..\..\Source\ES.FreeEditors.pas',
+  ES.FreeReg in '..\..\Source\ES.FreeReg.pas',
   ES.RegexEditor in '..\..\Source\ES.RegexEditor.pas' {EsRegexEditorForm};
 
 end.
+

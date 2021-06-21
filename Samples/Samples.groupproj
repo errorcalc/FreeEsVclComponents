@@ -3,7 +3,7 @@
         <ProjectGuid>{A56E8291-B4F5-4DE9-986E-05E19A8BDC39}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="9PatchLayout\Project9PatchLayout.dproj">
+        <Projects Include="9PatchLayout\NinePatchLayout.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="ActivityBar\ActivityBar.dproj">
@@ -38,14 +38,14 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="Project9PatchLayout">
-        <MSBuild Projects="9PatchLayout\Project9PatchLayout.dproj"/>
+    <Target Name="NinePatchLayout">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj"/>
     </Target>
-    <Target Name="Project9PatchLayout:Clean">
-        <MSBuild Projects="9PatchLayout\Project9PatchLayout.dproj" Targets="Clean"/>
+    <Target Name="NinePatchLayout:Clean">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Project9PatchLayout:Make">
-        <MSBuild Projects="9PatchLayout\Project9PatchLayout.dproj" Targets="Make"/>
+    <Target Name="NinePatchLayout:Make">
+        <MSBuild Projects="9PatchLayout\NinePatchLayout.dproj" Targets="Make"/>
     </Target>
     <Target Name="ActivityBar">
         <MSBuild Projects="ActivityBar\ActivityBar.dproj"/>
@@ -120,13 +120,13 @@
         <MSBuild Projects="Labels\Labels.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="Project9PatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Panel;Labels"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Panel;Labels"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Project9PatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Panel:Clean;Labels:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Panel:Clean;Labels:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Project9PatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Panel:Make;Labels:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Panel:Make;Labels:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -24,7 +24,6 @@ type
     Image5: TImage;
     Label2: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
     EsImage2: TEsImage;
     Image1: TImage;
     EsImage4: TEsImage;

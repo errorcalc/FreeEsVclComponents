@@ -1,5 +1,4 @@
 // Compiler verisons
-{$LEGACYIFEND ON}
 
 // 2010
 {$IFDEF VER210}

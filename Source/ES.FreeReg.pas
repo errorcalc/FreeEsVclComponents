@@ -60,6 +60,12 @@ begin
   {$IFDEF VER340UP}
   RegisterPropertyEditor(TypeInfo(TImageName), TEsImage, '', TEsCustomImageNameProperty);
   RegisterPropertyEditor(TypeInfo(TImageName), TEsImageControl, '', TEsCustomImageNameProperty);
+  // TEsVirtualImage
+  RegisterPropertyEditor(TypeInfo(TImageName), TEsVirtualImage, 'ImageName', TEsCustomCollectionImageNameProperty);
+  RegisterPropertyEditor(TypeInfo(TImageIndex), TEsVirtualImage, 'ImageIndex', TEsCustomCollectionImageIndexProperty);
+  // TEsVirtualImageControl
+  RegisterPropertyEditor(TypeInfo(TImageName), TEsVirtualImageControl, 'ImageName', TEsCustomCollectionImageNameProperty);
+  RegisterPropertyEditor(TypeInfo(TImageIndex), TEsVirtualImageControl, 'ImageIndex', TEsCustomCollectionImageIndexProperty);
   {$ENDIF}
 
   // Regex controls

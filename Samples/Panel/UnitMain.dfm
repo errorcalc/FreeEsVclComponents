@@ -1,7 +1,7 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = 'FormMain'
+  Caption = 'Panel Sample'
   ClientHeight = 185
   ClientWidth = 415
   Color = clBtnFace
@@ -132,8 +132,6 @@ object FormMain: TFormMain
       Height = 21
       Align = alClient
       Caption = 'FrameStyle = Down'
-      ExplicitLeft = 3
-      ExplicitTop = 3
       ExplicitWidth = 95
       ExplicitHeight = 13
     end
@@ -153,8 +151,6 @@ object FormMain: TFormMain
       Height = 21
       Align = alClient
       Caption = 'FrameStyle = Up'
-      ExplicitLeft = 3
-      ExplicitTop = 3
       ExplicitWidth = 81
       ExplicitHeight = 13
     end
@@ -174,8 +170,6 @@ object FormMain: TFormMain
       Height = 21
       Align = alClient
       Caption = 'FrameStyle = Flat'
-      ExplicitLeft = 3
-      ExplicitTop = 3
       ExplicitWidth = 86
       ExplicitHeight = 13
     end
@@ -193,9 +187,20 @@ object FormMain: TFormMain
   object ColorBoxFrameColor: TColorBox
     Left = 168
     Top = 144
-    Width = 145
+    Width = 104
     Height = 22
     TabOrder = 10
     OnChange = ColorBoxFrameColorChange
+  end
+  object EsSwitch1: TEsSwitch
+    Left = 306
+    Top = 146
+    Width = 90
+    Height = 20
+    TextOn = 'Style On'
+    TextOff = 'Style Off'
+    ShowCaption = True
+    TabOrder = 11
+    OnClick = EsSwitch1Click
   end
 end

@@ -1,7 +1,7 @@
-object Form2: TForm2
+object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = 'Form2'
+  Caption = 'Nine Patch Sample'
   ClientHeight = 465
   ClientWidth = 729
   Color = clBtnFace
@@ -23,7 +23,7 @@ object Form2: TForm2
     Height = 457
     ImageMargins.Left = 6
     ImageMargins.Top = 6
-    ImageMargins.Right = 11
+    ImageMargins.Right = 14
     ImageMargins.Bottom = 12
     Image.Data = {
       89504E470D0A1A0A0000000D49484452000000F2000000E2080600000074BE9A
@@ -659,13 +659,11 @@ object Form2: TForm2
       AE426082}
     OverlayAlign = Center
     Anchors = [akLeft, akTop, akRight, akBottom]
-    BufferedChildrens = True
-    IsDrawHelper = True
     Padding.Left = 2
     Padding.Top = 2
     Padding.Right = 11
     Padding.Bottom = 12
-    ParentBufferedChildrens = False
+    ParentBufferedChildren = False
     TabOrder = 0
     DesignSize = (
       721
@@ -850,7 +848,6 @@ object Form2: TForm2
       Font.Height = 15
       Font.Name = 'Tahoma'
       Font.Style = []
-      IsDrawHelper = True
       ParentFont = False
       TabOrder = 0
       TextMultiline = True

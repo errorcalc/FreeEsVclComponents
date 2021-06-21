@@ -2,7 +2,7 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   BorderStyle = bsToolWindow
-  Caption = 'FormMain'
+  Caption = 'Labels Sample'
   ClientHeight = 241
   ClientWidth = 337
   Color = clBtnFace

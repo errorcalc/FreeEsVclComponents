@@ -25,9 +25,9 @@ package EsVclCore;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'ErrorSoft Vcl Library Core'}
+{$DESCRIPTION 'errorsoft vcl library core'}
 {$RUNONLY}
-{$IMPLICITBUILD OFF}
+{$IMPLICITBUILD ON}
 {$LIBSUFFIX '240'}
 
 requires
@@ -45,4 +45,3 @@ contains
   ES.VclFix in '..\..\Source\ES.VclFix.pas';
 
 end.
-

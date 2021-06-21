@@ -1,7 +1,7 @@
 object FormDemo: TFormDemo
   Left = 0
   Top = 0
-  Caption = 'Demo'
+  Caption = 'BufferedChildren Demo'
   ClientHeight = 487
   ClientWidth = 716
   Color = clBtnFace
@@ -23,7 +23,6 @@ object FormDemo: TFormDemo
     Height = 448
     Anchors = [akLeft, akTop, akRight, akBottom]
     BufferedChildren = False
-    IsDrawHelper = True
     ParentBufferedChildren = False
     TabOrder = 0
     OnPaint = EsLayoutPaint
@@ -48486,7 +48485,7 @@ object FormDemo: TFormDemo
     Top = 8
     Width = 114
     Height = 17
-    Caption = 'BufferedChildrens'
+    Caption = 'BufferedChildren'
     TabOrder = 1
     OnClick = CheckBoxBufferedChildrensClick
   end

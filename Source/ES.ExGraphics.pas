@@ -21,7 +21,7 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  WinApi.Windows, System.SysUtils, Vcl.Graphics, Vcl.Themes, Vcl.Imaging.PngImage
+  WinApi.Windows, System.SysUtils, Vcl.Controls, Vcl.Graphics, Vcl.Themes, Vcl.Imaging.PngImage
   {$IFDEF USE_GDIPLUS}, WinApi.GdipObj, WinApi.GdipApi{$ENDIF};
 
 type

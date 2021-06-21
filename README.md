@@ -1,12 +1,10 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Community update
-*Release is dedicated to the emergence of a free version of the Delphi Community Edition!*  
-*Релиз посвящен появлению бесплатной версии Delphi Community Edition!*  
-**Version 3.1.0**  
+# Sydney Update
+**Version 4.0**  
 The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
-**If you need to install FreeEsVclComponents in several versions of Delphi, you can use   https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ to generate individual packages for every version.**
+**If you need to install FreeEsVclComponents in several versions of Delphi, you can use https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ to generate individual packages for every version.**
 
 Free Open Source components for Delphi & C++Builder (VCL)
 GetIt and Delphinus-Support
@@ -37,6 +35,9 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsSwitch (Looks like Windows 10 XAML control!)
 * TEsImage (Much better than the TImage)
 * TEsImageControl (Much better than the TImage & absolutely no flicker!)
+* TEsVirtualImage (TEsImage with TImageCollection support)
+* TEsImageControl (Much better than the TImage & absolutely no flicker!)
+* TEsVirtualImageControl (TEsImageControl with TImageCollection support)
 * TEsRegexpEdit
 * TEsRegexButtonedEdit
 * TEsRegexLabeledEdit

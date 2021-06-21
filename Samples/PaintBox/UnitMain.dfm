@@ -1,8 +1,9 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'FormMain'
+  Caption = 'TEsPaintBox Demo'
   ClientHeight = 435
   ClientWidth = 822
   Color = clWhite
@@ -25,9 +26,9 @@ object FormMain: TFormMain
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 93
+    Width = 48
     Height = 13
-    Caption = 'Standart TPaintBox'
+    Caption = 'TPaintBox'
   end
   object Label2: TLabel
     Left = 414
@@ -46,7 +47,7 @@ object FormMain: TFormMain
   object Timer: TTimer
     Interval = 20
     OnTimer = TimerTimer
-    Left = 160
-    Top = 8
+    Left = 400
+    Top = 104
   end
 end

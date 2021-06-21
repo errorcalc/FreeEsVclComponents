@@ -1,14 +1,14 @@
-program Project9PatchLayout;
+program NinePatchLayout;
 
 uses
   Vcl.Forms,
-  U9PathLayout in 'U9PathLayout.pas' {Form2};
+  Main in 'Main.pas' {FormMain};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TFormMain, FormMain);
   Application.Run;
 end.
