@@ -230,7 +230,7 @@ type
 implementation
 
 uses
-  System.Math, Es.ExGraphics, Es.Utils, System.RegularExpressionsCore, System.RegularExpressions,
+  System.Math, System.UITypes, Es.ExGraphics, Es.Utils, System.RegularExpressionsCore, System.RegularExpressions,
   Winapi.Windows, Vcl.Themes;
 
 function GetNormalEditColor(Control: TWinControl): TColor;
