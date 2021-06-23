@@ -20,8 +20,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 
 **You can help, if you send me where you are using the component and attach a screenshot example of use**
 
-**See [ReleaseNotes_en.pdf](Doc/ReleaseNotes_en.pdf) with a description of the new library features!**  
-**Смотрите [ReleaseNotes_ru.pdf](Doc/ReleaseNotes_ru.pdf) с описанием новых возможностей библиотеки!**
+**See [ReleaseNotes_4.pdf](Doc/ReleaseNotes_4.pdf) with a description of the new library features!**  
 
 # List of components:
 * TEsLayout (Absolutely no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
