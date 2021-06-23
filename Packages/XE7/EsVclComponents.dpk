@@ -34,7 +34,7 @@ package EsVclComponents;
 {$DESCRIPTION 'errorsoft free vcl components'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
-{$LIBSUFFIX '280'}
+{$LIBSUFFIX '210'}
 
 requires
   rtl,

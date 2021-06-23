@@ -28,7 +28,7 @@ package EsVclCore;
 {$DESCRIPTION 'errorsoft vcl library core'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
-{$LIBSUFFIX '260'}
+{$LIBSUFFIX '190'}
 
 requires
   rtl,

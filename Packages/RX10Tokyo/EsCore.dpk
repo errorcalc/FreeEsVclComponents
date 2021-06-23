@@ -28,7 +28,7 @@ package EsCore;
 {$DESCRIPTION 'errorsoft library core'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
-{$LIBSUFFIX '320'}
+{$LIBSUFFIX '250'}
 
 requires
   rtl;

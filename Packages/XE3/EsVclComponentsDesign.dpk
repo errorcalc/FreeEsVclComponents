@@ -28,7 +28,7 @@ package EsVclComponentsDesign;
 {$DESCRIPTION 'errorsoft free vcl library design-time'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
-{$LIBSUFFIX '240'}
+{$LIBSUFFIX '170'}
 
 requires
   rtl,

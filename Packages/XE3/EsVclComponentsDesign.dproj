@@ -66,7 +66,7 @@
         <DCC_Description>errorsoft free vcl library design-time</DCC_Description>
         <SanitizedProjectName>EsVclComponentsDesign</SanitizedProjectName>
         <DesignOnlyPackage>true</DesignOnlyPackage>
-        <DllSuffix>240</DllSuffix>
+        <DllSuffix>170</DllSuffix>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_CBuilderOutput>None</DCC_CBuilderOutput>
