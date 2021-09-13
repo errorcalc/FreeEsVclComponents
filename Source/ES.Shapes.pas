@@ -961,14 +961,15 @@ begin
   try
     if Opacity <> 255 then
     begin
-      TempBitmap := TBitmap.Create(Width, Height);
+      TempBitmap := TBitmap.Create;
+      TempBitmap.SetSize(Width, Height);
       TempBitmap.PixelFormat := pf32bit;
       GpGraphics := TGPGraphics.Create(TempBitmap.Canvas.Handle);
       GpGraphics.Clear(0);
     end else
       GpGraphics := TGPGraphics.Create(Canvas.Handle);
 
-    GpGraphics.SetSmoothingMode(SmoothingModeAntiAlias8x8);
+    GpGraphics.SetSmoothingMode(SmoothingModeHighQuality);
 
     GpPen := MakeGPPenFormShapePen(Pen, Self);
     if Pen.Width = 0 then

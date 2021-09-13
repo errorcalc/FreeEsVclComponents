@@ -54,7 +54,6 @@ object FormMain: TFormMain
           ParentBackground = False
           TabOrder = 0
           StyleName = 'Windows'
-          Caption = 'EsPanel1'
           object Label1: TLabel
             Left = 3
             Top = 80
@@ -109,7 +108,6 @@ object FormMain: TFormMain
             Align = alTop
             TabOrder = 0
             Caption = #39'Windows'#39' StyleName'
-            CaptionVisible = True
             FrameStyle = Chess
           end
           object EsRegexEdit1: TEsRegexEdit
@@ -314,7 +312,6 @@ object FormMain: TFormMain
           ParentBackground = False
           TabOrder = 3
           StyleName = 'Windows10 SlateGray'
-          Caption = 'EsPanel1'
           object Label13: TLabel
             Left = 3
             Top = 80
@@ -369,7 +366,6 @@ object FormMain: TFormMain
             Align = alTop
             TabOrder = 0
             Caption = #39'Windows10 SlateGray'#39' StyleName'
-            CaptionVisible = True
             FrameStyle = Chess
           end
           object EsRegexEdit4: TEsRegexEdit
@@ -574,7 +570,6 @@ object FormMain: TFormMain
           ParentBackground = False
           TabOrder = 1
           StyleName = 'Sapphire Kamri'
-          Caption = 'EsPanel1'
           object Label5: TLabel
             Left = 3
             Top = 80
@@ -629,7 +624,6 @@ object FormMain: TFormMain
             Align = alTop
             TabOrder = 0
             Caption = #39'Sapphire Kamri'#39' StyleName'
-            CaptionVisible = True
             FrameStyle = Chess
           end
           object EsRegexEdit2: TEsRegexEdit
@@ -834,7 +828,6 @@ object FormMain: TFormMain
           ParentBackground = False
           TabOrder = 2
           StyleName = 'Ruby graphite'
-          Caption = 'Ruby Graphite StyleName'
           object Label9: TLabel
             Left = 3
             Top = 80
@@ -889,7 +882,6 @@ object FormMain: TFormMain
             Align = alTop
             TabOrder = 0
             Caption = #39'Ruby graphite'#39' StyleName'
-            CaptionVisible = True
             FrameStyle = Chess
           end
           object EsRegexEdit3: TEsRegexEdit
@@ -1092,7 +1084,6 @@ object FormMain: TFormMain
           Width = 424
           Height = 289
           TabOrder = 4
-          Caption = 'EsPanel9'
           object EsImageBg2: TEsImage
             Left = 2
             Top = 2
@@ -3510,7 +3501,6 @@ object FormMain: TFormMain
           TabOrder = 0
           StyleName = 'Windows10 SlateGray'
           Caption = 'TEsPanel'
-          CaptionVisible = True
         end
       end
       object CheckBoxSeFont: TCheckBox
