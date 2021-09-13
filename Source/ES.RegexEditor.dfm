@@ -13,13 +13,12 @@ object EsRegexEditorForm: TEsRegexEditorForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  PixelsPerInch = 96
   DesignSize = (
     409
     141)
-  PixelsPerInch = 96
   TextHeight = 13
   object PatternEdit: TLabeledEdit
     Left = 8
@@ -31,6 +30,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
     EditLabel.Height = 13
     EditLabel.Caption = 'Pattern:'
     TabOrder = 0
+    Text = ''
     OnChange = PatternEditChange
   end
   object TestEdit: TEsRegexLabeledEdit
@@ -43,6 +43,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
     EditLabel.Height = 13
     EditLabel.Caption = 'Test:'
     TabOrder = 2
+    Text = ''
     AllowNeutral = False
     IndicateState = All
   end

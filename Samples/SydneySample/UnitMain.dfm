@@ -12,15 +12,14 @@ object FormMain: TFormMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   StyleElements = [seFont, seClient]
   StyleName = 'Windows'
   OnCreate = FormCreate
   OnResize = FormResize
+  PixelsPerInch = 96
   DesignSize = (
     694
     641)
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     AlignWithMargins = True
@@ -574,7 +573,7 @@ object FormMain: TFormMain
           Height = 289
           ParentBackground = False
           TabOrder = 1
-          StyleName = 'Emerald'
+          StyleName = 'Sapphire Kamri'
           Caption = 'EsPanel1'
           object Label5: TLabel
             Left = 3
@@ -629,7 +628,7 @@ object FormMain: TFormMain
             Margins.Bottom = 4
             Align = alTop
             TabOrder = 0
-            Caption = #39'Emerald'#39' StyleName'
+            Caption = #39'Sapphire Kamri'#39' StyleName'
             CaptionVisible = True
             FrameStyle = Chess
           end
@@ -3402,7 +3401,7 @@ object FormMain: TFormMain
           Left = 4
           Top = 4
           Width = 42
-          Height = -8
+          Height = 42
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -3416,14 +3415,13 @@ object FormMain: TFormMain
           ParentColor = False
           Stretch = Center
           Transparent = False
-          ExplicitHeight = 42
         end
         object EsImageLabelOpacityCL: TEsImageLabel
           AlignWithMargins = True
           Left = 50
           Top = 4
           Width = 163
-          Height = -8
+          Height = 42
           Margins.Left = 0
           Margins.Top = 4
           Margins.Right = 4
@@ -3458,7 +3456,7 @@ object FormMain: TFormMain
           Left = 4
           Top = 4
           Width = 42
-          Height = -8
+          Height = 42
           Margins.Left = 4
           Margins.Top = 4
           Margins.Right = 4
@@ -3469,14 +3467,13 @@ object FormMain: TFormMain
           ImageName = 'emotion0'
           Images = VirtualImageList
           Stretch = Center
-          ExplicitHeight = 42
         end
         object EsImageLabelCL: TEsImageLabel
           AlignWithMargins = True
           Left = 50
           Top = 4
           Width = 163
-          Height = -8
+          Height = 42
           Margins.Left = 0
           Margins.Top = 4
           Margins.Right = 4
@@ -4827,61 +4824,50 @@ object FormMain: TFormMain
     Top = 72
   end
   object VirtualImageList: TVirtualImageList
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 1
         CollectionName = 'emotion3'
-        Disabled = False
         Name = 'emotion3'
       end
       item
         CollectionIndex = 2
         CollectionName = 'emotion6'
-        Disabled = False
         Name = 'emotion6'
       end
       item
         CollectionIndex = 3
         CollectionName = 'emotion1'
-        Disabled = False
         Name = 'emotion1'
       end
       item
         CollectionIndex = 4
         CollectionName = 'emotion4'
-        Disabled = False
         Name = 'emotion4'
       end
       item
         CollectionIndex = 5
         CollectionName = 'emotion2'
-        Disabled = False
         Name = 'emotion2'
       end
       item
         CollectionIndex = 6
         CollectionName = 'emotion7'
-        Disabled = False
         Name = 'emotion7'
       end
       item
         CollectionIndex = 7
         CollectionName = 'emotion5'
-        Disabled = False
         Name = 'emotion5'
       end
       item
         CollectionIndex = 8
         CollectionName = 'emotion0'
-        Disabled = False
         Name = 'emotion0'
       end
       item
         CollectionIndex = 9
         CollectionName = 'radioactivity'
-        Disabled = False
         Name = 'radioactivity'
       end>
     ImageCollection = ImageCollection
