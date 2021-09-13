@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -102,15 +102,22 @@ interface
   {$IFDEF VER340}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
   {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
   {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$ENDIF}
+  // XE11 Alexandria
+  {$IFDEF VER350}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
+  {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$ENDIF}
   // Next versions
-  {$IF CompilerVersion >= 34}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}
-  {$DEFINE VER260UP}{$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}
-  {$DEFINE VER310UP}{$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$IFEND}
+  {$IF CompilerVersion >= 34}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
+  {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$IFEND}
   // Vcl
   {$IFDEF VER240UP}{$DEFINE STYLE_ELEMENTS}{$ENDIF}
   {$IFDEF VER330UP}{$DEFINE VIRTUAL_IMAGE}{$ENDIF}
   {$IFDEF VER340UP}{$DEFINE STYLE_NAME}{$ENDIF}
 {$ENDREGION}
+
+{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS OFF}
 
 // see function CalcClientRect
 {$define FAST_CALC_CLIENTRECT}
@@ -126,7 +133,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.0;
+  EsVclCoreVersion = 4.1;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
@@ -377,7 +384,7 @@ procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWi
     Canvas.LineTo(x2, y2);
   end;
 var
-  SaveBk: TColor;
+  SaveBk: Cardinal;
   SavePen, SaveBrush: TPersistent;
 begin
   SavePen := nil;
@@ -414,7 +421,7 @@ begin
     end;
 
     // Padding Helper
-    if THelperOption.hoPadding in Options then
+    if (THelperOption.hoPadding in Options) and (Padding <> nil) then
     begin
       if (BorderWidth + Padding.Top < RectHeight(Rect) - BorderWidth - Padding.Bottom) and
          (BorderWidth + Padding.Left < RectWidth(Rect) - BorderWidth - Padding.Right) then
@@ -479,13 +486,12 @@ begin
       BorderWidth := TEsBaseLayout(Control).BorderWidth
     else
       BorderWidth := TOpenCtrl(Control).BorderWidth;
-  end else
-  if Control is TGraphicControl then
+  end
+  else if Control is TEsGraphicControl then
   begin
     // get canvas
     Canvas := TEsGraphicControl(Control).Canvas;
-    if Control is TEsGraphicControl then
-      Padding := TEsGraphicControl(Control).Padding;
+    Padding := TEsGraphicControl(Control).Padding;
   end;
 
   try
@@ -772,7 +778,7 @@ end;
 
 procedure TEsCustomControl.Paint;
 var
-  SaveBk: TColor;
+  SaveBk: Cardinal;
 begin
   // for Design time
   if IsDrawHelper and(csDesigning in ComponentState) then

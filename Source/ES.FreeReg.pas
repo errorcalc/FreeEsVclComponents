@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -32,7 +32,7 @@ implementation
 uses
   System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
   ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics,
-  ES.RegexEditor, ES.PaintBox, ES.Labels, ToolsApi, Dialogs;
+  ES.RegexEditor, ES.PaintBox, ES.Labels, ES.Shapes, ToolsApi, Dialogs;
 
 procedure Register;
 begin
@@ -54,7 +54,9 @@ begin
     TEsPaintBox,
     // Labels
     TEsLinkLabel,
-    TEsVersionLabel
+    TEsVersionLabel,
+    // Shapes
+    TEsShape
   ]);
 
   // ImageList support
@@ -75,6 +77,13 @@ begin
   RegisterComponentEditor(TEsRegexEdit, TEsRegexEditorEditor);
   RegisterComponentEditor(TEsRegexButtonedEdit, TEsRegexEditorEditor);
   RegisterComponentEditor(TEsRegexLabeledEdit, TEsRegexEditorEditor);
+
+  // Guidelines
+  RegisterComponentGuidelines(TEsPanel, TEsPanelGuidelines);
+  RegisterComponentGuidelines(TEsSwitch, TEsSwitchGuidelines);
+  RegisterComponentGuidelines(TEsImageLabel, TEsImageLabelGuidelines);
+  RegisterComponentGuidelines(TEsImageStaticText, TEsImageStaticTextGuidelines);
+  RegisterComponentGuidelines(TEsShape, TEsShapeTextGuidelines);
 
   // Alpha controls COMPLETLY BREAK DOWN STANDART PNG LOADER.
   {$IFDEF FixLoadPng}

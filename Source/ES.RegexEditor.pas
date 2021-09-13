@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -24,7 +24,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, ES.BaseControls, ES.Layouts, Vcl.StdCtrls,
-  ES.RegexControls, Vcl.ExtCtrls, DesignMenus, DesignEditors, DesignIntf, WinApi.ShellAPI;
+  ES.RegexControls, Vcl.ExtCtrls, DesignMenus, DesignEditors, DesignIntf, WinApi.ShellAPI,
+  Vcl.Mask;
 
 type
   TEsRegexEditorForm = class(TForm)

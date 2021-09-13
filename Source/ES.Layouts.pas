@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -148,7 +148,7 @@ type
       SetCaptionVertLayout default TVertLayout.Center;
     property CaptionHorzLayout: THorzLayout read FCaptionHorzLayout write
       SetCaptionHorzLayout default THorzLayout.Center;
-    property CaptionVisible: Boolean read FCaptionVisible write SetCaptionVisible default False;
+    property CaptionVisible: Boolean read FCaptionVisible write SetCaptionVisible default True;
     property CaptionDistance: Integer read FCaptionDistance write SetCaptionDistance default 2;
     property BevelKind;
     property BevelInner;
@@ -211,6 +211,8 @@ constructor TEsPanel.Create(AOwner: TComponent);
 begin
   inherited;
 
+  ControlStyle := ControlStyle - [csSetCaption];
+
   FFrameColor := clBtnShadow;
   FFrameWidth := 1;
   FFrameStyle := TExFrameStyle.Raised;
@@ -218,6 +220,7 @@ begin
   FCaptionVertLayout := TVertLayout.Center;
   FCaptionHorzLayout := THorzLayout.Center;
   FCaptionDistance := 2;
+  FCaptionVisible := True;
 
   IsDrawHelper := False;
 end;

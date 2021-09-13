@@ -1,6 +1,6 @@
 ﻿{******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -289,11 +289,13 @@ type
     {$IFDEF VER240UP}
     property StyleElements;
     {$ENDIF}
+    {$IFDEF VER340UP}
+    property StyleName;
+    {$ENDIF}
     property TabOrder;
     property TabStop;
     property Visible;
     property Width;
-
     property OnClick;
     property OnContextPopup;
     property OnDragDrop;

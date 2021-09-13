@@ -19,8 +19,8 @@ package EsVclComponents;
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
 {$OPTIMIZATION OFF}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES ON}
@@ -38,11 +38,11 @@ package EsVclComponents;
 
 requires
   rtl,
-  vcl,
   vclimg,
+  vcl,
   {$IFNDEF VCLWINX_NO_NEEDED}vclwinx,{$ENDIF}
-  EsCore,
-  EsVclCore;
+  EsVclCore,
+  EsCore;
 
 contains
   ES.Hints in '..\..\Source\ES.Hints.pas',
@@ -53,6 +53,7 @@ contains
   ES.NinePatch in '..\..\Source\ES.NinePatch.pas',
   ES.PaintBox in '..\..\Source\ES.PaintBox.pas',
   ES.RegExControls in '..\..\Source\ES.RegExControls.pas',
+  ES.Shapes in '..\..\Source\ES.Shapes.pas',
   ES.Switch in '..\..\Source\ES.Switch.pas';
 
 end.

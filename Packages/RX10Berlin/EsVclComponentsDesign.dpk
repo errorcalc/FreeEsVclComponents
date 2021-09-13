@@ -13,8 +13,8 @@ package EsVclComponentsDesign;
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
 {$OPTIMIZATION OFF}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES ON}
@@ -25,17 +25,15 @@ package EsVclComponentsDesign;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'errorsoft free vcl library design-time'}
+{$DESCRIPTION 'errorsoft free vcl library designtime'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '240'}
 
 requires
   rtl,
-  designide,
-  EsVclCore,
-  EsCore,
-  EsVclComponents;
+  EsVclComponents,
+  designide;
 
 contains
   ES.FreeEditors in '..\..\Source\ES.FreeEditors.pas',
@@ -43,4 +41,3 @@ contains
   ES.RegexEditor in '..\..\Source\ES.RegexEditor.pas' {EsRegexEditorForm};
 
 end.
-

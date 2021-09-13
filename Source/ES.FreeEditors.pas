@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -101,10 +101,46 @@ type
   end;
   {$ENDIF}
 
+  TEsPanelGuidelines = class(TControlGuidelines)
+  protected
+    function GetCount: Integer; override;
+    function GetDesignerGuideType(Index: Integer): TDesignerGuideType; override;
+    function GetDesignerGuideOffset(Index: Integer): Integer; override;
+  end;
+
+  TEsSwitchGuidelines = class(TControlGuidelines)
+  protected
+    function GetCount: Integer; override;
+    function GetDesignerGuideType(Index: Integer): TDesignerGuideType; override;
+    function GetDesignerGuideOffset(Index: Integer): Integer; override;
+  end;
+
+  TEsImageLabelGuidelines = class(TControlGuidelines)
+  protected
+    function GetCount: Integer; override;
+    function GetDesignerGuideType(Index: Integer): TDesignerGuideType; override;
+    function GetDesignerGuideOffset(Index: Integer): Integer; override;
+  end;
+
+  TEsImageStaticTextGuidelines = class(TControlGuidelines)
+  protected
+    function GetCount: Integer; override;
+    function GetDesignerGuideType(Index: Integer): TDesignerGuideType; override;
+    function GetDesignerGuideOffset(Index: Integer): Integer; override;
+  end;
+
+  TEsShapeTextGuidelines = class(TControlGuidelines)
+  protected
+    function GetCount: Integer; override;
+    function GetDesignerGuideType(Index: Integer): TDesignerGuideType; override;
+    function GetDesignerGuideOffset(Index: Integer): Integer; override;
+  end;
+
 implementation
 
 uses
-  System.SysUtils, System.Math, ES.ExGraphics;
+  System.SysUtils, System.Math, ES.ExGraphics, ES.Layouts, Vcl.StdCtrls, ES.CfxClasses,
+  ES.Switch, ES.NinePatch, ES.Shapes;
 
 {TEsPngPropertyFix}
 
@@ -472,6 +508,182 @@ begin
       Png.Free;
     end;
   end;
+end;
+
+{ TEsPanelGuidelines }
+
+function TEsPanelGuidelines.GetCount: Integer;
+begin
+  Result := inherited GetCount + 1;
+end;
+
+function TEsPanelGuidelines.GetDesignerGuideOffset(Index: Integer): Integer;
+var
+  Panel: TEsPanel;
+begin
+  if Index >= inherited GetCount then
+  begin
+    Panel := Component as TEsPanel;
+
+    case Panel.CaptionVertLayout of
+      TVertLayout.Top:
+        Result := GetTextBaseline(Panel, TTextLayout.tlTop) +
+          Panel.ContentRect.Top + Panel.CaptionDistance;
+      TVertLayout.Bottom:
+        Result := GetTextBaseline(Panel, TTextLayout.tlBottom) -
+          (Panel.Height - Panel.ContentRect.Bottom) - Panel.CaptionDistance;
+      else
+        Result := GetTextBaseline(Panel, TTextLayout.tlCenter);
+    end;
+  end else
+    Result := inherited GetDesignerGuideOffset(Index);
+end;
+
+function TEsPanelGuidelines.GetDesignerGuideType(
+  Index: Integer): TDesignerGuideType;
+begin
+  if Index >= inherited GetCount then
+    Result := gtBaseline
+  else
+    Result := inherited GetDesignerGuideType(Index);
+end;
+
+{ TEsSwitchGuidelines }
+
+function TEsSwitchGuidelines.GetCount: Integer;
+begin
+  Result := inherited GetCount + 1;
+end;
+
+function TEsSwitchGuidelines.GetDesignerGuideOffset(Index: Integer): Integer;
+var
+  Switch: TEsSwitch;
+begin
+  if Index >= inherited GetCount then
+  begin
+    Switch := Component as TEsSwitch;
+
+    Result := GetTextBaseline(Switch, TTextLayout.tlCenter);
+  end else
+    Result := inherited GetDesignerGuideOffset(Index);
+end;
+
+function TEsSwitchGuidelines.GetDesignerGuideType(
+  Index: Integer): TDesignerGuideType;
+begin
+  if Index >= inherited GetCount then
+    Result := gtBaseline
+  else
+    Result := inherited GetDesignerGuideType(Index);
+end;
+
+{ TEsImageLabelGuidelines }
+
+function TEsImageLabelGuidelines.GetCount: Integer;
+begin
+  Result := inherited GetCount + 1;
+end;
+
+function TEsImageLabelGuidelines.GetDesignerGuideOffset(
+  Index: Integer): Integer;
+var
+  ImageLabel: TEsImageLabel;
+begin
+  if Index >= inherited GetCount then
+  begin
+    ImageLabel := Component as TEsImageLabel;
+
+    case ImageLabel.TextLayout of
+      TVertLayout.Top:
+        Result := GetTextBaseline(ImageLabel, TTextLayout.tlTop) +
+          ImageLabel.ContentRect.Top + ImageLabel.TextDistance + ImageLabel.ImageMargins.Top;
+      TVertLayout.Bottom:
+        Result := GetTextBaseline(ImageLabel, TTextLayout.tlBottom) -
+          (ImageLabel.Height - ImageLabel.ContentRect.Bottom) - ImageLabel.TextDistance -
+          ImageLabel.ImageMargins.Bottom;
+      else
+        Result := GetTextBaseline(ImageLabel, TTextLayout.tlCenter);// TODO: Improve me
+    end;
+  end else
+    Result := inherited GetDesignerGuideOffset(Index);
+end;
+
+function TEsImageLabelGuidelines.GetDesignerGuideType(
+  Index: Integer): TDesignerGuideType;
+begin
+  if Index >= inherited GetCount then
+    Result := gtBaseline
+  else
+    Result := inherited GetDesignerGuideType(Index);
+end;
+
+{ TEsImageStaticTextGuidelines }
+
+function TEsImageStaticTextGuidelines.GetCount: Integer;
+begin
+  Result := inherited GetCount + 1;
+end;
+
+function TEsImageStaticTextGuidelines.GetDesignerGuideOffset(
+  Index: Integer): Integer;
+var
+  ImageStaticText: TEsImageStaticText;
+begin
+  if Index >= inherited GetCount then
+  begin
+    ImageStaticText := Component as TEsImageStaticText;
+
+    case ImageStaticText.TextLayout of
+      TVertLayout.Top:
+        Result := GetTextBaseline(ImageStaticText, TTextLayout.tlTop) +
+          ImageStaticText.ContentRect.Top + ImageStaticText.TextDistance +
+          ImageStaticText.ImageMargins.Top;
+      TVertLayout.Bottom:
+        Result := GetTextBaseline(ImageStaticText, TTextLayout.tlBottom) -
+          (ImageStaticText.Height - ImageStaticText.ContentRect.Bottom) -
+          ImageStaticText.TextDistance - ImageStaticText.ImageMargins.Bottom;
+      else
+        Result := GetTextBaseline(ImageStaticText, TTextLayout.tlCenter);// TODO: Improve me
+    end;
+  end else
+    Result := inherited GetDesignerGuideOffset(Index);
+end;
+
+function TEsImageStaticTextGuidelines.GetDesignerGuideType(
+  Index: Integer): TDesignerGuideType;
+begin
+  if Index >= inherited GetCount then
+    Result := gtBaseline
+  else
+    Result := inherited GetDesignerGuideType(Index);
+end;
+
+{ TEsShapeTextGuidelines }
+
+function TEsShapeTextGuidelines.GetCount: Integer;
+begin
+  Result := inherited GetCount + 1;
+end;
+
+function TEsShapeTextGuidelines.GetDesignerGuideOffset(Index: Integer): Integer;
+var
+  Shape: TEsShape;
+begin
+  if Index >= inherited GetCount then
+  begin
+    Shape := Component as TEsShape;
+    Result := GetTextBaseline(Shape, TTextLayout.tlCenter);
+  end else
+    Result := inherited GetDesignerGuideOffset(Index);
+end;
+
+function TEsShapeTextGuidelines.GetDesignerGuideType(
+  Index: Integer): TDesignerGuideType;
+begin
+  if Index >= inherited GetCount then
+    Result := gtBaseline
+  else
+    Result := inherited GetDesignerGuideType(Index);
 end;
 
 end.

@@ -13,8 +13,8 @@ package EsVclCore;
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
 {$OPTIMIZATION OFF}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES ON}
@@ -32,8 +32,8 @@ package EsVclCore;
 
 requires
   rtl,
-  vcl,
-  vclimg;
+  vclimg,
+  vcl;
 
 contains
   ES.BaseControls in '..\..\Source\ES.BaseControls.pas',

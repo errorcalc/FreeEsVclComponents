@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.0                         }
+{                       EsVclComponents/EsVclCore v4.1                         }
 {                           errorsoft(c) 2009-2021                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -36,6 +36,8 @@ function ColorToGPColor(Color: TColor; Alpha: byte = 255): DWORD;
 var
   BRG: DWORD;
 begin
+  if Color = clNone then
+    Alpha := 0;
   BRG := ColorToRGB(Color);
 
   Result := ((BRG shl 16) and $00FF0000) or
