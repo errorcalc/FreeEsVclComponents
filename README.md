@@ -270,8 +270,6 @@ Features:
 
 **Email:** errorsoft(at)mail.ru
 
-Более оперативно на вопросы я могу ответить здесь: http://vk.com/errorsoft
-
 Совместима с Delphi/C++Builder, начиная с XE2
 (Хотя класс **TEsCustomControl** будет полезен и ценителям Delphi 7)
 
