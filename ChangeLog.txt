@@ -131,11 +131,11 @@ users of previous Delphi versions have no problems. You can open it manually.
 *** What's new? ***
 Added support for Delphi 11 Alexandria.
 Support for design time styles for all controls.
-Added new component TEsShape.
+Added a new component TEsShape.
 Improvements in ES.BaseControls.pas
 Improvements to the TEsPanel component.
 Improved handling of focus in TEsSwitch.
-Added Design Guedlines on text components like TEsPanel, TEsSwitch, etc.
+Added Design Guidelines on text components like TEsPanel, TEsSwitch, etc.
 Other minor improvements.
 *** TEsShape ***
 TEsShape is an analogue of TShape with advanced features such as:
