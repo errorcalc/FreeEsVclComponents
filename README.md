@@ -1,7 +1,9 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Sydney Update
-**Version 4.0**  
+# Alexanria Update (**Version 4.1**)  
+![Preview](Logos/Preview.gif)
+---
+
 The old version v2 here: https://github.com/errorcalc/FreeEsVclComponents/tree/Version2  
 
 **If you need to install FreeEsVclComponents in several versions of Delphi, you can use https://github.com/errorcalc/FreeEsVclComponents/blob/master/Packages/ to generate individual packages for every version.**
@@ -26,6 +28,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsLayout (Absolutely no flicker! Also for children TGraphicControl`s - BufferedChildrens property)
 * TEsPanel (Absolutely no flicker! Also this support new frame styles)
 * TEsPaintBox (Flicker free PaintBox)
+* TEsShape (Shape with anti-aliasing and opacity)
 * TEsImageLayout (Best for your application)
 * TEsImageStaticText
 * TEsNinePatchImage
@@ -81,6 +84,9 @@ Features:
 
 ![Icon](Source/icons/TESPANEL32.bmp)
 **TEsPanel** - Flicker free Panel. It’s very nice replacement for TPanel, also this support new frame styles
+
+![Icon](Source/icons/TESSHAPE32.bmp)
+**TEsShape** - Shape with anti-aliasing and opacity, also this support new kinds. 
 
 ![Icon](Source/icons/TESLINKLABEL32.bmp)
 **TEsLinkLabel** - Clickable link, opens a link on the Internet or local
@@ -186,6 +192,9 @@ Features:
 
 ![Icon](Source/icons/TESPANEL32.bmp)
 **TEsPanel** - Свободный от мерцания аналог TPanel. Отличная замена TPanel, поддерживающая новые стили фреймов
+
+![Icon](Source/icons/TESSHAPE32.bmp)
+**TEsShape** - Shape with anti-aliasing and opacity, also this support new kinds. 
 
 ![Icon](Source/icons/TESLINKLABEL32.bmp)
 **TEsLinkLabel** - Кликабельная ссылка, открывает локальную или интернет ссылку
