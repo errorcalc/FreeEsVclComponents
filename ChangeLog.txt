@@ -1,4 +1,4 @@
-﻿[26.02.2016]
+[26.02.2016]
 Поддержка BevelKind в TEsCustomControl
 
 [15.02.2016]
@@ -127,3 +127,26 @@ I recommend watching the Sydney Update example for new features.
 It is located in the examples folder, but is not part of the project group so that
 users of previous Delphi versions have no problems. You can open it manually.
 
+[14.09.2021]
+*** What's new? ***
+Added support for Delphi 11 Alexandria.
+Support for design time styles for all controls.
+Added new component TEsShape.
+Improvements in ES.BaseControls.pas
+Improvements to the TEsPanel component.
+Improved handling of focus in TEsSwitch.
+Added Design Guedlines on text components like TEsPanel, TEsSwitch, etc.
+Other minor improvements.
+*** TEsShape ***
+TEsShape is an analogue of TShape with advanced features such as:
+* Anti-alisang support, which improves the appearance of the shape borders
+* Opacity support
+* New shapes like triangle, star, etc.
+* Horizontal and vertical gradient support for brush
+* You can set the corner radius for RoundRect
+* You can turn the sides of the rectangle on and off (Top, Left, Bottom, Right)
+* You can turn the corners of the rectangle on and off (TopLeft, TopRight, BottomLeft, BottomRight)
+* There is also a Caption property for displaying text in the shape
+* TEsShape uses the color from the current vcl style for standard colors
+I suggest you to look at the Samples\Shapes\Shapes.dpr project to evaluate the new component!
+(Samples\ShapesOld\ShapesOld.dpr for previous versions of delphi)
