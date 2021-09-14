@@ -30,6 +30,12 @@
         <Projects Include="Labels\Labels.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="SydneySample\SydneySample.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ShapesOld\Shapes.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -119,14 +125,32 @@
     <Target Name="Labels:Make">
         <MSBuild Projects="Labels\Labels.dproj" Targets="Make"/>
     </Target>
+    <Target Name="SydneySample">
+        <MSBuild Projects="SydneySample\SydneySample.dproj"/>
+    </Target>
+    <Target Name="SydneySample:Clean">
+        <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SydneySample:Make">
+        <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Shapes">
+        <MSBuild Projects="ShapesOld\Shapes.dproj"/>
+    </Target>
+    <Target Name="Shapes:Clean">
+        <MSBuild Projects="ShapesOld\Shapes.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Shapes:Make">
+        <MSBuild Projects="ShapesOld\Shapes.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Panel;Labels"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Panel;Labels;SydneySample;Shapes"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Panel:Clean;Labels:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Panel:Clean;Labels:Clean;SydneySample:Clean;Shapes:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Panel:Make;Labels:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Panel:Make;Labels:Make;SydneySample:Make;Shapes:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

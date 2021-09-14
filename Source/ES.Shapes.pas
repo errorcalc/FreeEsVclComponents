@@ -284,8 +284,27 @@ procedure FillRoundRectangle(const Graphics: TGPGraphics; const Brush: TGPBrush;
   const Sides: TShapeSides);
 var
   Path: TGPGraphicsPath;
+  LeftShift, TopShift, RightShift, BottomShift: Double;
 begin
-  Path := MakeRoundRectanglePath(Left, Top, Width, Height, Radius, Corners, AllShapeSides);
+  if TShapeSide.Top in Sides then
+    TopShift := 0.0
+  else
+    TopShift := 0.5;
+  if TShapeSide.Left in Sides then
+    LeftShift := 0.0
+  else
+    LeftShift := 0.5;
+  if TShapeSide.Bottom in Sides then
+    BottomShift := 0.0
+  else
+    BottomShift := 0.5;
+  if TShapeSide.Right in Sides then
+    RightShift := 0.0
+  else
+    RightShift := 0.5;
+
+  Path := MakeRoundRectanglePath(Left - LeftShift, Top - TopShift, Width + RightShift + LeftShift,
+    Height + BottomShift + TopShift, Radius, Corners, AllShapeSides);
   try
     Graphics.FillPath(Brush, Path);
   finally
@@ -668,7 +687,7 @@ begin
       ColorToGPColor(ClientColorToRgb(Brush.StartColor, Control), Brush.Opacity),
       ColorToGPColor(ClientColorToRgb(Brush.EndColor, Control), Brush.Opacity)
     );
-    TGPLinearGradientBrush(Result).SetWrapMode(WrapModeClamp);
+    TGPLinearGradientBrush(Result).SetWrapMode(WrapModeTileFlipXY);
     Exit;
   end
   else if Brush.Style = TShapeBrushStyle.HorizontalGradient then
@@ -679,7 +698,7 @@ begin
       ColorToGPColor(ClientColorToRgb(Brush.StartColor, Control), Brush.Opacity),
       ColorToGPColor(ClientColorToRgb(Brush.EndColor, Control), Brush.Opacity)
     );
-    TGPLinearGradientBrush(Result).SetWrapMode(WrapModeClamp);
+    TGPLinearGradientBrush(Result).SetWrapMode(WrapModeTileFlipXY);
     Exit;
   end;
 
@@ -975,7 +994,7 @@ begin
     if Pen.Width = 0 then
       GpPen.SetColor(0);
     GpPen.SetLineJoin(LineJoinMiterClipped);
-    GpPen.SetMiterLimit(Pen.Width * 0.5);
+    GpPen.SetMiterLimit(Pen.Width* 0.5);
 
     GpBrush := MakeGPBrushFormShapeBrush(Brush, Self, ShapeLeft, ShapeTop, ShapeWidth, ShapeHeight);
 
@@ -983,7 +1002,7 @@ begin
       TShapeKind.Rectangle,
       TShapeKind.Square:
       begin
-        GpGraphics.FillRectangle(GpBrush, ShapeLeft, ShapeTop, ShapeWidth, ShapeHeight);
+        GpGraphics.FillRectangle(GpBrush, ShapeLeft - 0.5, ShapeTop - 0.5, ShapeWidth + 1, ShapeHeight + 1);
         if Sides = AllShapeSides then
           GpGraphics.DrawRectangle(GpPen, ShapeLeft, ShapeTop, ShapeWidth, ShapeHeight)
         else
