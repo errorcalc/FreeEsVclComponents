@@ -14,8 +14,7 @@ GetIt and Delphinus-Support
 ## **Is still not know what Delphi/ObjectPascal?**  
 **You can get Delphi/Rad Studio IDE on this resource:** https://www.embarcadero.com  
 **And learn Delphi/ObjectPascal on this resource:** https://learndelphi.org/  
-
-
+---
 **This library is Open Source software, can be used this in commercial projects, modify, and distribute as source code or binary files.**  
 This library licensed at two licenses: Modified MIT License (MIT) and GNU GPL v2.    
 You can choose one of two licenses. See "LICENSE.txt"
