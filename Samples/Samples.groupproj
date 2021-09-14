@@ -24,16 +24,19 @@
         <Projects Include="PaintBox\PaintBox.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Labels\Labels.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="Panel\Panel.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Labels\Labels.dproj">
+        <Projects Include="ShapesOld\ShapesOld.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="SydneySample\SydneySample.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ShapesOld\Shapes.dproj">
+        <Projects Include="Shapes\Shapes.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -107,6 +110,15 @@
     <Target Name="PaintBox:Make">
         <MSBuild Projects="PaintBox\PaintBox.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Labels">
+        <MSBuild Projects="Labels\Labels.dproj"/>
+    </Target>
+    <Target Name="Labels:Clean">
+        <MSBuild Projects="Labels\Labels.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Labels:Make">
+        <MSBuild Projects="Labels\Labels.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Panel">
         <MSBuild Projects="Panel\Panel.dproj"/>
     </Target>
@@ -116,14 +128,14 @@
     <Target Name="Panel:Make">
         <MSBuild Projects="Panel\Panel.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Labels">
-        <MSBuild Projects="Labels\Labels.dproj"/>
+    <Target Name="ShapesOld">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj"/>
     </Target>
-    <Target Name="Labels:Clean">
-        <MSBuild Projects="Labels\Labels.dproj" Targets="Clean"/>
+    <Target Name="ShapesOld:Clean">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Labels:Make">
-        <MSBuild Projects="Labels\Labels.dproj" Targets="Make"/>
+    <Target Name="ShapesOld:Make">
+        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Make"/>
     </Target>
     <Target Name="SydneySample">
         <MSBuild Projects="SydneySample\SydneySample.dproj"/>
@@ -135,22 +147,22 @@
         <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Make"/>
     </Target>
     <Target Name="Shapes">
-        <MSBuild Projects="ShapesOld\Shapes.dproj"/>
+        <MSBuild Projects="Shapes\Shapes.dproj"/>
     </Target>
     <Target Name="Shapes:Clean">
-        <MSBuild Projects="ShapesOld\Shapes.dproj" Targets="Clean"/>
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Clean"/>
     </Target>
     <Target Name="Shapes:Make">
-        <MSBuild Projects="ShapesOld\Shapes.dproj" Targets="Make"/>
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Panel;Labels;SydneySample;Shapes"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Panel:Clean;Labels:Clean;SydneySample:Clean;Shapes:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Panel:Make;Labels:Make;SydneySample:Make;Shapes:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

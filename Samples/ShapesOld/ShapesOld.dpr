@@ -1,4 +1,4 @@
-program Shapes;
+program ShapesOld;
 
 uses
   Vcl.Forms,
