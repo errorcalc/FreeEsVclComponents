@@ -180,7 +180,6 @@ type
     IsTracking: Boolean;
     IsAnimating: Boolean;
     CanAutoCheck: Boolean;
-    IsDrawFocusRect: Boolean;
     {$IFDEF VER240UP}
     procedure UpdateStyleElements; override;
     {$ENDIF}
@@ -514,6 +513,7 @@ end;
 procedure TEsCustomSwitch.CreateWnd;
 begin
   inherited;
+  Perform(WM_CHANGEUISTATE, MakeWParam(UIS_INITIALIZE,  UISF_HIDEFOCUS), 0 );
   AdjustBounds;
 end;
 
@@ -846,7 +846,7 @@ begin
       Canvas.Brush.Style := bsSolid;
     end;
 
-    if IsShowFocusRect(Self) then
+    if IsShowFocusRect(Self) {and IsDrawFocusRect} then
     begin
       Canvas.Brush.Color := TColor($FF000000);
       Canvas.DrawFocusRect(ClientRect);
@@ -1045,15 +1045,13 @@ end;
 
 procedure TEsCustomSwitch.WMKillFocus(var Message: TWMKillFocus);
 begin
-  Inherited;
-  IsDrawFocusRect := False;
+  inherited;
   Invalidate;
 end;
 
 procedure TEsCustomSwitch.WMSetFocus(var Message: TWMSetFocus);
 begin
-  Inherited;
-  IsDrawFocusRect := True;
+  inherited;
   Invalidate;
 end;
 
