@@ -135,7 +135,12 @@ type
   // TEdit style hook
   TEsRegexEditStyleHook = class(TEditStyleHook)
   strict protected
+  {$IFNDEF VER350UP}
     procedure PaintBackground(Canvas: TCanvas); override;
+  {$ENDIF}
+  {$IFDEF VER350UP}
+    procedure WndProc(var Message: TMessage); override;
+  {$ENDIF}
   end;
 
   // TButtonedEdit
@@ -533,11 +538,31 @@ end;
 
 { TEsRegExEditStyleHook }
 
+{$IFNDEF VER350UP}
 procedure TEsRegexEditStyleHook.PaintBackground(Canvas: TCanvas);
 begin
   Brush.Color := Control.Brush.Color;
   inherited;
 end;
+{$ENDIF}
+
+{$IFDEF VER350UP}
+procedure TEsRegexEditStyleHook.WndProc(var Message: TMessage);
+begin
+  case Message.Msg of
+    CN_CTLCOLORMSGBOX..CN_CTLCOLORSTATIC:
+    begin
+      inherited WndProc(Message);
+      Brush.Color := Control.Brush.Color;
+      SetBkColor(Message.WParam, ColorToRGB(Brush.Color));
+      Message.Result := LRESULT(Brush.Handle);
+      Handled := True;
+    end;
+  else
+    inherited WndProc(Message);
+  end;
+end;
+{$ENDIF}
 
 { TEsRegExButtonedEdit }
 
