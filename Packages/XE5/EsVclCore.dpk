@@ -42,6 +42,7 @@ contains
   ES.ExGraphics in '..\..\Source\ES.ExGraphics.pas',
   ES.StyleHooks in '..\..\Source\ES.StyleHooks.pas',
   ES.Utils in '..\..\Source\ES.Utils.pas',
-  ES.VclFix in '..\..\Source\ES.VclFix.pas';
+  ES.VclFix in '..\..\Source\ES.VclFix.pas',
+  ES.BitmapPixels in '..\..\Source\ES.BitmapPixels.pas';
 
 end.
