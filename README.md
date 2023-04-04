@@ -1,6 +1,8 @@
-![Logo](Source/icons/Logo.png)
+﻿![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Alexandria 11.3 Update (**Version 4.4**)  
+# Alexandria 11.3 Update (**Version 4.4**)
+![Preview](Logos/Preview1.gif)
+![Preview](Logos/Preview2.gif)
 ![Preview](Logos/Preview.gif)
 ---
 
