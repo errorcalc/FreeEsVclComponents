@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.1                         }
-{                           errorsoft(c) 2009-2021                             }
+{                       EsVclComponents/EsVclCore v4.4                         }
+{                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -12,7 +12,6 @@
 {                                                                              }
 {                 You can order developing vcl/fmx components,                 }
 {               please submit your requests to mail or telegram.               }
-{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
 {                                                                              }
 {******************************************************************************}
 unit ES.Indicators;
@@ -159,7 +158,7 @@ type
     property PointCount: TPointCount read FPointCount write SetPointCount default 5;
     property PointColor: TColor read FPointColor write SetPointColor default clHighlight;
     property PointType: TActivityPointType read FPointType write SetPointType default TActivityPointType.Box;
-    property TimerInterval: TTimerInterval read FTimerInterval write SetTimerInterval default 10;
+    property TimerInterval: TTimerInterval read FTimerInterval write SetTimerInterval default 33;
     property AutoHide: Boolean read FAutoHide write SetAutoHide default False;
     property Active: Boolean read FActive write SetActive default False;
     property Placement: TActivityPlacement read FPlacement write SetPlacement default TActivityPlacement.None;
@@ -301,7 +300,7 @@ begin
   FPointCount := 5;
   NormEnergy := DefaultEnegry / 10;
   FAnimationType := TActivityAnimationType.WindowsX;
-  FTimerInterval := 10;
+  FTimerInterval := 33;
   FAnimationTime := 4000;
   FAnimationDelay := 500;
   FMax := 100;
@@ -317,7 +316,7 @@ begin
   if not (csDesigning in ComponentState) then
     TTimer(Sender).Interval := FTimerInterval
   else
-    TTimer(Sender).Interval := 77;
+    TTimer(Sender).Interval := 200;
   OldTime := GetTickCount;
   TTimer(Sender).Enabled := True;
 end;

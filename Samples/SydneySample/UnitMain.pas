@@ -202,8 +202,6 @@ end;
 
 procedure TFormMain.ControlListOpacityBeforeDrawItem(AIndex: Integer;
   ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
-var
-  B: TBitmap;
 begin
   EsImageOpacityCL.Opacity := Byte((AIndex * 13219 + 83919 + AIndex * 32234 + 3423));
   EsImageOpacityCL.Color :=

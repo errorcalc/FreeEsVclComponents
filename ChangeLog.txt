@@ -150,3 +150,14 @@ TEsShape is an analogue of TShape with advanced features such as:
 * TEsShape uses the color from the current vcl style for standard colors
 I suggest you to look at the Samples\Shapes\Shapes.dpr project to evaluate the new component!
 (Samples\ShapesOld\ShapesOld.dpr for previous versions of delphi)
+
+[04.04.2023]
+*** What's new? ***
+Added a new component TEsControlListCheckBox (Similar to TCheckBox but can be used in TControlList).
+- Support ReadOnly mode
+- Support bindings
+(See Samples\TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dpr)
+Added "ES.BitmapPixels.pas" with TBitmapData to easy and fast access to TBitmap pixels. 
+(See Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dpr)
+Improved support for Delphi 11 Alexandria.
+Fix minor issues.

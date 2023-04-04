@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Labels, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ES.Labels, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Mask;
 
 type
   TFormMain = class(TForm)
@@ -20,7 +21,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
-    procedure Update;
+    procedure UpdateMe();
   public
     { Public declarations }
   end;
@@ -34,7 +35,7 @@ implementation
 
 procedure TFormMain.EditCaptionChange(Sender: TObject);
 begin
-  Update;
+  UpdateMe;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -42,7 +43,7 @@ begin
   Update;
 end;
 
-procedure TFormMain.Update;
+procedure TFormMain.UpdateMe();
 begin
   EsLinkLabel.Caption := EditCaption.Text;
   EsLinkLabel.Url := EditAddress.Text;

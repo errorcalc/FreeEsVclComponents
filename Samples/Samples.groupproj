@@ -39,6 +39,12 @@
         <Projects Include="Shapes\Shapes.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -155,14 +161,32 @@
     <Target Name="Shapes:Make">
         <MSBuild Projects="Shapes\Shapes.dproj" Targets="Make"/>
     </Target>
+    <Target Name="TBitmapPixelsDemo">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Clean">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Make">
+        <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo:Clean">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TEsControlListCheckBoxDemo:Make">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes;TBitmapPixelsDemo;TEsControlListCheckBoxDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean;TBitmapPixelsDemo:Clean;TEsControlListCheckBoxDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make;TBitmapPixelsDemo:Make;TEsControlListCheckBoxDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

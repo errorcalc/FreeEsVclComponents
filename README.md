@@ -1,6 +1,6 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Alexandria Update (**Version 4.1**)  
+# Alexandria 11.3 Update (**Version 4.4**)  
 ![Preview](Logos/Preview.gif)
 ---
 
@@ -44,17 +44,15 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsRegexLabeledEdit
 * TEsLinkLabel
 * TEsVersionLabel
+* TEsControlListCheckBox (Graphic TCheckBox analog for usage in TControlList)
 
-## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney) - compatibility
+## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria) - compatibility
 
 # English ReadMe:
 
 **EsVCLComponents** - Free ErrorSoft Vcl Components - a free library of VCL components for Delphi and C++Builder. This new controls and components to improve the appearance applications and to better user experience. All components have best support transparency, not flicker, and has support Interesting possibility for double buffering for TGraphicControl heirs. Components support visual styles and have a modern style. 
 
 Free use for commercial and non-commercial projects, you need to specify in About, or anywhere else, that the program used components "EsVCLComponents" or link to this repository :)
-
-If you'd like to support the EsVCLComponents or EsVclCore lib, you can do so at this link: 
-### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 You can help by giving an example of using the components in your projects(screenshot, description).
 
@@ -155,6 +153,11 @@ Features:
 * Four indication modes
 * Built-in regular expression editor
 
+![Icon](Source/icons/TESCONTROLLISTCHECKBOX32.bmp)
+**TEsControlListCheckBox** - Graphic TCheckBox analog for usage in TControlList.
+* Read-only mode support
+* Bindings support
+
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
 # Russian ReadMe:
@@ -163,9 +166,6 @@ Features:
 **Полностью бесплатная лицензия (в том числе для использования в коммерческих продуктах), открытый исходный код, необходимо только указать а About-е или где-нибудь в другом месте, что в программе используется данный набор компонент.**
 **Автор будет благодарен, если будет ссылка на данный репозиторий :)**
 **Также нельзя продавать данные компоненты и их производные, что, в общем то логично.**
-
-Вы можете поддержать развитие проекта: 
-### [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QZMJDXWS8GMU6&lc=US&item_name=FreeEsVclComponents&item_number=3&currency_code=RUB&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
 
 **Вы можете помочь развитию библиотеки, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования**
 
@@ -264,6 +264,11 @@ Features:
 * Настройка цвета
 * Четыре режима индикации
 * Встроенный редактор регулярных выражений
+
+![Icon](Source/icons/TESCONTROLLISTCHECKBOX32.bmp)
+**TEsControlListCheckBox** - "Графический" аналог TCheckBox для использования с TControlList.
+* Поддержка режима "только для чтения"
+* Поддержка биндингов
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 

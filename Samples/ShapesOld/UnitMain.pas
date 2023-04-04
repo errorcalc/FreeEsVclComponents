@@ -86,7 +86,7 @@ var
 implementation
 
 uses
-  Vcl.Themes, Vcl.StyleAPI;
+  Vcl.Themes;
 
 {$R *.dfm}
 

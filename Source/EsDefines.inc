@@ -151,6 +151,7 @@
   {$DEFINE VER320UP}
   {$DEFINE VER330UP}
   {$DEFINE VER340UP}
+  {$DEFINE VER350UP}
 {$ENDIF}
 
 // Compiler options

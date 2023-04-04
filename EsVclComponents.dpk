@@ -53,6 +53,7 @@ contains
   ES.PaintBox in 'Source\ES.PaintBox.pas',
   ES.RegExControls in 'Source\ES.RegExControls.pas',
   ES.Shapes in 'Source\ES.Shapes.pas',
-  ES.Switch in 'Source\ES.Switch.pas';
+  ES.Switch in 'Source\ES.Switch.pas',
+  ES.ControlListControls in 'Source\ES.ControlListControls.pas';
 
 end.

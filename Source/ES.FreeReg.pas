@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.1                         }
-{                           errorsoft(c) 2009-2021                             }
+{                       EsVclComponents/EsVclCore v4.4                         }
+{                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -12,7 +12,6 @@
 {                                                                              }
 {                 You can order developing vcl/fmx components,                 }
 {               please submit your requests to mail or telegram.               }
-{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
 {                                                                              }
 {******************************************************************************}
 unit ES.FreeReg;
@@ -32,7 +31,7 @@ implementation
 uses
   System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
   ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics,
-  ES.RegexEditor, ES.PaintBox, ES.Labels, ES.Shapes, ToolsApi, Dialogs;
+  ES.RegexEditor, ES.PaintBox, ES.Labels, ES.Shapes, ES.ControlListControls, ToolsApi, Dialogs;
 
 procedure Register;
 begin
@@ -55,6 +54,8 @@ begin
     // Labels
     TEsLinkLabel,
     TEsVersionLabel,
+    // ControlList controls
+    {$IFDEF VER350UP}TEsControlListCheckBox,{$ENDIF}
     // Shapes
     TEsShape
   ]);

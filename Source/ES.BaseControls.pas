@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.1                         }
-{                           errorsoft(c) 2009-2021                             }
+{                       EsVclComponents/EsVclCore v4.4                         }
+{                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -12,7 +12,6 @@
 {                                                                              }
 {                 You can order developing vcl/fmx components,                 }
 {               please submit your requests to mail or telegram.               }
-{          Вы можете заказать разработку VCL/FMX компонента на заказ.          }
 {                                                                              }
 {******************************************************************************}
 {                                                                              }
@@ -133,7 +132,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.1;
+  EsVclCoreVersion = 4.4;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
