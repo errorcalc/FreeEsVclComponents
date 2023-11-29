@@ -858,4 +858,10 @@ object FormMain: TFormMain
         'ImageStaticText!'
     end
   end
+  object TimerAnimate: TTimer
+    Interval = 33
+    OnTimer = TimerAnimateTimer
+    Left = 360
+    Top = 240
+  end
 end

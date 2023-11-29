@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.4                         }
+{                       EsVclComponents/EsVclCore v4.5                         }
 {                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -770,7 +770,11 @@ begin
         end else
         begin
           BitmapData.FBitmap.PixelFormat := pf32bit;
+          {$IF CompilerVersion >= 34}
           TOpenBitmap(BitmapData.FBitmap).FAlphaFormat := afPremultiplied;
+          {$ELSE}
+          BitmapData.FBitmap.AlphaFormat := afPremultiplied;
+          {$ENDIF}
           WriteDataPremultipliedBGRA(BitmapData);
         end;
       end else

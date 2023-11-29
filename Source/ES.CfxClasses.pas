@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.4                         }
+{                       EsVclComponents/EsVclCore v4.5                         }
 {                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -152,7 +152,8 @@ type
     property Margins: TImageMargins read FMargins write SetMargins;
     property OnNeedRepaint: TNotifyEvent read FOnNeedRepaint write FOnNeedRepaint;
     // property OnMarginsChange: TNotifyEvent read FOnMarginsChange write FOnMarginsChange;
-    procedure Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte); virtual;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte; OverlayOpacity: Byte); overload; virtual;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte); overload; virtual;
     procedure AssignImage(G: TGraphic);
     procedure AssignOverlay(G: TGraphic);
     constructor Create; virtual;
@@ -180,6 +181,7 @@ type
     property TextLayout: TVertLayout read FTextLayout write SetTextLayout;
     property TextDistance: Integer read FTextDistance write SetTextDistance;
     property TextMultiline: Boolean read FTextMultiline write SetTextMultiline;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: Byte; OverlayOpacity: Byte); reintroduce; overload;
     procedure Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: Byte); reintroduce; overload;
   end;
 
@@ -235,7 +237,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     //
     procedure DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
-      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255); virtual;
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255; OverlayOpacity: Byte = 255); virtual;
     //----------------------------------------------------------------------------------------------
     // Indexed properties:
     function GetImage(const Index: Integer): TPngImage;
@@ -254,7 +256,7 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255); virtual;
+    procedure Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255; OverlayOpacity: Byte = 255); virtual;
     procedure Clear; dynamic;
     procedure UpdateImages; dynamic;
     //
@@ -618,7 +620,12 @@ begin
   inherited;
 end;
 
-procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Opacity: byte);
+procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte);
+begin
+  Draw(Canvas, Rect, Opacity, Opacity);
+end;
+
+procedure TNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Opacity: Byte; OverlayOpacity: Byte);
 var
   R: TRect;
 begin
@@ -652,31 +659,31 @@ begin
 
     case FOverlayAlign of
       TImageAlign.TopLeft:
-        Canvas.Draw(R.Left, R.Top, FOverlay, Opacity);
+        Canvas.Draw(R.Left, R.Top, FOverlay, OverlayOpacity);
 
       TImageAlign.TopRight:
-        Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, Opacity);
+        Canvas.Draw(R.Right - FOverlay.Width, R.Top, FOverlay, OverlayOpacity);
 
       TImageAlign.BottomRight:
-        Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, Opacity);
+        Canvas.Draw(R.Right - FOverlay.Width, R.Bottom - FOverlay.Height, FOverlay, OverlayOpacity);
 
       TImageAlign.BottomLeft:
-        Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, Opacity);
+        Canvas.Draw(R.Left, R.Bottom - FOverlay.Height, FOverlay, OverlayOpacity);
 
       TImageAlign.Center:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, OverlayOpacity);
 
       TImageAlign.Left:
-        Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
+        Canvas.Draw(R.Left, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, OverlayOpacity);
 
       TImageAlign.Right:
-        Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, Opacity);
+        Canvas.Draw(R.Left + R.Width - FOverlay.Width, R.Top + R.Height div 2 - FOverlay.Height div 2, FOverlay, OverlayOpacity);
 
       TImageAlign.Top:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, Opacity);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top, FOverlay, OverlayOpacity);
 
       TImageAlign.Bottom:
-        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, Opacity);
+        Canvas.Draw(R.Left + R.Width div 2 - FOverlay.Width div 2, R.Top + R.Height - FOverlay.Height, FOverlay, OverlayOpacity);
     end;
 
     case FOverlayAlign of
@@ -794,7 +801,7 @@ begin
   OverlayAlign := TImageAlign.Left;
 end;
 
-procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: byte);
+procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: Byte; OverlayOpacity: Byte);
 var
   R, Temp: TRect;
   Format: TTextFormat;
@@ -807,7 +814,7 @@ var
     Canvas.TextRect(Rect, Text, T);
   end;
 begin
-  inherited Draw(Canvas, Rect, Opacity);
+  inherited Draw(Canvas, Rect, Opacity, OverlayOpacity);
 
   if (not ShowCaption) or (Control = nil) then
     exit;
@@ -923,6 +930,11 @@ begin
     Canvas.TextRect(R, Text, Format);
   end;
   Canvas.Brush.Style := bsSolid;
+end;
+
+procedure TTextNinePatchObject.Draw(Canvas: TCanvas; Rect: TRect; Text: String; Opacity: Byte);
+begin
+  Draw(Canvas, Rect, Text, Opacity, Opacity);
 end;
 
 procedure TTextNinePatchObject.SetShowCaption(const Value: Boolean);
@@ -1074,9 +1086,9 @@ begin
   inherited;
 end;
 
-procedure TStyleNinePatch.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255);
+procedure TStyleNinePatch.Draw(Canvas: TCanvas; Rect: TRect; StateIndex: Integer; Opacity: Byte = 255; OverlayOpacity: Byte = 255);
 begin
-  DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Opacity);
+  DoDraw(Canvas, Rect, GetSuitedBitmap(StateIndex), GetSuitedOverlayBitmap(StateIndex), ImageMode, Opacity, OverlayOpacity);
 end;
 
 procedure TStyleNinePatch.EndUpdate;
@@ -1204,7 +1216,7 @@ begin
 end;
 
 procedure TStyleNinePatch.DoDraw(Canvas: TCanvas; Rect: TRect; Bitmap: TBitmap;
-      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255);
+      OverlayBitmap: TBitmap; Mode: TStretchMode; Opacity: Byte = 255; OverlayOpacity: Byte = 255);
 var
   R: TRect;
   ContentRect: TRect;

@@ -161,3 +161,10 @@ Added "ES.BitmapPixels.pas" with TBitmapData to easy and fast access to TBitmap 
 (See Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dpr)
 Improved support for Delphi 11 Alexandria.
 Fix minor issues.
+
+[29.11.2023] 
+*** v4.5. What's new? ***
+Support Delphi 12 Athens. 
+Added a new OverlayOpacity property to TEsNinePatchImage, TEsImageLabel, TEsImageLayout, TEsImageStaticText to be able to change the transparency of the overlay separately from the background. (see NinePatchLayout example) (Thanks to Phil Dewar)
+Fix compilation "ES.BitmapPixels" issues on Delphi 10 and below. (Thanks to Oleg/Softologic)
+Support DoubleBufferedMode for Delphi 12.

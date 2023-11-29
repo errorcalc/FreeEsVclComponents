@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.4                         }
+{                       EsVclComponents/EsVclCore v4.5                         }
 {                           errorsoft(c) 2009-2023                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -32,6 +32,7 @@ type
     FImage: TPngImage;
     FOpacity: Byte;
     FOverlay: TPngImage;
+    FOverlayOpacity: Byte;
     procedure NeedRepaint(Sender: TObject);
     procedure SetImageMargins(const Value: TImageMargins);
     function GetImageMargins: TImageMargins;
@@ -45,6 +46,7 @@ type
     procedure SetOverlaySpace(const Value: Boolean);
     function GetOverlayMargins: TImageMargins;
     procedure SetOverlayMargins(const Value: TImageMargins);
+    procedure SetOverlayOpacity(const Value: Byte);
     // text
     function GetTextAlignment: TAlignment;
     procedure SetTextAlignment(const Value: TAlignment);
@@ -79,7 +81,8 @@ type
     property ImageMargins: TImageMargins read GetImageMargins write SetImageMargins;
     property Image: TPngImage read FImage write SetImage;
     property Overlay: TPngImage read FOverlay write SetOverlay;
-    property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign;
+    property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign default TImageAlign.TopLeft;
+    property OverlayOpacity: Byte read FOverlayOpacity write SetOverlayOpacity default 255;
     property Opacity: byte read FOpacity write SetOpacity default 255;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
     property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
@@ -174,6 +177,7 @@ type
     FOverlay: TPngImage;
     FPaddingWithImage: Boolean;
     FPadding: TPadding;
+    FOverlayOpacity: Byte;
     procedure SetImageMargins(const Value: TImageMargins);
     function GetImageMargins: TImageMargins;
     procedure SetImage(const Value: TPngImage);
@@ -204,6 +208,7 @@ type
     function IsPaddingStored: Boolean;
     function GetPadding: TPadding;
     procedure PaddingChange(Sender: TObject);
+    procedure SetOverlayOpacity(const Value: Byte);
   protected
     procedure Paint; override;
     procedure Loaded; override;
@@ -224,6 +229,7 @@ type
     property Image: TPngImage read FImage write SetImage;
     property Overlay: TPngImage read FOverlay write SetOverlay;
     property OverlayAlign: TImageAlign read GetOverlayAlign write SetOverlayAlign default TImageAlign.TopLeft;
+    property OverlayOpacity: Byte read FOverlayOpacity write SetOverlayOpacity default 255;
     property OverlaySpace: Boolean read GetOverlaySpace write SetOverlaySpace default False;
     property OverlayMargins: TImageMargins read GetOverlayMargins write SetOverlayMargins;
     property Opacity: Byte read FOpacity write SetOpacity default 255;
@@ -242,6 +248,7 @@ type
     property Image;
     property Overlay;
     property OverlayAlign;
+    property OverlayOpacity;
     property OverlaySpace;
     property OverlayMargins;
     property Opacity;
@@ -259,6 +266,9 @@ type
     property UseDockManager;
     property DockSite;
     property DoubleBuffered;
+    {$IFDEF VER360UP}
+    property DoubleBufferedMode;
+    {$ENDIF}
     property DragCursor;
     property DragKind;
     property DragMode;
@@ -386,6 +396,7 @@ begin
   FOverlay := TFixPngImage.Create;
   FOverlay.OnChange := PictureChange;
   FOpacity := 255;
+  FOverlayOpacity := 255;
 end;
 
 destructor TEsNinePatchImage.Destroy;
@@ -458,7 +469,7 @@ end;
 procedure TEsNinePatchImage.Paint;
 begin
   Canvas.Font := Font;
-  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity, FOverlayOpacity);
 
   if (csDesigning in ComponentState) and not IsDrawHelper then
     DrawHelper(Canvas, Width, Height);
@@ -495,6 +506,15 @@ end;
 procedure TEsNinePatchImage.SetOverlayMargins(const Value: TImageMargins);
 begin
   NinePatch.OverlayMargins := Value;
+end;
+
+procedure TEsNinePatchImage.SetOverlayOpacity(const Value: Byte);
+begin
+  if Value <> FOverlayOpacity then
+  begin
+    FOverlayOpacity := Value;
+    Invalidate;
+  end;
 end;
 
 procedure TEsNinePatchImage.SetOverlay(const Value: TPngImage);
@@ -589,6 +609,7 @@ begin
   NinePatch.OverlayAlign := TImageAlign.TopLeft;
   NinePatch.OverlaySpace := False;
   FOpacity := 255;
+  FOverlayOpacity := 255;
 end;
 
 procedure TEsCustomImageLayout.CreateParams(var Params: TCreateParams);
@@ -699,7 +720,7 @@ end;
 procedure TEsCustomImageLayout.Paint;
 begin
   Canvas.Font := Font;
-  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity);
+  NinePatch.Draw(Canvas, Rect(0, 0, Width, Height), Caption, FOpacity, FOverlayOpacity);
 
   if (csDesigning in ComponentState) and not IsDrawHelper then
     DrawHelper(Canvas, Width, Height);
@@ -774,6 +795,15 @@ end;
 procedure TEsCustomImageLayout.SetOverlayMargins(const Value: TImageMargins);
 begin
   NinePatch.OverlayMargins := Value;
+end;
+
+procedure TEsCustomImageLayout.SetOverlayOpacity(const Value: Byte);
+begin
+  if Value <> FOverlayOpacity then
+  begin
+    FOverlayOpacity := Value;
+    Invalidate;
+  end;
 end;
 
 procedure TEsCustomImageLayout.SetOverlay(const Value: TPngImage);

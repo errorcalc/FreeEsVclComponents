@@ -1,0 +1,96 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5B9287A3-1F89-4FEE-A2E4-39EB910041C0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="RX12Athens\EsCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX12Athens\EsVclCore.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX12Athens\EsVclComponents.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="RX12Athens\EsVclComponentsDesign.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EsCore">
+        <MSBuild Projects="RX12Athens\EsCore.dproj"/>
+    </Target>
+    <Target Name="EsCore:Clean">
+        <MSBuild Projects="RX12Athens\EsCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsCore:Make">
+        <MSBuild Projects="RX12Athens\EsCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclCore">
+        <MSBuild Projects="RX12Athens\EsVclCore.dproj"/>
+    </Target>
+    <Target Name="EsVclCore:Clean">
+        <MSBuild Projects="RX12Athens\EsVclCore.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclCore:Make">
+        <MSBuild Projects="RX12Athens\EsVclCore.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponents">
+        <MSBuild Projects="RX12Athens\EsVclComponents.dproj"/>
+    </Target>
+    <Target Name="EsVclComponents:Clean">
+        <MSBuild Projects="RX12Athens\EsVclComponents.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponents:Make">
+        <MSBuild Projects="RX12Athens\EsVclComponents.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign">
+        <MSBuild Projects="RX12Athens\EsVclComponentsDesign.dproj"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Clean">
+        <MSBuild Projects="RX12Athens\EsVclComponentsDesign.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EsVclComponentsDesign:Make">
+        <MSBuild Projects="RX12Athens\EsVclComponentsDesign.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo">
+        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Clean">
+        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TBitmapPixelsDemo:Make">
+        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project6">
+        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj"/>
+    </Target>
+    <Target Name="Project6:Clean">
+        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project6:Make">
+        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EsCore;EsVclCore;EsVclComponents;EsVclComponentsDesign;TBitmapPixelsDemo;Project6"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EsCore:Clean;EsVclCore:Clean;EsVclComponents:Clean;EsVclComponentsDesign:Clean;TBitmapPixelsDemo:Clean;Project6:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EsCore:Make;EsVclCore:Make;EsVclComponents:Make;EsVclComponentsDesign:Make;TBitmapPixelsDemo:Make;Project6:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
