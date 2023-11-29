@@ -1,6 +1,6 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Alexandria 11.3 Update (**Version 4.4**)
+# Athens 12 Update (**Version 4.5**)
 ![Preview](Logos/Preview1.gif)
 ![Preview](Logos/Preview2.gif)
 ![Preview](Logos/Preview.gif)
@@ -48,7 +48,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsVersionLabel
 * TEsControlListCheckBox (Graphic TCheckBox analog for usage in TControlList)
 
-## XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria) - compatibility
+### Compatibility with XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria), RX12(Athens)
 
 # English ReadMe:
 
