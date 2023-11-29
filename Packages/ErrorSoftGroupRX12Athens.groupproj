@@ -15,12 +15,6 @@
         <Projects Include="RX12Athens\EsVclComponentsDesign.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -65,32 +59,14 @@
     <Target Name="EsVclComponentsDesign:Make">
         <MSBuild Projects="RX12Athens\EsVclComponentsDesign.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TBitmapPixelsDemo">
-        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj"/>
-    </Target>
-    <Target Name="TBitmapPixelsDemo:Clean">
-        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="TBitmapPixelsDemo:Make">
-        <MSBuild Projects="..\Samples\TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="Project6">
-        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj"/>
-    </Target>
-    <Target Name="Project6:Clean">
-        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Project6:Make">
-        <MSBuild Projects="..\..\..\Embarcadero\Studio\Projects\ggd\Project6.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="EsCore;EsVclCore;EsVclComponents;EsVclComponentsDesign;TBitmapPixelsDemo;Project6"/>
+        <CallTarget Targets="EsCore;EsVclCore;EsVclComponents;EsVclComponentsDesign"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="EsCore:Clean;EsVclCore:Clean;EsVclComponents:Clean;EsVclComponentsDesign:Clean;TBitmapPixelsDemo:Clean;Project6:Clean"/>
+        <CallTarget Targets="EsCore:Clean;EsVclCore:Clean;EsVclComponents:Clean;EsVclComponentsDesign:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="EsCore:Make;EsVclCore:Make;EsVclComponents:Make;EsVclComponentsDesign:Make;TBitmapPixelsDemo:Make;Project6:Make"/>
+        <CallTarget Targets="EsCore:Make;EsVclCore:Make;EsVclComponents:Make;EsVclComponentsDesign:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
