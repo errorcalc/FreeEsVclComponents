@@ -400,6 +400,9 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
     property OnPaint;
     property OnPainting;
     property OnProgress: TProgressEvent read GetOnProgress write SetOnProgress;
@@ -665,6 +668,9 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
     property OnPaint;
     property OnPainting;
     property OnResize;

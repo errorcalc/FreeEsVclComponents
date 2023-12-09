@@ -113,6 +113,9 @@ type
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
     property OnResize;
     property OnPaint;// TEsCustomControl
     property OnPainting;// TEsCustomControl

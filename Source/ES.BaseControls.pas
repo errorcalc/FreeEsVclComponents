@@ -132,7 +132,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.4;
+  EsVclCoreVersion = 4.5;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;

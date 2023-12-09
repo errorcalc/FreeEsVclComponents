@@ -47,7 +47,6 @@ type
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
-    procedure dddd(var Message: TMessage); message CM_UNTHEMECONTROL;
     procedure SetAlignment(const Value: TCheckBoxAlignment);
   protected
     procedure MouseEnter(); override;
@@ -194,11 +193,6 @@ procedure TEsControlListCheckBox.CMStyleChanged(var Message: TMessage);
 begin
   inherited;
   CalcCheckBoxSize(CurrentPPI);
-end;
-
-procedure TEsControlListCheckBox.dddd(var Message: TMessage);
-begin
-CalcCheckBoxSize(CurrentPPI);
 end;
 
 procedure TEsControlListCheckBox.CMTextChanged(var Message: TMessage);

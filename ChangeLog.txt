@@ -168,3 +168,8 @@ Support Delphi 12 Athens.
 Added a new OverlayOpacity property to TEsNinePatchImage, TEsImageLabel, TEsImageLayout, TEsImageStaticText to be able to change the transparency of the overlay separately from the background. (see NinePatchLayout example) (Thanks to Phil Dewar)
 Fix compilation "ES.BitmapPixels" issues on Delphi 10 and below. (Thanks to Oleg/Softologic)
 Support DoubleBufferedMode for Delphi 12.
+
+[09.12.2023]
+- Add lost  mouse wheel properties for controls
+- fix version const
+- refactor 
