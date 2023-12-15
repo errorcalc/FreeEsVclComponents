@@ -47,6 +47,7 @@ type
     property ShowHint;
     property Touch;
     property Visible;
+    property OnCanResize;
     property OnClick;
     property OnContextPopup;
     property OnDblClick;

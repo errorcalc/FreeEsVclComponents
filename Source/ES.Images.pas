@@ -652,6 +652,7 @@ type
     property Touch;
     property Transparent;
     property Visible;
+    property OnCanResize;
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
