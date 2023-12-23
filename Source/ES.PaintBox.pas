@@ -45,6 +45,8 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
+    property TabOrder;
+    property TabStop;
     property Touch;
     property Visible;
     property OnCanResize;
@@ -56,6 +58,11 @@ type
     property OnEndDock;
     property OnEndDrag;
     property OnGesture;
+    property OnEnter;
+    property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
     property OnMouseActivate;
     property OnMouseDown;
     property OnMouseEnter;

@@ -292,6 +292,7 @@ type
     FFrameWidth: TFrameWidth;
     FFrameColor: TColor;
     FFrameStyle: TFrameStyle;
+    FAllowFocus: Boolean;
     function GetCanvas: TCanvas;
     function GetImageIndex: TImageIndex;
     function GetImages: TCustomImageList;
@@ -326,12 +327,14 @@ type
     procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure ImageProxyChange(Sender: TObject);
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Loaded; override;
     procedure Paint; override;
     procedure PaintWindow(DC: HDC); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    function CanFocus: Boolean; override;
     procedure BeginDraw;
     procedure EndDraw;
     procedure RecreateBitmap;
@@ -339,6 +342,7 @@ type
   published
     property Align;
     property AlignWithMargins;
+    property AllowFocus: Boolean read FAllowFocus write FAllowFocus default False;
     property Anchors;
     property AutoSize;
     property BorderWidth;
@@ -393,6 +397,9 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
     property OnGesture;
     property OnMouseActivate;
     property OnMouseDown;
@@ -555,6 +562,7 @@ type
     FFrameWidth: TFrameWidth;
     FFrameColor: TColor;
     FFrameStyle: TFrameStyle;
+    FAllowFocus: Boolean;
     function GetImageCollection: TCustomImageCollection;
     function GetImageHeight: Integer;
     function GetImageIndex: TImageIndex;
@@ -583,10 +591,12 @@ type
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure ImageProxyChange(Sender: TObject);
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    function CanFocus: Boolean; override;
     property FrameColor: TColor read FFrameColor write SetFrameColor default clBtnShadow;
     property FrameStyle: TFrameStyle read FFrameStyle write SetFrameStyle default TExFrameStyle.None;
     property FrameWidth: TFrameWidth read FFrameWidth write SetFrameWidth default 1;
@@ -608,11 +618,13 @@ type
     property Opacity: Byte read GetOpacity write SetOpacity default 255;
     /// <summary> Image location </summary>
     property Stretch: TImageStretch read GetStretch write SetStretch default TImageStretch.Fit;
+    property AllowFocus: Boolean read FAllowFocus write FAllowFocus default False;
   end;
 
   TEsVirtualImageControl = class(TEsCustomVirtualImageControl)
     property Align;
     property AlignWithMargins;
+    property AllowFocus;
     property Anchors;
     property BorderWidth;
     property Color default clBtnFace;
@@ -662,6 +674,9 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
+    property OnKeyDown;
+    property OnKeyPress;
+    property OnKeyUp;
     property OnGesture;
     property OnMouseActivate;
     property OnMouseDown;
@@ -1491,6 +1506,11 @@ begin
     NewHeight := ImageProxy.ImageHeight + ContentMargins.Height;
 end;
 
+function TEsImageControl.CanFocus: Boolean;
+begin
+  Result := AllowFocus and Inherited;
+end;
+
 function TEsImageControl.GetOpacity: Byte;
 begin
   Result := ImageProxy.Opacity;
@@ -1592,8 +1612,18 @@ end;
 procedure TEsImageControl.KeyUp(var Key: Word; Shift: TShiftState);
 begin
   inherited;
-  if (Key = VK_SPACE) or (Key = VK_RETURN) then
+  if (Key = VK_SPACE) {or (Key = VK_RETURN)} then
     Click;
+end;
+
+procedure TEsImageControl.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+
+  if (Button = mbLeft) and Enabled and AllowFocus then
+  begin
+    Winapi.Windows.SetFocus(Handle);
+  end;
 end;
 
 procedure TEsImageControl.Loaded;
@@ -2287,6 +2317,11 @@ begin
   end;
 end;
 
+function TEsCustomVirtualImageControl.CanFocus: Boolean;
+begin
+  Result := AllowFocus and Inherited;
+end;
+
 {$IFDEF VER310UP}
 procedure TEsCustomVirtualImageControl.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
@@ -2356,8 +2391,18 @@ end;
 procedure TEsCustomVirtualImageControl.KeyUp(var Key: Word; Shift: TShiftState);
 begin
   inherited;
-  if (Key = VK_SPACE) or (Key = VK_RETURN) then
+  if (Key = VK_SPACE) {or (Key = VK_RETURN)} then
     Click;
+end;
+
+procedure TEsCustomVirtualImageControl.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+
+  if (Button = mbLeft) and Enabled and AllowFocus then
+  begin
+    Winapi.Windows.SetFocus(Handle);
+  end;
 end;
 
 procedure TEsCustomVirtualImageControl.Paint;

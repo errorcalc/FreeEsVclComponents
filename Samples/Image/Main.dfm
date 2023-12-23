@@ -11,8 +11,6 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object Image3: TImage
     Left = 336
@@ -2952,9 +2950,11 @@ object MainForm: TMainForm
     Top = 0
     Width = 770
     Height = 605
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 764
+    ExplicitHeight = 586
     object TabSheet1: TTabSheet
       Caption = 'Smothing'
       object Shape2: TShape
@@ -11434,15 +11434,18 @@ object MainForm: TMainForm
         object Label21: TLabel
           Left = 8
           Top = 5
-          Width = 151
+          Width = 320
           Height = 13
-          Caption = 'Focus support: (press TAB key)'
+          Caption = 
+            'Focus support: Press TAB key for Focus, and SPACE key for "Click' +
+            '"'
         end
         object EsImageControl14: TEsImageControl
           Left = 8
           Top = 24
           Width = 209
           Height = 73
+          AllowFocus = True
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
@@ -11879,6 +11882,7 @@ object MainForm: TMainForm
           Top = 24
           Width = 209
           Height = 73
+          AllowFocus = True
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
@@ -12116,6 +12120,7 @@ object MainForm: TMainForm
           Top = 24
           Width = 209
           Height = 73
+          AllowFocus = True
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D49484452000000A60000
             0038080600000077E483440000000473424954080808087C0864880000000970
