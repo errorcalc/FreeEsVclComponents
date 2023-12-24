@@ -317,6 +317,7 @@ type
     procedure SetTransparentGraphic(const Value: Boolean);
     procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
     procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure CNKeydown(var Message: TWMKeyDown); message CN_KEYDOWN;
     {$IFDEF VER340UP}
     function GetImageName: TImageName;
     function IsImageNameStored: Boolean;
@@ -326,7 +327,6 @@ type
     function CanAutoSize(var NewWidth, NewHeight: Integer): Boolean; override;
     procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure ImageProxyChange(Sender: TObject);
-    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Loaded; override;
     procedure Paint; override;
@@ -586,11 +586,11 @@ type
     procedure SetFrameWidth(const Value: TFrameWidth);
     procedure WMKillFocus(var Message: TWMKillFocus); message WM_KILLFOCUS;
     procedure WMSetFocus(var Message: TWMSetFocus); message WM_SETFOCUS;
+    procedure CNKeydown(var Message: TWMKeyDown); message CN_KEYDOWN;
   protected
     procedure CalcContentMargins(var Margins: TContentMargins); override;
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure ImageProxyChange(Sender: TObject);
-    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Paint; override;
   public
@@ -1511,6 +1511,8 @@ begin
   Result := AllowFocus and Inherited;
 end;
 
+
+
 function TEsImageControl.GetOpacity: Byte;
 begin
   Result := ImageProxy.Opacity;
@@ -1609,10 +1611,11 @@ begin
 end;
 {$ENDIF}
 
-procedure TEsImageControl.KeyUp(var Key: Word; Shift: TShiftState);
+procedure TEsImageControl.CNKeydown(var Message: TWMKeyDown);
 begin
   inherited;
-  if (Key = VK_SPACE) {or (Key = VK_RETURN)} then
+
+  if (Message.CharCode = VK_SPACE) or (Message.CharCode = VK_RETURN) then
     Click;
 end;
 
@@ -1666,7 +1669,7 @@ begin
     else
       DrawFrame(inherited Canvas, nil, ClientRect, FrameStyle, FrameWidth, FrameColor, clBtnHighlight, clBtnShadow);
 
-  if Focused then
+  if IsShowFocusRect(Self) then
   begin
     (inherited Canvas).Brush.Color := TColor($FF000000);
     (inherited Canvas).DrawFocusRect(ContentRect);
@@ -2388,10 +2391,11 @@ begin
   Result := ImageProxy.ImageName <> '';
 end;
 
-procedure TEsCustomVirtualImageControl.KeyUp(var Key: Word; Shift: TShiftState);
+procedure TEsCustomVirtualImageControl.CNKeydown(var Message: TWMKeyDown);
 begin
   inherited;
-  if (Key = VK_SPACE) {or (Key = VK_RETURN)} then
+
+  if (Message.CharCode = VK_SPACE) or (Message.CharCode = VK_RETURN) then
     Click;
 end;
 
@@ -2432,7 +2436,7 @@ begin
     DrawDesignStretchHint(Canvas, ClientRect, ImageProxy);
   end;
 
-  if Focused then
+  if IsShowFocusRect(Self) then
   begin
     Canvas.Brush.Color := TColor($FF000000);
     Canvas.DrawFocusRect(ContentRect);
