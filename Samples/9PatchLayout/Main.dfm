@@ -3,24 +3,22 @@ object FormMain: TFormMain
   Top = 0
   Caption = 'Nine Patch Sample'
   ClientHeight = 465
-  ClientWidth = 729
+  ClientWidth = 711
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   DesignSize = (
-    729
+    711
     465)
-  PixelsPerInch = 96
   TextHeight = 13
   object EsImageLayout1: TEsImageLayout
     Left = 8
     Top = 8
-    Width = 721
-    Height = 457
+    Width = 699
+    Height = 455
     ImageMargins.Left = 6
     ImageMargins.Top = 6
     ImageMargins.Right = 14
@@ -666,13 +664,13 @@ object FormMain: TFormMain
     ParentBufferedChildren = False
     TabOrder = 0
     DesignSize = (
-      721
-      457)
+      699
+      455)
     object EsImageLabel1: TEsImageLabel
       AlignWithMargins = True
       Left = 5
       Top = 5
-      Width = 702
+      Width = 680
       Height = 63
       ImageMargins.Left = 10
       ImageMargins.Top = 10
@@ -840,8 +838,8 @@ object FormMain: TFormMain
     object EsImageStaticText1: TEsImageStaticText
       Left = 544
       Top = 74
-      Width = 163
-      Height = 368
+      Width = 141
+      Height = 366
       Anchors = [akLeft, akTop, akRight, akBottom]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
@@ -856,6 +854,8 @@ object FormMain: TFormMain
         'control has rich aligning text! ***'#13#10'This is EsImageStaticText! ' +
         'This is EsImageStaticText! This is EsImageStaticText! This is Es' +
         'ImageStaticText!'
+      ExplicitWidth = 153
+      ExplicitHeight = 368
     end
   end
   object TimerAnimate: TTimer
