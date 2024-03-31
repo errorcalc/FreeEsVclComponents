@@ -73,7 +73,7 @@ end;
 procedure TFormDemo.CheckBoxUseThemeClick(Sender: TObject);
 begin
   if TCheckBox(Sender).Checked then
-    TStyleManager.TrySetStyle('Windows10')
+    TStyleManager.TrySetStyle('Tablet Light')
   else
     TStyleManager.TrySetStyle('Windows');
 end;

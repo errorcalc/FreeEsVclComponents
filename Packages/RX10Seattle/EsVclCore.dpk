@@ -1,4 +1,4 @@
-package EsVclCore;
+﻿package EsVclCore;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,24 +25,26 @@ package EsVclCore;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'errorsoft vcl library core'}
+{$DESCRIPTION 'Errorsoft EsVclCore'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '230'}
 
 requires
   rtl,
+  EsCore,
   vclimg,
   vcl;
 
 contains
   ES.BaseControls in '..\..\Source\ES.BaseControls.pas',
+  ES.BitmapPixels in '..\..\Source\ES.BitmapPixels.pas',
   ES.CfxClasses in '..\..\Source\ES.CfxClasses.pas',
   ES.ExGdiPlus in '..\..\Source\ES.ExGdiPlus.pas',
   ES.ExGraphics in '..\..\Source\ES.ExGraphics.pas',
   ES.StyleHooks in '..\..\Source\ES.StyleHooks.pas',
   ES.Utils in '..\..\Source\ES.Utils.pas',
-  ES.VclFix in '..\..\Source\ES.VclFix.pas',
-  ES.BitmapPixels in '..\..\Source\ES.BitmapPixels.pas';
+  ES.VclFix in '..\..\Source\ES.VclFix.pas';
 
 end.
+

@@ -1,4 +1,4 @@
-package EsVclComponentsDesign;
+﻿package EsVclComponentsDesign;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,13 +25,15 @@ package EsVclComponentsDesign;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'errorsoft free vcl library designtime'}
+{$DESCRIPTION 'Errorsoft EsVclComponentsDesign'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '170'}
 
 requires
   rtl,
+  EsCore,
+  EsVclCore,
   EsVclComponents,
   designide;
 

@@ -2950,11 +2950,9 @@ object MainForm: TMainForm
     Top = 0
     Width = 770
     Height = 605
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 764
-    ExplicitHeight = 586
     object TabSheet1: TTabSheet
       Caption = 'Smothing'
       object Shape2: TShape
@@ -8389,7 +8387,7 @@ object MainForm: TMainForm
       end
     end
     object TabSheet4: TTabSheet
-      Caption = 'TEsImageControl'
+      Caption = 'TEsImageControl (Focus support)'
       ImageIndex = 3
       object Panel8: TPanel
         Left = 16
@@ -11434,11 +11432,11 @@ object MainForm: TMainForm
         object Label21: TLabel
           Left = 8
           Top = 5
-          Width = 320
+          Width = 501
           Height = 13
           Caption = 
-            'Focus support: Press TAB key for Focus, and SPACE key for "Click' +
-            '"'
+            'Focus support: Press TAB key for Focus, and SPACE/ENTER key for ' +
+            '"Click" (Property AllowFocus = True)'
         end
         object EsImageControl14: TEsImageControl
           Left = 8

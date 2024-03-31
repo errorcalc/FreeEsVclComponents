@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.5                         }
-{                           errorsoft(c) 2009-2023                             }
+{                       EsVclComponents/EsVclCore v4.6                         }
+{                           errorsoft(c) 2009-2024                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -26,12 +26,16 @@ uses
 
 type
   TEsPaintBox = class(TEsCustomControl)
+  private
+    FAllowFocus: Boolean;
   protected
     procedure Paint; override;
   public
     constructor Create(AOwner: TComponent); override;
+    function CanFocus: Boolean; override;
   published
     property Align;
+    property AllowFocus: Boolean read FAllowFocus write FAllowFocus default False;
     property Anchors;
     property Color;
     property Constraints;
@@ -46,7 +50,7 @@ type
     property PopupMenu;
     property ShowHint;
     property TabOrder;
-    property TabStop;
+    property TabStop default True;
     property Touch;
     property Visible;
     property OnCanResize;
@@ -89,11 +93,17 @@ uses
 
 { TEsPaintBox }
 
+function TEsPaintBox.CanFocus: Boolean;
+begin
+  Result := AllowFocus and Inherited;
+end;
+
 constructor TEsPaintBox.Create(AOwner: TComponent);
 begin
   inherited;
   Width := 105;
   Height := 105;
+  TabStop := True;
 end;
 
 procedure TEsPaintBox.Paint;

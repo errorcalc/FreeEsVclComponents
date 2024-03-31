@@ -171,5 +171,14 @@ Support DoubleBufferedMode for Delphi 12.
 
 [09.12.2023]
 - Add lost  mouse wheel properties for controls
-- fix version const
-- refactor 
+- Fix version const
+- Refactor 
+
+[31.03.2024]
+- Recreate project files
+- Refactoring ES.BaseControls
+- Improved focus behavior for TEsImageControl, TEsVirtualImageControl and TEsPaintBox. 
+Now, activate AllowFocus property makes TEsImageControl and TEsVirtualImageControl as full focus supported controls!
+(See Image Demo)
+- Improved keyboard support for TEsPaintBox.
+- Add lost published props

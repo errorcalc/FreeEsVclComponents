@@ -15,7 +15,6 @@ object EsRegexEditorForm: TEsRegexEditorForm
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   DesignSize = (
     409
     141)
@@ -32,6 +31,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
     TabOrder = 0
     Text = ''
     OnChange = PatternEditChange
+    ExplicitWidth = 316
   end
   object TestEdit: TEsRegexLabeledEdit
     Left = 8
@@ -46,6 +46,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Text = ''
     AllowNeutral = False
     IndicateState = All
+    ExplicitWidth = 387
   end
   object PatternsButton: TButton
     Left = 336
@@ -56,6 +57,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Caption = 'Patterns...'
     TabOrder = 1
     OnClick = PatternsButtonClick
+    ExplicitLeft = 330
   end
   object FotterLayout: TEsLayout
     AlignWithMargins = True
@@ -70,6 +72,8 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Align = alBottom
     ParentBackground = False
     TabOrder = 3
+    ExplicitTop = 89
+    ExplicitWidth = 387
     object CancelButton: TButton
       Left = 318
       Top = 0
@@ -79,6 +83,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
       Caption = 'Cancel'
       TabOrder = 1
       OnClick = CancelButtonClick
+      ExplicitLeft = 312
     end
     object OkButton: TButton
       Left = 243
@@ -89,12 +94,13 @@ object EsRegexEditorForm: TEsRegexEditorForm
       Caption = 'OK'
       TabOrder = 0
       OnClick = OkButtonClick
+      ExplicitLeft = 237
     end
     object LinkLabelEs: TLinkLabel
       Left = 0
       Top = 6
-      Width = 70
-      Height = 19
+      Width = 110
+      Height = 29
       Caption = '<a href="http://errorsoft.org">errorsoft.org</a>'
       TabOrder = 2
       UseVisualStyle = True

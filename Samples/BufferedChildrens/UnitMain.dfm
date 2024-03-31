@@ -10,29 +10,29 @@ object FormDemo: TFormDemo
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   DesignSize = (
     716
     487)
-  PixelsPerInch = 96
   TextHeight = 13
   object EsLayout: TEsLayout
     Left = 8
     Top = 31
-    Width = 700
+    Width = 694
     Height = 448
     Anchors = [akLeft, akTop, akRight, akBottom]
     BufferedChildren = False
     ParentBufferedChildren = False
     TabOrder = 0
     OnPaint = EsLayoutPaint
+    ExplicitWidth = 688
+    ExplicitHeight = 429
     DesignSize = (
-      700
+      694
       448)
     object Image1: TImage
       Left = 424
       Top = 172
-      Width = 276
+      Width = 270
       Height = 276
       Anchors = [akLeft, akTop, akRight, akBottom]
       Picture.Data = {
@@ -48187,7 +48187,7 @@ object FormDemo: TFormDemo
     object Bevel1: TBevel
       Left = 424
       Top = 171
-      Width = 276
+      Width = 270
       Height = 277
       Anchors = [akLeft, akTop, akRight, akBottom]
       ExplicitWidth = 329
@@ -48390,7 +48390,7 @@ object FormDemo: TFormDemo
       Brush.Color = clBlue
     end
     object SpeedButton6: TSpeedButton
-      Left = 619
+      Left = 613
       Top = 366
       Width = 73
       Height = 73
@@ -48399,7 +48399,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 416
     end
     object SpeedButton7: TSpeedButton
-      Left = 619
+      Left = 613
       Top = 287
       Width = 73
       Height = 73
@@ -48408,7 +48408,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 337
     end
     object SpeedButton8: TSpeedButton
-      Left = 619
+      Left = 613
       Top = 208
       Width = 73
       Height = 73
@@ -48417,7 +48417,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 258
     end
     object SpeedButton9: TSpeedButton
-      Left = 540
+      Left = 534
       Top = 366
       Width = 73
       Height = 73
@@ -48426,7 +48426,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 416
     end
     object SpeedButton10: TSpeedButton
-      Left = 540
+      Left = 534
       Top = 287
       Width = 73
       Height = 73
@@ -48435,7 +48435,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 337
     end
     object SpeedButton11: TSpeedButton
-      Left = 540
+      Left = 534
       Top = 208
       Width = 73
       Height = 73
@@ -48444,7 +48444,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 258
     end
     object SpeedButton12: TSpeedButton
-      Left = 461
+      Left = 455
       Top = 366
       Width = 73
       Height = 73
@@ -48453,7 +48453,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 416
     end
     object SpeedButton13: TSpeedButton
-      Left = 461
+      Left = 455
       Top = 287
       Width = 73
       Height = 73
@@ -48462,7 +48462,7 @@ object FormDemo: TFormDemo
       ExplicitTop = 337
     end
     object SpeedButton14: TSpeedButton
-      Left = 461
+      Left = 455
       Top = 208
       Width = 73
       Height = 73
@@ -48473,7 +48473,7 @@ object FormDemo: TFormDemo
     object SpeedButton15: TSpeedButton
       Left = 425
       Top = 172
-      Width = 31
+      Width = 25
       Height = 31
       Anchors = [akLeft, akTop, akRight, akBottom]
       ExplicitWidth = 84

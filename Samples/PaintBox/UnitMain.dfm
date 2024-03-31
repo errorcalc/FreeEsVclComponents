@@ -12,9 +12,7 @@ object FormMain: TFormMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object PaintBox: TPaintBox
     Left = 8
@@ -42,6 +40,7 @@ object FormMain: TFormMain
     Top = 27
     Width = 400
     Height = 400
+    TabOrder = 0
     OnPaint = EsPaintBoxPaint
   end
   object Timer: TTimer

@@ -65,8 +65,8 @@ type
     procedure tbAnimationDelayChange(Sender: TObject);
     procedure tbAnimationEnergyChange(Sender: TObject);
     procedure tbTimerIntervalChange(Sender: TObject);
-    procedure Panel1Resize(Sender: TObject);
     procedure cbStyleChange(Sender: TObject);
+    procedure Panel1Resize(Sender: TObject);
   private
     { Private declarations }
   public
@@ -122,6 +122,8 @@ begin
   tbAnimationDelay.Position := EsActivityBar.AnimationDelay;
   tbAnimationEnergy.Position := EsActivityBar.AnimationEnergy;
   tbTimerInterval.Position := EsActivityBar.TimerInterval;
+
+  Panel1Resize(Self);
 end;
 
 procedure TMainForm.Panel1Resize(Sender: TObject);

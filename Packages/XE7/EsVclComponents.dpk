@@ -1,10 +1,4 @@
-package EsVclComponents;
-
-// For Sydney support
-{$IF Defined(VER210) or Defined(VER220) or Defined(VER230) or Defined(VER240) or
-  Defined(VER250) or Defined(VER260) or Defined(VER270) or Defined(VER280) or
-  Defined(VER290) or Defined(VER300) or Defined(VER310) or Defined(VER320) or
-  Defined(VER330)}{$DEFINE VCLWINX_NO_NEEDED}{$IFEND}
+﻿package EsVclComponents;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -31,20 +25,19 @@ package EsVclComponents;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'errorsoft free vcl components'}
+{$DESCRIPTION 'Errorsoft EsVclComponents'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
 {$LIBSUFFIX '210'}
 
 requires
   rtl,
-  vclimg,
-  vcl,
-  {$IFNDEF VCLWINX_NO_NEEDED}vclwinx,{$ENDIF}
   EsVclCore,
-  EsCore;
+  EsCore,
+  vclimg;
 
 contains
+  ES.ControlListControls in '..\..\Source\ES.ControlListControls.pas',
   ES.Hints in '..\..\Source\ES.Hints.pas',
   ES.Images in '..\..\Source\ES.Images.pas',
   ES.Indicators in '..\..\Source\ES.Indicators.pas',
@@ -54,7 +47,6 @@ contains
   ES.PaintBox in '..\..\Source\ES.PaintBox.pas',
   ES.RegExControls in '..\..\Source\ES.RegExControls.pas',
   ES.Shapes in '..\..\Source\ES.Shapes.pas',
-  ES.Switch in '..\..\Source\ES.Switch.pas',
-  ES.ControlListControls in '..\..\Source\ES.ControlListControls.pas';
+  ES.Switch in '..\..\Source\ES.Switch.pas';
 
 end.

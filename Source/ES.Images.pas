@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.5                         }
-{                           errorsoft(c) 2009-2023                             }
+{                       EsVclComponents/EsVclCore v4.6                         }
+{                           errorsoft(c) 2009-2024                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -382,7 +382,7 @@ type
     property StyleName;
     {$ENDIF}
     property TabOrder;
-    property TabStop;
+    property TabStop default True;
     property Touch;
     property Transparent;
     property TransparentGraphic: Boolean read GetTransparentGraphic write SetTransparentGraphic default False;
@@ -660,7 +660,7 @@ type
     property StyleName;
     {$ENDIF}
     property TabOrder;
-    property TabStop;
+    property TabStop default True;
     property Touch;
     property Transparent;
     property Visible;
@@ -1462,6 +1462,7 @@ begin
   Transparent := True;
   Width := 100;
   Height := 100;
+  TabStop := True;
 end;
 
 destructor TEsImageControl.Destroy;
@@ -1510,8 +1511,6 @@ function TEsImageControl.CanFocus: Boolean;
 begin
   Result := AllowFocus and Inherited;
 end;
-
-
 
 function TEsImageControl.GetOpacity: Byte;
 begin
@@ -2302,6 +2301,7 @@ begin
   FFrameWidth := 1;
   Width := 100;
   Height := 100;
+  TabStop := True;
 end;
 
 destructor TEsCustomVirtualImageControl.Destroy;

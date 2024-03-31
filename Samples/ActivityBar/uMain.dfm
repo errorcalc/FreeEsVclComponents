@@ -3,30 +3,30 @@ object MainForm: TMainForm
   Top = 0
   Caption = 'ActivityBar Sample'
   ClientHeight = 376
-  ClientWidth = 647
+  ClientWidth = 648
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   DesignSize = (
-    647
+    648
     376)
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 647
+    Width = 648
     Height = 376
     Align = alClient
-    BevelWidth = 3
+    BevelOuter = bvNone
     ShowCaption = False
     TabOrder = 1
     OnResize = Panel1Resize
+    ExplicitWidth = 641
+    ExplicitHeight = 357
     object EsLayoutMain: TEsLayout
       Left = 0
       Top = 11
@@ -497,7 +497,7 @@ object MainForm: TMainForm
   object EsActivityBar: TEsActivityBar
     Left = 0
     Top = 0
-    Width = 647
+    Width = 648
     Height = 11
     Anchors = [akLeft, akTop, akRight]
     AutoHide = True

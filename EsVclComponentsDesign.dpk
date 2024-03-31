@@ -25,12 +25,14 @@ package EsVclComponentsDesign;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'errorsoft free vcl library designtime'}
+{$DESCRIPTION 'Errorsoft EsVclComponentsDesign'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
+  EsCore,
+  EsVclCore,
   EsVclComponents,
   designide;
 

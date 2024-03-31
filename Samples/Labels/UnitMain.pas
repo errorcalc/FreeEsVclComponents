@@ -40,7 +40,7 @@ end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
-  Update;
+  UpdateMe;
 end;
 
 procedure TFormMain.UpdateMe();
@@ -51,7 +51,7 @@ end;
 
 procedure TFormMain.EditAddressChange(Sender: TObject);
 begin
-  Update;
+  UpdateMe;
 end;
 
 end.

@@ -1,6 +1,6 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# Athens 12 Update (**Version 4.5**)
+# "X" Update (**Version 4.6**)
 ![Preview](Logos/Preview1.gif)
 ![Preview](Logos/Preview2.gif)
 ![Preview](Logos/Preview.gif)
@@ -135,7 +135,7 @@ Features:
 * Support Opacity
 * More Stretch modes
 * Draw frame if need
-* Support Focusing
+* Support Focusing(Activate AllowFocus property makes as full focus supported control)
 
 ![Icon](Source/icons/TESREGEXEDIT32.bmp)
 **TEsRegexEdit** - Edit with regular expression validation and indication.
@@ -247,7 +247,7 @@ Features:
 * Поддержка полупрозрачности
 * Несколько режимов растягивания изображения
 * Рисование границы, если необходимо
-* Поддержка фокуса ввода
+* Поддержка фокуса ввода(Activate AllowFocus property makes as full focus supported control)
 
 ![Icon](Source/icons/TESREGEXEDIT32.bmp)
 **TEsRegexEdit** - TEdit со встроенной поддержкой валидации и индикации правильности ввода с помощью регулярных выражений.

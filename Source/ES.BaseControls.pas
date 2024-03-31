@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.5                         }
-{                           errorsoft(c) 2009-2023                             }
+{                       EsVclComponents/EsVclCore v4.6                         }
+{                           errorsoft(c) 2009-2024                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -105,10 +105,14 @@ interface
   {$IFDEF VER350}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
   {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
   {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$ENDIF}
-  // Next versions
-  {$IF CompilerVersion >= 34}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
+  // XE12 Athens
+  {$IFDEF VER360}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
   {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
-  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$IFEND}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$ENDIF}
+  // Next versions
+  {$IF CompilerVersion > 36}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
+  {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$IFEND}
   // Vcl
   {$IFDEF VER240UP}{$DEFINE STYLE_ELEMENTS}{$ENDIF}
   {$IFDEF VER330UP}{$DEFINE VIRTUAL_IMAGE}{$ENDIF}
@@ -132,7 +136,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.5;
+  EsVclCoreVersion = 4.6;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
@@ -359,9 +363,9 @@ type
   procedure DrawControlHelper(Canvas: TCanvas; Rect: TRect; BorderWidth: TBorderWidth;
     Padding: TPadding; Options: THelperOptions); overload;
 
-  function CalcClientRect(Control: TControl): TRect;
+  function CalcControlClientRect(Control: TControl): TRect;
 
-  procedure DrawParentImage(Control: TControl; DC: HDC; InvalidateParent: Boolean = False);
+  procedure DrawParentImage(Control: TControl; DC: HDC);
 
 implementation
 
@@ -542,79 +546,64 @@ begin
   {$ENDIF}
 end;
 
-function CalcClientRect(Control: TControl): TRect;
+function CalcControlClientRect(Control: TControl): TRect;
 var
-  {$IFDEF FAST_CALC_CLIENTRECT}
   Info: TWindowInfo;
-  {$ENDIF}
-  IsFast: Boolean;
 begin
-  {$IFDEF FAST_CALC_CLIENTRECT}
-  IsFast := True;
-  {$ELSE}
-  IsFast := False;
-  {$ENDIF}
-
-  Result := Rect(0, 0, Control.Width, Control.Height);
-
-  // Only TWinControl's has non client area
+  // only TWinControl's has non client area
   if not (Control is TWinControl) then
-    Exit;
-
-  // Fast method not work for controls not having Handle
-  if not TWinControl(Control).Handle <> 0 then
-    IsFast := False;
-
-  if IsFast then
   begin
-    ZeroMemory(@Info, SizeOf(TWindowInfo));
-    Info.cbSize := SizeOf(TWindowInfo);
-    GetWindowInfo(TWinControl(Control).Handle, info);
+    Result.Left := 0;
+    Result.Top := 0;
+    Result.Right := Control.Width;
+    Result.Bottom := Control.Height;
+    exit;
+  end;
+
+  ZeroMemory(@Info, SizeOf(TWindowInfo));
+  Info.cbSize := SizeOf(TWindowInfo);
+  // try get info
+  if GetWindowInfo(TWinControl(Control).Handle, Info) then
+  begin
+    // fast way
     Result.Left := Info.rcClient.Left - Info.rcWindow.Left;
     Result.Top := Info.rcClient.Top - Info.rcWindow.Top;
-    Result.Right := -Info.rcWindow.Left + Info.rcClient.Right;
-    Result.Top := -Info.rcWindow.Top + Info.rcClient.Bottom;
+    Result.Right := Info.rcClient.Right - Info.rcWindow.Left;
+    Result.Bottom := Info.rcClient.Bottom - Info.rcWindow.Top;
   end else
   begin
+    // slow way
+    Result := Rect(0, 0, Control.Width, Control.Height);
     Control.Perform(WM_NCCALCSIZE, 0, LParam(@Result));
   end;
 end;
 
-procedure DrawParentImage(Control: TControl; DC: HDC; InvalidateParent: Boolean = False);
+procedure DrawParentImage(Control: TControl; DC: HDC);
 var
   ClientRect: TRect;
+  ParentClientRect: TRect;
   P: TPoint;
   SaveIndex: Integer;
 begin
+  // no parent => no parent image
   if Control.Parent = nil then
-    Exit;
+    exit;
+
   SaveIndex := SaveDC(DC);
-  GetViewportOrgEx(DC, P);
-
-  // if control has non client border then need additional offset viewport
-  ClientRect := Control.ClientRect;
-  if (ClientRect.Right <> Control.Width) or (ClientRect.Bottom <> Control.Height) then
-  begin
-    ClientRect := CalcClientRect(Control);
+  try
+    ClientRect := CalcControlClientRect(Control);
+    GetViewportOrgEx(DC, P);
     SetViewportOrgEx(DC, P.X - Control.Left - ClientRect.Left, P.Y - Control.Top - ClientRect.Top, nil);
-  end else
-    SetViewportOrgEx(DC, P.X - Control.Left, P.Y - Control.Top, nil);
 
-  IntersectClipRect(DC, 0, 0, Control.Parent.ClientWidth, Control.Parent.ClientHeight);
+    // clip by parent client coord
+    ParentClientRect := CalcControlClientRect(Control.Parent);
+    IntersectClipRect(DC, 0, 0, ParentClientRect.Width, ParentClientRect.Height);
 
-  Control.Parent.Perform(WM_ERASEBKGND, DC, 0);
-  Control.Parent.Perform(WM_PRINTCLIENT, DC, PRF_CLIENT);
-
-  RestoreDC(DC, SaveIndex);
-
-  if InvalidateParent then
-    if not (Control.Parent is TCustomControl) and not (Control.Parent is TCustomForm) and
-       not (csDesigning in Control.ComponentState)and not (Control.Parent is TEsCustomControl) then
-    begin
-      Control.Parent.Invalidate;
-    end;
-
-  SetViewportOrgEx(DC, P.X, P.Y, nil);
+    Control.Parent.Perform(WM_ERASEBKGND, DC, 0);
+    Control.Parent.Perform(WM_PRINTCLIENT, DC, PRF_CLIENT);
+  finally
+    RestoreDC(DC, SaveIndex);
+  end;
 end;
 
 procedure BitmapDeleteAndNil(var Bitmap: HBITMAP);
@@ -702,7 +691,7 @@ end;
 
 procedure TEsCustomControl.DrawBackground(DC: HDC);
 begin
-  DrawParentImage(Self, DC, False);
+  DrawParentImage(Self, DC);
 end;
 
 // hack for bad graphic controls

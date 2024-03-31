@@ -33,10 +33,7 @@ implementation
 
 procedure TFormMain.TimerAnimateTimer(Sender: TObject);
 begin
-  if EsImageLayout1.OverlayOpacity - 10 < 0 then
-    EsImageLayout1.OverlayOpacity := 255;
-
-  EsImageLayout1.OverlayOpacity := EsImageLayout1.OverlayOpacity - 10;
+  EsImageLayout1.OverlayOpacity := Trunc((Sin(GetTickCount64 * 0.004) + 1) * 127);
 end;
 
 end.
