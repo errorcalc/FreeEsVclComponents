@@ -105,7 +105,6 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="EsVclCore.dcp"/>
         <DCCReference Include="EsCore.dcp"/>
-        <DCCReference Include="vclwinx.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="Source\ES.ControlListControls.pas"/>
         <DCCReference Include="Source\ES.Hints.pas"/>
