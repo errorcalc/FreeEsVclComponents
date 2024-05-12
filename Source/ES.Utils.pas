@@ -55,6 +55,9 @@ function ImageListGetBitmap(ImageList: TCustomImageList; Index: Integer; Bitmap:
 function GetMainColor(var Color: TAlphaColor): Boolean; overload;
 procedure InitMainColor;
 
+function AllocateUtilWindow(const Method: TWndMethod): HWND;
+procedure DeallocateUtilWindow(Wnd: HWND);
+
 implementation
 
 uses
@@ -480,5 +483,111 @@ begin
   if (not CheckWin32Version(6, 2)) or (DwmGetColorizationColor(MainColor, DwnOpaqueBlend) <> S_OK) then
     MainColor := 0;
 end;
+
+var
+  EsHiddenUtilWindowClass: TAtom = 0;
+
+procedure TryRegisterEsHiddenUtilWindowClass();
+const
+  EsUtilWindowClassPrototype: TWndClass = (
+    style: 0;
+    lpfnWndProc: @DefWindowProc;// default proc
+    cbClsExtra: 0;
+    cbWndExtra: SizeOf(TMethod);// extra mem for handler
+    hInstance: 0;
+    hIcon: 0;
+    hCursor: 0;
+    hbrBackground: 0;
+    lpszMenuName: nil;
+    lpszClassName: 'EsHiddenUtilWindow'
+  );
+var
+  NewClass: TAtom;
+begin
+  NewClass := Winapi.Windows.RegisterClass(EsUtilWindowClassPrototype);
+
+  if NewClass <> 0 then
+    EsHiddenUtilWindowClass := NewClass// ok
+  else
+    if Winapi.Windows.GetLastError = ERROR_CLASS_ALREADY_EXISTS then
+      Winapi.Windows.SetLastError(0)// just ignore the registration error of the same class, its ok
+    else
+      RaiseLastOSError();
+end;
+
+procedure UnregiserEsHiddenUtilWindowClass();
+begin
+  if EsHiddenUtilWindowClass <> 0 then
+    Winapi.Windows.UnRegisterClass(LPCWSTR(EsHiddenUtilWindowClass), HInstance);
+end;
+
+function UtilWindowProc(HWnd: HWND; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM): LRESULT; stdcall;
+var
+  Method: TMethod;
+  Message: TMessage;
+  M: TWndMethod;
+  K: LRESULT;
+begin
+  // make method
+  Method.Code := Pointer(GetWindowLongPtr(HWnd, SizeOf(Pointer) * 0));// code
+  Method.Data := Pointer(GetWindowLongPtr(HWnd, SizeOf(Pointer) * 1));// data
+
+  // make message
+  Message.Result := 0;
+  Message.Msg := Msg;
+  Message.WParam := WParam;
+  Message.LParam := LParam;
+
+  // call
+  TWndMethod(Method)(Message);
+
+  // set result
+  Result := Message.Result;
+end;
+
+function AllocateUtilWindow(const Method: TWndMethod): HWND;
+begin
+  // Although it is possible that a race condition may occur in the condition,
+  // which could lead to multiple threads calling TryRegisterEsUtilWindowClass at once,
+  // there is nothing wrong with this, the first call will register the class,
+  // and the rest will simply do nothing.
+  // Additional verification of the success of class registration in TryRegisterEsUtilWindowClass
+  // is "cheaper" than using synchronization primitives.
+  if EsHiddenUtilWindowClass = 0 then
+    TryRegisterEsHiddenUtilWindowClass();
+
+  // make window
+  Result := CreateWindowEx(
+    WS_EX_TOOLWINDOW,// dwExStyle
+    LPCWSTR(EsHiddenUtilWindowClass),// lpClassName
+    '',// lpWindowName
+    WS_POPUP,// dwStyle
+    0,// X
+    0,// Y
+    0,// nWidth
+    0,// nHeight
+    0,// hWndParent
+    0,// hMenu
+    HInstance,// hInstance
+    nil// lpParam (https://learn.microsoft.com/en-us/windows/win32/learnwin32/managing-application-state-)
+  );
+
+  // save method
+  SetWindowLongPtr(Result, SizeOf(Pointer) * 0, IntPtr(TMethod(Method).Code));// code
+  SetWindowLongPtr(Result, SizeOf(Pointer) * 1, IntPtr(TMethod(Method).Data));// data
+
+  // set proc
+  SetWindowLongPtr(Result, GWL_WNDPROC, IntPtr(@UtilWindowProc));
+end;
+
+procedure DeallocateUtilWindow(Wnd: HWND);
+begin
+  DestroyWindow(Wnd);
+end;
+
+initialization
+
+finalization
+  UnregiserEsHiddenUtilWindowClass();
 
 end.
