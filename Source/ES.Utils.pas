@@ -499,7 +499,7 @@ const
     hCursor: 0;
     hbrBackground: 0;
     lpszMenuName: nil;
-    lpszClassName: 'EsHiddenUtilWindow'
+    lpszClassName: 'EsHiddenUtilWindowClass'
   );
 var
   NewClass: TAtom;
@@ -518,7 +518,7 @@ end;
 procedure UnregiserEsHiddenUtilWindowClass();
 begin
   if EsHiddenUtilWindowClass <> 0 then
-    Winapi.Windows.UnRegisterClass(LPCWSTR(EsHiddenUtilWindowClass), HInstance);
+    Winapi.Windows.UnRegisterClass(MakeIntAtom(EsHiddenUtilWindowClass), HInstance);
 end;
 
 function UtilWindowProc(HWnd: HWND; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM): LRESULT; stdcall;
