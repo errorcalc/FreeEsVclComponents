@@ -525,8 +525,6 @@ function UtilWindowProc(HWnd: HWND; Msg: Cardinal; WParam: WPARAM; LParam: LPARA
 var
   Method: TMethod;
   Message: TMessage;
-  M: TWndMethod;
-  K: LRESULT;
 begin
   // make method
   Method.Code := Pointer(GetWindowLongPtr(HWnd, SizeOf(Pointer) * 0));// code
