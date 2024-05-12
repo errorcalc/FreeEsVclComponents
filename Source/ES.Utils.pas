@@ -510,7 +510,7 @@ begin
     EsHiddenUtilWindowClass := NewClass// ok
   else
     if Winapi.Windows.GetLastError = ERROR_CLASS_ALREADY_EXISTS then
-      Winapi.Windows.SetLastError(0)// just ignore the registration error of the same class, its ok
+      Winapi.Windows.SetLastError(ERROR_SUCCESS)// just ignore the registration error of the same class, its ok
     else
       RaiseLastOSError();
 end;
