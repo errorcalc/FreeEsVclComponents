@@ -202,6 +202,7 @@ type
     procedure SetSplitterColor(const Value: TColor);
   protected
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     function DoCanResize(var NewSize: Integer): Boolean; override;
     procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
     procedure StopSizing(); override;
@@ -608,6 +609,12 @@ begin
   // show splitter window
   if FResizeStyle in [rsLine, rsPattern] then
     MakeSplitterWindow();
+end;
+
+procedure TEsTransparentSplitter.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  KillSplitterWindow();
 end;
 
 procedure TEsTransparentSplitter.SetResizeStyle(const Value: TResizeStyle);
