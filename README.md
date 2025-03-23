@@ -1,6 +1,7 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# "X" Update (**Version 4.6**)
+# "Q" Update with 64-bit IDE support (**Version 4.7**)
+![Preview](Logos/Preview3.gif)
 ![Preview](Logos/Preview1.gif)
 ![Preview](Logos/Preview2.gif)
 ![Preview](Logos/Preview.gif)
@@ -47,6 +48,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsLinkLabel
 * TEsVersionLabel
 * TEsControlListCheckBox (Graphic TCheckBox analog for usage in TControlList)
+* TEsTransparentSplitter (Inherited from TSplitter, this component displays the splitter as a transparent selection, eliminating many drawing issues)
 
 ### Compatibility with XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria), RX12(Athens)
 
@@ -160,6 +162,11 @@ Features:
 * Read-only mode support
 * Bindings support
 
+![Icon](Source/icons/TESTRANSPARENTSPLITTER32.bmp)
+**TEsTransparentSplitter** - Inherited from TSplitter, this component displays the splitter as a transparent selection, eliminating many drawing issues.
+* With clDefault at SplitterColor property, the control will automatically select a contrast color for "splitter" based on the active theme, but any color can be selected
+* Just replace TSplitter in DFM with TEsTransparentSplitter and get a modern look
+
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
 # Russian ReadMe:
@@ -271,6 +278,11 @@ Features:
 **TEsControlListCheckBox** - "Графический" аналог TCheckBox для использования с TControlList.
 * Поддержка режима "только для чтения"
 * Поддержка биндингов
+
+![Icon](Source/icons/TESTRANSPARENTSPLITTER32.bmp)
+**TEsTransparentSplitter** – наследуется от TSplitter, этот компонент отображает разделитель как прозрачную область выделения, устраняя многие проблемы с отрисовкой.  
+* Если в свойстве SplitterColor установлено значение clDefault, компонент автоматически выберет контрастный цвет для разделителя в зависимости от активной темы, но можно задать любой цвет вручную.  
+* Просто замените TSplitter на TEsTransparentSplitter в DFM-файле, чтобы получить современный вид.
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 
