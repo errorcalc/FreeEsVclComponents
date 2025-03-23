@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.5                         }
-{                           errorsoft(c) 2009-2023                             }
+{                       EsVclComponents/EsVclCore v4.7                         }
+{                           errorsoft(c) 2009-2025                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }

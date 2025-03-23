@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.6                         }
-{                           errorsoft(c) 2009-2024                             }
+{                       EsVclComponents/EsVclCore v4.7                         }
+{                           errorsoft(c) 2009-2025                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -38,7 +38,7 @@ begin
 
   RegisterComponents('errorsoft', [
     // Layouts
-    TEsLayout, TEsPanel,
+    TEsLayout, TEsPanel, TEsTransparentSplitter,
     // NinePatch
     TEsNinePatchImage, TEsImageLabel, TEsImageLayout, TEsImageStaticText,
     // Indicators

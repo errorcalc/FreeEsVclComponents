@@ -182,3 +182,11 @@ Now, activate AllowFocus property makes TEsImageControl and TEsVirtualImageContr
 (See Image Demo)
 - Improved keyboard support for TEsPaintBox.
 - Add lost published props
+
+[23.03.2025]
+- Supprot 64-bit IDE
+- Add new control: TEsTransparentSplitter
+The TEsTransparentSplitter is a inherited of TSplitter, but displays "splitter" in a transparent selection.
+It fully matches the behavior of TSplitter, but solves many rendering problems, and also creates a modern visual style of a "semi-transparent" splitter.
+With clDefault at SplitterColor property, the control will automatically select a contrast color for "splitter" based on the active theme, but any color can be selected.
+(See TransparentSplitter demo)
