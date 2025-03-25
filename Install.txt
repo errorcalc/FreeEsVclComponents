@@ -1,13 +1,8 @@
-﻿[ENG]
-*** You can help, if you send me where you are using the component and attach a screenshot example of use ***
-
-Please see "Doc/ReleaseNotes_en.pdf"
-
+INSTALLATION:
 0. Uninstall previous version!
-1. Add "Source" folder to search path (Tools->Options->Delphi Options->Library->Library path), for "Selected platform": "32-bit Windows" and "64-bit Windows"
-2. If you plan to install the components to multiple versions of Delphi on computer(multiple installation), 
-then start the "Packages\PackagesGenerator.exe" and choose appropriate generated project files.
-3. Open "ErrorSoftGroup.groupproj" project group
+1. Add "/Source" folder to search path (Tools->Options->Language->Delphi->Library->Library path), for "Selected platform": "Windows 32-bit", "Windows 64-bit", and "Windows 64-bit (Modern)" (if exists)
+2. If you plan to install the components to multiple versions of Delphi on computer(multiple installation) use specific packages in "/packages" folder.
+3. Open "ErrorSoftGroup.groupproj"(or specific for Delphi version) project group
 4. Build "EsCore.bpl"
 5. Build "EsVclCore.bpl"
 6. Build "EsVclComponents.bpl"
@@ -15,26 +10,5 @@ then start the "Packages\PackagesGenerator.exe" and choose appropriate generated
 8. Enjoy!
 
 WARNING:
-1)
 Activate FixLoadPng in "Source/FreeEsVclComponents.inc" if you are having problems downloading PNG images in the Design time, 
 because of some installed packages (ex: AlphaSkins)
-
-[RUS]
-*** Вы можете помочь, если вы напишете мне, где вы используете компонент и приложите скриншот с примером использования ***
-
-Пожалуйста посмотрите "Doc/ReleaseNotes_ru.pdf"
-
-0. Полностью удалите предыдущую версию!
-1. Добавьте путь к папке "Source" в search path (Tools->Options->Delphi Options->Library->Library path), для "Selected platform": "32-bit Windows" и "64-bit Windows"
-2. Если вы планируете установить компоненты одновременно в нескольких версиях Delphi на компьютере, то запустите 
-"Packages\PackagesGenerator.exe" и выберите соответствующие сгенерированные файлы проекта.
-3. Откройте группу проектов "ErrorSoftGroup.groupproj" 
-4. Сделайте билд(Build) "EsCore.bpl"
-5. Сделайте билд(Build) "EsVclCore.bpl"
-6. Сделайте билд(Build) "EsVclComponents.bpl"
-7. Проинсталлируйте(Install) "EsVclComponentsDesign.bpl"
-8. Пользуйтесь :) и пишите отзывы.
-
-ВНИМАНИЕ:
-1)
-Активируйте FixLoadPng в "Source/FreeEsVclComponents.inc", если у вас возникли проблемы с загрузкой изображений в формате PNG в Design Time, из-за некоторых установленных пакетов (к примеру AlphaSkins)
