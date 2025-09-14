@@ -1,4 +1,4 @@
-package EsVclCore;
+package EsVclComponentsDesign;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,26 +25,21 @@ package EsVclCore;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Errorsoft EsVclCore'}
-{$RUNONLY}
+{$DESCRIPTION 'Errorsoft EsVclComponentsDesign'}
+{$DESIGNONLY}
 {$IMPLICITBUILD ON}
-{$LIBSUFFIX '290'}
+{$LIBSUFFIX '370'}
 
 requires
   rtl,
   EsCore,
-  vclimg,
-  vcl;
+  EsVclCore,
+  EsVclComponents,
+  designide;
 
 contains
-  ES.BaseControls in '..\..\Source\ES.BaseControls.pas',
-  ES.BitmapPixels in '..\..\Source\ES.BitmapPixels.pas',
-  ES.CfxClasses in '..\..\Source\ES.CfxClasses.pas',
-  ES.ExGdiPlus in '..\..\Source\ES.ExGdiPlus.pas',
-  ES.ExGraphics in '..\..\Source\ES.ExGraphics.pas',
-  ES.StyleHooks in '..\..\Source\ES.StyleHooks.pas',
-  ES.Utils in '..\..\Source\ES.Utils.pas',
-  ES.VclFix in '..\..\Source\ES.VclFix.pas';
+  ES.FreeEditors in '..\..\Source\ES.FreeEditors.pas',
+  ES.FreeReg in '..\..\Source\ES.FreeReg.pas',
+  ES.RegexEditor in '..\..\Source\ES.RegexEditor.pas' {EsRegexEditorForm};
 
 end.
-
