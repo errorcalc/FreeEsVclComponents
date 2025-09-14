@@ -190,3 +190,6 @@ The TEsTransparentSplitter is a inherited of TSplitter, but displays "splitter" 
 It fully matches the behavior of TSplitter, but solves many rendering problems, and also creates a modern visual style of a "semi-transparent" splitter.
 With clDefault at SplitterColor property, the control will automatically select a contrast color for "splitter" based on the active theme, but any color can be selected.
 (See TransparentSplitter demo)
+
+[14.09.2025]
+- Support Delphi 13.0 Florence

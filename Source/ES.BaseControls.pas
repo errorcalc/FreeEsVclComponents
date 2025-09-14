@@ -1,6 +1,6 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.7                         }
+{                       EsVclComponents/EsVclCore v4.8                         }
 {                           errorsoft(c) 2009-2025                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
@@ -109,10 +109,14 @@ interface
   {$IFDEF VER360}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
   {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
   {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$ENDIF}
+  // XE13 Florence
+  {$IFDEF VER370}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
+  {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$DEFINE VER370UP}{$ENDIF}
   // Next versions
   {$IF CompilerVersion > 36}{$DEFINE VER230UP}{$DEFINE VER240UP}{$DEFINE VER250UP}{$DEFINE VER260UP}
   {$DEFINE VER270UP}{$DEFINE VER280UP}{$DEFINE VER290UP}{$DEFINE VER300UP}{$DEFINE VER310UP}
-  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$IFEND}
+  {$DEFINE VER320UP}{$DEFINE VER330UP}{$DEFINE VER340UP}{$DEFINE VER350UP}{$DEFINE VER360UP}{$DEFINE VER370UP}{$IFEND}
   // Vcl
   {$IFDEF VER240UP}{$DEFINE STYLE_ELEMENTS}{$ENDIF}
   {$IFDEF VER330UP}{$DEFINE VIRTUAL_IMAGE}{$ENDIF}
@@ -136,7 +140,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.7;
+  EsVclCoreVersion = 4.8;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;

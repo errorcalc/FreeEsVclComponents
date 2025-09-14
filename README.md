@@ -1,6 +1,6 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# "Q" Update with 64-bit IDE support (**Version 4.7**)
+# **Version 4.8**
 ![Preview](Logos/Preview3.gif)
 ![Preview](Logos/Preview1.gif)
 ![Preview](Logos/Preview2.gif)
@@ -50,7 +50,7 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsControlListCheckBox (Graphic TCheckBox analog for usage in TControlList)
 * TEsTransparentSplitter (Inherited from TSplitter, this component displays the splitter as a transparent selection, eliminating many drawing issues)
 
-### Compatibility with XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria), RX12(Athens)
+### Compatibility with XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria), RX12(Athens), RX13(Florence)
 
 # English ReadMe:
 
