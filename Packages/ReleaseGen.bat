@@ -28,6 +28,7 @@ goto :end
 
 :vclwinx_before_fix
 FileFix -path %package%/EsVclComponents.dpk -delete-with "vclwinx,"
+FileFix -path %package%/EsVclComponents.dproj -delete-with "vclwinx.dcp"
 exit /b
 
 :end
