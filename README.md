@@ -1,6 +1,7 @@
 ![Logo](Source/icons/Logo.png)
 # ErrorSoft VCL Components
-# **Version 4.8**
+# **Version 4.9**
+![Preview](Logos/Preview4.gif)
 ![Preview](Logos/Preview3.gif)
 ![Preview](Logos/Preview1.gif)
 ![Preview](Logos/Preview2.gif)
@@ -49,6 +50,8 @@ You can choose one of two licenses. See "LICENSE.txt"
 * TEsVersionLabel
 * TEsControlListCheckBox (Graphic TCheckBox analog for usage in TControlList)
 * TEsTransparentSplitter (Inherited from TSplitter, this component displays the splitter as a transparent selection, eliminating many drawing issues)
+* TEsRgbLinePicker
+* TEsAlphaLinePicker
 
 ### Compatibility with XE2, XE3, XE4, XE5, XE6, XE7, XE8, RX10(Seattle), RX10.1(Berlin), RX10.2(Tokyo), RX10.3(Rio), RX10.4(Sydney), RX11(Alexandria), RX12(Athens), RX13(Florence)
 
@@ -166,6 +169,14 @@ Features:
 **TEsTransparentSplitter** - Inherited from TSplitter, this component displays the splitter as a transparent selection, eliminating many drawing issues.
 * With clDefault at SplitterColor property, the control will automatically select a contrast color for "splitter" based on the active theme, but any color can be selected
 * Just replace TSplitter in DFM with TEsTransparentSplitter and get a modern look
+
+![Icon](Source/icons/TESRGBLINEPICKER32.bmp)
+**TEsRgbLinePicker** - A linear RGB picker used to edit a single channel (Red, Green, Blue).
+* Full focus support
+
+![Icon](Source/icons/TESALPHALINEPICKER32.bmp)
+**TEsAlphaLinePicker** - A linear picker for the alpha channel (0..255) with transparent background preview.
+* Full focus support
 
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
