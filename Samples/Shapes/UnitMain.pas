@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, ES.BaseControls,
-  ES.Shapes, ES.Layouts, Vcl.ComCtrls, Vcl.StdCtrls, ES.Switch, Vcl.ControlList;
+  ES.Shapes, ES.Layouts, Vcl.ComCtrls, Vcl.StdCtrls, ES.Switch;
 
 type
   TFormMain = class(TForm)
@@ -69,26 +69,11 @@ type
     EsShape4: TEsShape;
     Label4: TLabel;
     Label5: TLabel;
-    TabSheet4: TTabSheet;
-    ControlList: TControlList;
-    LabelProduct: TLabel;
-    EsShapeAviable: TEsShape;
-    EsShapeStar1: TEsShape;
-    EsShapeStar2: TEsShape;
-    EsShapeStar3: TEsShape;
-    EsShapeStar4: TEsShape;
-    EsShapeStar5: TEsShape;
-    EsShape18: TEsShape;
-    Label6: TLabel;
-    EsShape19: TEsShape;
-    Label7: TLabel;
     procedure TimerAnimateTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure EsSwitchScale2XClick(Sender: TObject);
     procedure CheckBoxRoundRectClick(Sender: TObject);
     procedure TrackBarRadiusChange(Sender: TObject);
-    procedure ControlListBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
-      ARect: TRect; AState: TOwnerDrawState);
   private
     SpeedArray: array of TPoint;
     IsUpdateRoundRectCheckboxes: Boolean;
@@ -151,58 +136,24 @@ begin
     ShapeRoundRect.Corners := ShapeRoundRect.Corners - [TShapeCorner.BottomRight];
 end;
 
-procedure TFormMain.ControlListBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
-  ARect: TRect; AState: TOwnerDrawState);
-var
-  Aviable: Integer;
-  Count: Integer;
-begin
-  // aviable
-  Aviable := (AIndex mod 2 + AIndex mod 3 + AIndex mod 5 + 6) mod 5;
-  if Aviable = 0 then
-    EsShapeAviable.Brush.Color := clSkyBlue
-  else if Aviable = 1 then
-    EsShapeAviable.Brush.Color := clBlue
-  else
-    EsShapeAviable.Brush.Color := clNone;
-  // name
-  LabelProduct.Caption := 'Product ' + (AIndex + 1).ToString;
-  // raiting
-  Count := (AIndex mod 8 + AIndex mod 3 + AIndex mod 6 + AIndex mod 5 + AIndex mod 7 + 9) mod 6;
-  if Count >= 1 then
-    EsShapeStar1.Brush.Color := clYellow
-  else
-    EsShapeStar1.Brush.Color := clWhite;
-  if Count >= 2 then
-    EsShapeStar2.Brush.Color := clYellow
-  else
-    EsShapeStar2.Brush.Color := clWhite;
-  if Count >= 3 then
-    EsShapeStar3.Brush.Color := clYellow
-  else
-    EsShapeStar3.Brush.Color := clWhite;
-  if Count >= 4 then
-    EsShapeStar4.Brush.Color := clYellow
-  else
-    EsShapeStar4.Brush.Color := clWhite;
-  if Count >= 5 then
-    EsShapeStar5.Brush.Color := clYellow
-  else
-    EsShapeStar5.Brush.Color := clWhite;
-end;
-
 procedure TFormMain.EsSwitchScale2XClick(Sender: TObject);
 begin
   if TEsSwitch(Sender).Checked then
-    Self.ScaleForPPI(Self.GetDesignDpi * 2)
+    Self.ScaleBy(200, 100)
   else
-    Self.ScaleForPPI(Self.GetDesignDpi div 2);
+    Self.ScaleBy(100, 200)
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
 var
   I: Integer;
 begin
+  {$IF CompilerVersion >= 33.0}
+  EsPanel1.StyleName := 'Windows';
+  EsPanel2.StyleName := 'Slate Classico';
+  EsPanel3.StyleName := 'Glow';
+  EsPanel4.StyleName := 'Windows10 SlateGray';
+  {$ENDIF}
   //TStyleManager.Initialize;
   //TStyleManager.TrySetStyle('Windows');
   // Shapes page

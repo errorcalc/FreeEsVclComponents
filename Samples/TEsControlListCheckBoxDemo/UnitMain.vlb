@@ -36,9 +36,6 @@ Coordinates=970,300,66,33
 [ControlListButtonOpen]
 Coordinates=841,300,128,33
 
-[PageControl1]
-Coordinates=752,300,81,33
-
 [EsControlListCheckBoxServer]
 Coordinates=1072,194,164,51
 
@@ -60,4 +57,7 @@ Coordinates=140,50,120,105
 
 [BindingsList]
 Coordinates=14,87,82,33
+
+[PageControl]
+Coordinates=752,300,81,33
 

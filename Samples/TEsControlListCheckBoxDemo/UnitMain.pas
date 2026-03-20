@@ -9,7 +9,7 @@ uses
   Data.Bind.Components, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.NumberBox,
   ES.ControlListControls, Data.Bind.ObjectScope, Vcl.Bind.GenData,
   Vcl.Bind.ControlList, Data.Bind.Grid, ES.BaseControls, ES.Images,
-  Data.Bind.GenData, Vcl.ExtCtrls, ES.Switch, Vcl.CheckLst, Vcl.Imaging.pngimage;
+  Data.Bind.GenData, Vcl.ExtCtrls, ES.Switch, Vcl.CheckLst, Vcl.Imaging.pngimage, ES.Shapes;
 
 type
   TIssue = record
@@ -22,7 +22,7 @@ type
 
   TFormMain = class(TForm)
     BindingsList: TBindingsList;
-    PageControl1: TPageControl;
+    PageControl: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     ControlListIssues: TControlList;
@@ -48,6 +48,19 @@ type
     CheckBoxReadOnly: TCheckBox;
     SwitchStyle: TEsSwitch;
     EsImageHint: TEsImage;
+    TabSheet3: TTabSheet;
+    ControlList: TControlList;
+    LabelProduct: TLabel;
+    EsShapeAviable: TEsShape;
+    EsShapeStar1: TEsShape;
+    EsShapeStar2: TEsShape;
+    EsShapeStar3: TEsShape;
+    EsShapeStar4: TEsShape;
+    EsShapeStar5: TEsShape;
+    Label7: TLabel;
+    EsShape19: TEsShape;
+    Label6: TLabel;
+    EsShape18: TEsShape;
     procedure FormCreate(Sender: TObject);
     procedure ControlListIssuesBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
       ARect: TRect; AState: TOwnerDrawState);
@@ -59,6 +72,7 @@ type
     procedure RadioGroupAlignmentClick(Sender: TObject);
     procedure CheckBoxReadOnlyClick(Sender: TObject);
     procedure SwitchStyleClick(Sender: TObject);
+    procedure ControlListBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
   private
     Issues: TArray<TIssue>;
     procedure UpdateSelected();
@@ -119,6 +133,45 @@ end;
 procedure TFormMain.CheckBoxReadOnlyClick(Sender: TObject);
 begin
   EsControlListCheckBoxIssueNumber.ReadOnly := CheckBoxReadOnly.Checked;
+end;
+
+procedure TFormMain.ControlListBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas; ARect: TRect; AState: TOwnerDrawState);
+var
+  Aviable: Integer;
+  Count: Integer;
+begin
+  // aviable
+  Aviable := (AIndex mod 2 + AIndex mod 3 + AIndex mod 5 + 6) mod 5;
+  if Aviable = 0 then
+    EsShapeAviable.Brush.Color := clSkyBlue
+  else if Aviable = 1 then
+    EsShapeAviable.Brush.Color := clBlue
+  else
+    EsShapeAviable.Brush.Color := clNone;
+  // name
+  LabelProduct.Caption := 'Product ' + (AIndex + 1).ToString;
+  // raiting
+  Count := (AIndex mod 8 + AIndex mod 3 + AIndex mod 6 + AIndex mod 5 + AIndex mod 7 + 9) mod 6;
+  if Count >= 1 then
+    EsShapeStar1.Brush.Color := clYellow
+  else
+    EsShapeStar1.Brush.Color := clWhite;
+  if Count >= 2 then
+    EsShapeStar2.Brush.Color := clYellow
+  else
+    EsShapeStar2.Brush.Color := clWhite;
+  if Count >= 3 then
+    EsShapeStar3.Brush.Color := clYellow
+  else
+    EsShapeStar3.Brush.Color := clWhite;
+  if Count >= 4 then
+    EsShapeStar4.Brush.Color := clYellow
+  else
+    EsShapeStar4.Brush.Color := clWhite;
+  if Count >= 5 then
+    EsShapeStar5.Brush.Color := clYellow
+  else
+    EsShapeStar5.Brush.Color := clWhite;
 end;
 
 procedure TFormMain.ControlListButtonOpenClick(Sender: TObject);

@@ -30,25 +30,22 @@
         <Projects Include="Panel\Panel.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="ShapesOld\ShapesOld.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="SydneySample\SydneySample.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Shapes\Shapes.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj">
+        <Projects Include="TEsControlListCheckBoxDemo\ControlListControlsDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="TransparentSplitter\TransparentSplitter.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="ColorPickers\ColorPickers.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Shapes\Shapes.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -140,15 +137,6 @@
     <Target Name="Panel:Make">
         <MSBuild Projects="Panel\Panel.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ShapesOld">
-        <MSBuild Projects="ShapesOld\ShapesOld.dproj"/>
-    </Target>
-    <Target Name="ShapesOld:Clean">
-        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ShapesOld:Make">
-        <MSBuild Projects="ShapesOld\ShapesOld.dproj" Targets="Make"/>
-    </Target>
     <Target Name="SydneySample">
         <MSBuild Projects="SydneySample\SydneySample.dproj"/>
     </Target>
@@ -157,15 +145,6 @@
     </Target>
     <Target Name="SydneySample:Make">
         <MSBuild Projects="SydneySample\SydneySample.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="Shapes">
-        <MSBuild Projects="Shapes\Shapes.dproj"/>
-    </Target>
-    <Target Name="Shapes:Clean">
-        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Shapes:Make">
-        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Make"/>
     </Target>
     <Target Name="TBitmapPixelsDemo">
         <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj"/>
@@ -176,14 +155,14 @@
     <Target Name="TBitmapPixelsDemo:Make">
         <MSBuild Projects="TBitmapPixelsDemo\TBitmapPixelsDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TEsControlListCheckBoxDemo">
-        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj"/>
+    <Target Name="ControlListControlsDemo">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\ControlListControlsDemo.dproj"/>
     </Target>
-    <Target Name="TEsControlListCheckBoxDemo:Clean">
-        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Clean"/>
+    <Target Name="ControlListControlsDemo:Clean">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\ControlListControlsDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TEsControlListCheckBoxDemo:Make">
-        <MSBuild Projects="TEsControlListCheckBoxDemo\TEsControlListCheckBoxDemo.dproj" Targets="Make"/>
+    <Target Name="ControlListControlsDemo:Make">
+        <MSBuild Projects="TEsControlListCheckBoxDemo\ControlListControlsDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="TransparentSplitter">
         <MSBuild Projects="TransparentSplitter\TransparentSplitter.dproj"/>
@@ -203,14 +182,23 @@
     <Target Name="ColorPickers:Make">
         <MSBuild Projects="ColorPickers\ColorPickers.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Shapes">
+        <MSBuild Projects="Shapes\Shapes.dproj"/>
+    </Target>
+    <Target Name="Shapes:Clean">
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Shapes:Make">
+        <MSBuild Projects="Shapes\Shapes.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes;TBitmapPixelsDemo;TEsControlListCheckBoxDemo;TransparentSplitter;ColorPickers"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;SydneySample;TBitmapPixelsDemo;ControlListControlsDemo;TransparentSplitter;ColorPickers;Shapes"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean;TBitmapPixelsDemo:Clean;TEsControlListCheckBoxDemo:Clean;TransparentSplitter:Clean;ColorPickers:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;SydneySample:Clean;TBitmapPixelsDemo:Clean;ControlListControlsDemo:Clean;TransparentSplitter:Clean;ColorPickers:Clean;Shapes:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make;TBitmapPixelsDemo:Make;TEsControlListCheckBoxDemo:Make;TransparentSplitter:Make;ColorPickers:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;SydneySample:Make;TBitmapPixelsDemo:Make;ControlListControlsDemo:Make;TransparentSplitter:Make;ColorPickers:Make;Shapes:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

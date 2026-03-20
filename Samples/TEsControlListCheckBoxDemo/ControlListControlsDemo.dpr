@@ -1,4 +1,4 @@
-program TEsControlListCheckBoxDemo;
+program ControlListControlsDemo;
 
 uses
   Vcl.Forms,

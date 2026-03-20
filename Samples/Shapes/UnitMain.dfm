@@ -12,7 +12,6 @@ object FormMain: TFormMain
   Font.Style = []
   StyleName = 'Windows'
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 15
   object PageControl1: TPageControl
     AlignWithMargins = True
@@ -254,7 +253,6 @@ object FormMain: TFormMain
           Pen.Opacity = 100
           Shape = Bubble
           IsDrawHelper = True
-          ExplicitHeight = 25
         end
       end
     end
@@ -415,7 +413,6 @@ object FormMain: TFormMain
         Height = 102
         ParentBackground = False
         TabOrder = 0
-        StyleName = 'Windows'
         object EsShape2: TEsShape
           Left = 8
           Top = 8
@@ -468,7 +465,6 @@ object FormMain: TFormMain
         Height = 102
         ParentBackground = False
         TabOrder = 1
-        StyleName = 'Glow'
         object EsShape6: TEsShape
           Left = 8
           Top = 8
@@ -521,7 +517,6 @@ object FormMain: TFormMain
         Height = 102
         ParentBackground = False
         TabOrder = 2
-        StyleName = 'Windows10 SlateGray'
         object EsShape10: TEsShape
           Left = 8
           Top = 8
@@ -574,7 +569,6 @@ object FormMain: TFormMain
         Height = 102
         ParentBackground = False
         TabOrder = 3
-        StyleName = 'Slate Classico'
         object EsShape14: TEsShape
           Left = 8
           Top = 8
@@ -621,186 +615,6 @@ object FormMain: TFormMain
         end
       end
     end
-    object TabSheet4: TTabSheet
-      Caption = 'ControlList sample'
-      ImageIndex = 3
-      object EsShape18: TEsShape
-        AlignWithMargins = True
-        Left = 369
-        Top = 13
-        Width = 9
-        Height = 27
-        Margins.Left = 8
-        Brush.Color = clBlue
-        Brush.EndColor = 14079702
-        Pen.Style = Clear
-        Shape = Circle
-        IsDrawHelper = True
-      end
-      object Label6: TLabel
-        Left = 384
-        Top = 19
-        Width = 24
-        Height = 15
-        Caption = 'New'
-      end
-      object EsShape19: TEsShape
-        AlignWithMargins = True
-        Left = 369
-        Top = 40
-        Width = 9
-        Height = 27
-        Margins.Left = 8
-        Brush.Color = clSkyBlue
-        Brush.EndColor = 14079702
-        Pen.Style = Clear
-        Shape = Circle
-        IsDrawHelper = True
-      end
-      object Label7: TLabel
-        Left = 384
-        Top = 46
-        Width = 72
-        Height = 15
-        Caption = 'Coming soon'
-      end
-      object ControlList: TControlList
-        AlignWithMargins = True
-        Left = 8
-        Top = 8
-        Width = 345
-        Height = 355
-        Margins.Left = 8
-        Margins.Top = 8
-        Margins.Right = 8
-        Margins.Bottom = 8
-        Align = alLeft
-        ItemCount = 500
-        ItemHeight = 50
-        ItemMargins.Left = 0
-        ItemMargins.Top = 0
-        ItemMargins.Right = 0
-        ItemMargins.Bottom = 0
-        ParentColor = False
-        TabOrder = 0
-        OnBeforeDrawItem = ControlListBeforeDrawItem
-        object LabelProduct: TLabel
-          AlignWithMargins = True
-          Left = 23
-          Top = 3
-          Width = 122
-          Height = 41
-          Margins.Bottom = 6
-          Align = alClient
-          Caption = 'LabelProduct'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -18
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
-          Layout = tlCenter
-          ExplicitWidth = 103
-          ExplicitHeight = 25
-        end
-        object EsShapeAviable: TEsShape
-          AlignWithMargins = True
-          Left = 8
-          Top = 3
-          Width = 9
-          Height = 44
-          Margins.Left = 8
-          Align = alLeft
-          Brush.Color = clSkyBlue
-          Brush.EndColor = 14079702
-          Pen.Style = Clear
-          Shape = Circle
-          IsDrawHelper = True
-          ExplicitHeight = 54
-        end
-        object EsShapeStar1: TEsShape
-          AlignWithMargins = True
-          Left = 156
-          Top = 0
-          Width = 32
-          Height = 50
-          Margins.Left = 8
-          Margins.Top = 0
-          Margins.Right = 0
-          Margins.Bottom = 0
-          Align = alRight
-          Brush.EndColor = 14079702
-          Padding.Left = 2
-          Padding.Right = 2
-          Shape = Star
-          IsDrawHelper = True
-          ExplicitLeft = 149
-          ExplicitHeight = 70
-        end
-        object EsShapeStar2: TEsShape
-          Left = 188
-          Top = 0
-          Width = 32
-          Height = 50
-          Align = alRight
-          Brush.EndColor = 14079702
-          Padding.Left = 2
-          Padding.Right = 2
-          Shape = Star
-          IsDrawHelper = True
-          ExplicitLeft = 168
-          ExplicitHeight = 70
-        end
-        object EsShapeStar3: TEsShape
-          Left = 220
-          Top = 0
-          Width = 32
-          Height = 50
-          Align = alRight
-          Brush.EndColor = 14079702
-          Padding.Left = 2
-          Padding.Right = 2
-          Shape = Star
-          IsDrawHelper = True
-          ExplicitLeft = 213
-          ExplicitTop = -2
-          ExplicitHeight = 70
-        end
-        object EsShapeStar4: TEsShape
-          Left = 252
-          Top = 0
-          Width = 32
-          Height = 50
-          Align = alRight
-          Brush.EndColor = 14079702
-          Padding.Left = 2
-          Padding.Right = 2
-          Shape = Star
-          IsDrawHelper = True
-          ExplicitLeft = 226
-          ExplicitHeight = 70
-        end
-        object EsShapeStar5: TEsShape
-          AlignWithMargins = True
-          Left = 284
-          Top = 0
-          Width = 32
-          Height = 50
-          Margins.Left = 0
-          Margins.Top = 0
-          Margins.Right = 8
-          Margins.Bottom = 0
-          Align = alRight
-          Brush.EndColor = 14079702
-          Padding.Left = 2
-          Padding.Right = 2
-          Shape = Star
-          IsDrawHelper = True
-          ExplicitLeft = 258
-          ExplicitHeight = 70
-        end
-      end
-    end
   end
   object EsSwitchScale2X: TEsSwitch
     AlignWithMargins = True
@@ -818,7 +632,6 @@ object FormMain: TFormMain
     Align = alTop
     TabOrder = 0
     OnClick = EsSwitchScale2XClick
-    ExplicitWidth = 90
   end
   object TimerAnimate: TTimer
     Interval = 40
