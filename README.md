@@ -172,11 +172,11 @@ Features:
 
 ![Icon](Source/icons/TESRGBLINEPICKER32.bmp)
 **TEsRgbLinePicker** - A linear RGB picker used to edit a single channel (Red, Green, Blue).
-* Full focus support
+* The component provides powerful customization options for appearance and behavior, such as layout, UI colors, max and min values, reverse, and keyboard input settings.
 
 ![Icon](Source/icons/TESALPHALINEPICKER32.bmp)
 **TEsAlphaLinePicker** - A linear picker for the alpha channel (0..255) with transparent background preview.
-* Full focus support
+* The component provides powerful customization options for appearance and behavior, such as layout, UI colors, max and min values, reverse, and keyboard input settings.
 
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
