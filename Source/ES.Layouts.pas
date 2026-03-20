@@ -204,7 +204,7 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     function DoCanResize(var NewSize: Integer): Boolean; override;
-    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    procedure ChangeScale(M, D: Integer{$IFDEF VER310UP}; isDpiChange: Boolean{$ENDIF}); override;
     procedure StopSizing(); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -573,7 +573,7 @@ begin
   FSplitterWindow.SetBounds(ScreenPoint.X, ScreenPoint.Y, Width, Height);
 end;
 
-procedure TEsTransparentSplitter.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+procedure TEsTransparentSplitter.ChangeScale(M, D: Integer{$IFDEF VER310UP}; isDpiChange: Boolean{$ENDIF});
 begin
   inherited;
   FNewSize := MulDiv(FNewSize, M, D);

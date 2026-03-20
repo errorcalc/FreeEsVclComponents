@@ -115,11 +115,7 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Paint(); override;
     procedure Resize(); override;
-    {$IFDEF VER310UP}
-    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
-    {$ELSE}
-    procedure ChangeScale(M, D: Integer); override;
-    {$ENDIF}
+    procedure ChangeScale(M, D: Integer{$IFDEF VER310UP}; isDpiChange: Boolean{$ENDIF}); override;
     procedure CMWantSpecialKey(var Msg: TCMWantSpecialKey); message CM_WANTSPECIALKEY;
   protected
     function GetPickerAbsolutePosition(Width: Integer): Integer; virtual; abstract;
@@ -452,11 +448,8 @@ begin
   inherited Destroy();
 end;
 
-{$IFDEF VER310UP}
-procedure TEsAbstractLinePicker.ChangeScale(M, D: Integer; isDpiChange: Boolean);
-{$ELSE}
-procedure TEsAbstractLinePicker.ChangeScale(M, D: Integer); override;
-{$ENDIF}
+
+procedure TEsAbstractLinePicker.ChangeScale(M, D: Integer{$IFDEF VER310UP}; isDpiChange: Boolean{$ENDIF});
 begin
   inherited;
 
