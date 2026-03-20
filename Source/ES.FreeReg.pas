@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.7                         }
-{                           errorsoft(c) 2009-2025                             }
+{                       EsVclComponents/EsVclCore v4.9                         }
+{                           errorsoft(c) 2009-2026                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -31,7 +31,7 @@ implementation
 uses
   System.Classes, ES.Layouts, ES.NinePatch, ES.Indicators, ES.Switch, ES.Images, ES.RegExControls,
   ES.FreeEditors, Designintf, Vcl.Imaging.PngImage, Vcl.ImgList, System.UITypes, Vcl.Graphics,
-  ES.RegexEditor, ES.PaintBox, ES.Labels, ES.Shapes, ES.ControlListControls, ToolsApi, Dialogs;
+  ES.RegexEditor, ES.PaintBox, ES.Labels, ES.Shapes, ES.ControlListControls, ES.Pickers, ToolsApi, Dialogs;
 
 procedure Register;
 begin
@@ -57,7 +57,10 @@ begin
     // ControlList controls
     {$IFDEF VER350UP}TEsControlListCheckBox,{$ENDIF}
     // Shapes
-    TEsShape
+    TEsShape,
+    // Pickers
+    TEsRgbLinePicker,
+    TEsAlphaLinePicker
   ]);
 
   // ImageList support

@@ -33,8 +33,8 @@ requires
   rtl,
   EsVclCore,
   EsCore,
-  {$IF not(Defined(VER210) or Defined(VER220) or Defined(VER230) or Defined(VER240) or Defined(VER250) or Defined(VER260) or Defined(VER270) or Defined(VER280) or Defined(VER290) or Defined(VER300) or Defined(VER310) or Defined(VER320) or Defined(VER330))}vclwinx,{$IFEND}
-  vclimg;
+  vclimg,
+  vclwinx;
 
 contains
   ES.ControlListControls in 'Source\ES.ControlListControls.pas',
@@ -47,6 +47,7 @@ contains
   ES.PaintBox in 'Source\ES.PaintBox.pas',
   ES.RegExControls in 'Source\ES.RegExControls.pas',
   ES.Shapes in 'Source\ES.Shapes.pas',
-  ES.Switch in 'Source\ES.Switch.pas';
+  ES.Switch in 'Source\ES.Switch.pas',
+  ES.Pickers in 'Source\ES.Pickers.pas';
 
 end.

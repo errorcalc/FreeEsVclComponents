@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.7                         }
-{                           errorsoft(c) 2009-2025                             }
+{                       EsVclComponents/EsVclCore v4.9                         }
+{                           errorsoft(c) 2009-2026                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -22,7 +22,7 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  WinApi.Windows, System.Classes, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
+  WinApi.Windows, System.Classes, System.Math, Vcl.Controls, Vcl.Graphics, Vcl.Imaging.PngImage,
   ES.ExGraphics, WinApi.Messages, System.Generics.Collections, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.Themes;
 
@@ -351,6 +351,29 @@ type
     property StartValue: Integer read FStartValue write SetStartValue;
     property EndValue: Integer read FEndValue write SetEndValue;
     property Value: Integer read GetValue;
+  end;
+
+  TTransparentBackground = class(TPersistent)
+  private
+    FCellSize: Integer;
+    FColor1: TColor;
+    FColor2: TColor;
+    FKind: TTransparentBackgroundKind;
+    FOnChange: TNotifyEvent;
+    procedure SetCellSize(Value: Integer);
+    procedure SetColor1(Value: TColor);
+    procedure SetColor2(Value: TColor);
+    procedure SetKind(Value: TTransparentBackgroundKind);
+    procedure Change();
+  public
+    constructor Create();
+    procedure AssignTo(Dest: TPersistent); override;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
+  published
+    property CellSize: Integer read FCellSize write SetCellSize default 4;
+    property Color1: TColor read FColor1 write SetColor1 default clGray;
+    property Color2: TColor read FColor2 write SetColor2 default clLtGray;
+    property Kind: TTransparentBackgroundKind read FKind write SetKind default TTransparentBackgroundKind.Chess;
   end;
 
   function DrawFrame(Canvas: TCanvas; Control: TControl; Rect: TRect; Style: TExFrameStyle;
@@ -1767,6 +1790,82 @@ procedure TFixPngImage.SetWidth(Value: Integer);
 begin
   inherited;
   Changed(Self);
+end;
+
+{ TEsTransparentBackground }
+
+constructor TTransparentBackground.Create();
+begin
+  inherited Create();
+
+  FKind := TTransparentBackgroundKind.Chess;
+  FCellSize := 4;
+  FColor1 := clGray;
+  FColor2 := clLtGray;
+end;
+
+procedure TTransparentBackground.AssignTo(Dest: TPersistent);
+begin
+  inherited;
+
+end;
+
+procedure TTransparentBackground.Change();
+begin
+  if Assigned(FOnChange) then
+  begin
+    FOnChange(Self);
+  end;
+end;
+
+procedure TTransparentBackground.SetCellSize(Value: Integer);
+begin
+  FCellSize := EnsureRange(Value, 1, 32);
+
+  if FCellSize = Value then
+  begin
+    exit;
+  end;
+
+  FCellSize := Value;
+
+  Change();
+end;
+
+procedure TTransparentBackground.SetColor1(Value: TColor);
+begin
+  if FColor1 = Value then
+  begin
+    exit;
+  end;
+
+  FColor1 := Value;
+
+  Change();
+end;
+
+procedure TTransparentBackground.SetColor2(Value: TColor);
+begin
+  if FColor2 = Value then
+  begin
+    exit;
+  end;
+
+  FColor2 := Value;
+
+  Change();
+end;
+
+procedure TTransparentBackground.SetKind(Value: TTransparentBackgroundKind);
+begin
+  if FKind = Value then
+  begin
+    exit;
+  end;
+
+  FKind := Value;
+
+  Change();
 end;
 
 initialization

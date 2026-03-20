@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.7                         }
-{                           errorsoft(c) 2009-2025                             }
+{                       EsVclComponents/EsVclCore v4.9                         }
+{                           errorsoft(c) 2009-2026                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -23,7 +23,7 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  WinApi.Windows, System.SysUtils, Vcl.Controls, Vcl.Graphics, Vcl.Themes, Vcl.Imaging.PngImage
+  WinApi.Windows, System.SysUtils, System.Math, Vcl.Controls, Vcl.Graphics, System.UITypes, Vcl.Themes, Vcl.Imaging.PngImage
   {$IFDEF USE_GDIPLUS}, WinApi.GdipObj, WinApi.GdipApi{$ENDIF};
 
 type
@@ -111,8 +111,7 @@ type
   end;
 
   // Utils
-  function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD; Inline;
-  function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD; Inline;
+  function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor; Inline;
   procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
     HighQality: Boolean = False; EgdeFill: Boolean = False);
   procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
@@ -139,11 +138,33 @@ type
   function HighlightColor(Color: TColor; Value: Integer): TColor;
   function GetLuminanceColor(Color: TColor): Byte;
 
+  function BlendAlphaColor(BackgroundColor: TAlphaColor; ForegroundColor: TAlphaColor; Alpha: Byte): TAlphaColor;
+
+  type
+    TTriangleThumbOrientation = (Left, Right, Up, Down);
+
+  procedure DrawTriangleThumb(Canvas: TCanvas; X, Y, Width, Height: Integer; Orientation: TTriangleThumbOrientation; FillColor, StrokeColor: TColor);
+
+  type
+    TTransparentBackgroundKind = (Chess, Diagonal);
+
+  function TransparentBackgroundCase(Kind: TTransparentBackgroundKind; Size: Integer; X, Y: Integer): Boolean; inline;
+
+  procedure DrawAxisLine(Canvas: TCanvas; X, Y, Size: Integer; IsVertical: Boolean; FillColor, StrokeColor: TColor; Opacity: Byte);
+
+  function HueToRgbComponent(MinValue, MaxValue, AdjustedHue: Double): Double; inline;
+  procedure HslToRgb(Hue, Saturation, Lightness: Double; out Red, Green, Blue: Byte); inline;
+  procedure RgbToHsl(Red, Green, Blue: Byte; out Hue, Saturation, Lightness: Double); inline;
+  procedure HsvToRgb(Hue, Saturation, Value: Double; out Red, Green, Blue: Byte); inline;
+  procedure RgbToHsv(Red, Green, Blue: Byte; out Hue, Saturation, Value: Double); inline;
+  procedure HslToHsv(HslHue, HslSaturation, HslLightness: Double; out HsvHue, HsvSaturation, HsvValue: Double); inline;
+  procedure HsvToHsl(HsvHue, HsvSaturation, HsvValue: Double; out HslHue, HslSaturation, HslLightness: Double); inline;
+
 implementation
 
 uses
-  System.Classes, System.Types, Vcl.GraphUtil, System.UITypes,
-  System.TypInfo, System.Math;
+  System.Classes, System.Types, Vcl.GraphUtil,
+  System.TypInfo;
 
 //------------------------------------------------------------------------------
 // Utils
@@ -155,18 +176,9 @@ type
   TRGBArray = array[Word] of TRGBTriple;
   PRGBArray = ^TRGBArray;
 
-function RgbToArgb(Color: TColor; Alpha: byte = 255): DWORD;
+function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor;
 begin
-  Result := ColorToAlphaColor(Color, Alpha);
-end;
-
-function ColorToAlphaColor(Color: TColor; Alpha: byte = 255): DWORD;
-var
-  BRG: DWORD;
-begin
-  BRG := ColorToRGB(Color);
-
-  Result := ((BRG shl 16) and $00FF0000) or ((BRG shr 16) and $000000FF) or (BRG and $0000FF00) or (Alpha shl 24);
+  Result := ((Color shl 16) and $00FF0000) or ((Color shr 16) and $000000FF) or (Color and $0000FF00) or (Alpha shl 24);
 end;
 
 procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
@@ -859,6 +871,506 @@ function GetLuminanceColor(Color: TColor): Byte;
 begin
   Color := ColorToRgb(Color);
   Result := Trunc((GetRValue(Color) + GetGValue(Color) + GetBValue(Color)) * (240/255) / 3);
+end;
+
+function ColorToGPColor(Color: TColor; Alpha: Byte = 255): DWORD;
+var
+  BRG: DWORD;
+begin
+  if Color = clNone then
+    Alpha := 0;
+  BRG := ColorToRGB(Color);
+
+  Result := ((BRG shl 16) and $00FF0000) or
+    ((BRG shr 16) and $000000FF) or
+    (BRG and $0000FF00) or
+    (Alpha shl 24);
+end;
+
+function BlendAlphaColor(BackgroundColor: TAlphaColor; ForegroundColor: TAlphaColor; Alpha: Byte): TAlphaColor;
+var
+  ForegroundAlpha, BackgroundAlpha, NewAlpha, BlendAlpha: Byte;
+  Weight: Integer;
+begin
+  BackgroundAlpha := TAlphaColorRec(BackgroundColor).A;
+  ForegroundAlpha := TAlphaColorRec(ForegroundColor).A;
+
+  // alpha
+  NewAlpha := (ForegroundAlpha * Alpha + 127) div 255;
+  BlendAlpha := NewAlpha + (BackgroundAlpha * (255 - NewAlpha) + 127) div 255;
+
+  // colors
+  if BlendAlpha = 0 then
+  begin
+    TAlphaColorRec(Result).A := 0;
+    TAlphaColorRec(Result).R := 0;
+    TAlphaColorRec(Result).G := 0;
+    TAlphaColorRec(Result).B := 0;
+  end else
+  begin
+    Weight := BackgroundAlpha * (255 - NewAlpha);
+    TAlphaColorRec(Result).A := BlendAlpha;
+    TAlphaColorRec(Result).R := ((TAlphaColorRec(ForegroundColor).R * NewAlpha) + (TAlphaColorRec(BackgroundColor).R * Weight) div 255) div BlendAlpha;
+    TAlphaColorRec(Result).G := ((TAlphaColorRec(ForegroundColor).G * NewAlpha) + (TAlphaColorRec(BackgroundColor).G * Weight) div 255) div BlendAlpha;
+    TAlphaColorRec(Result).B := ((TAlphaColorRec(ForegroundColor).B * NewAlpha) + (TAlphaColorRec(BackgroundColor).B * Weight) div 255) div BlendAlpha;
+  end;
+end;
+
+procedure DrawTriangleThumb(Canvas: TCanvas; X, Y, Width, Height: Integer; Orientation: TTriangleThumbOrientation; FillColor, StrokeColor: TColor);
+var
+  Graphics: TGPGraphics;
+  Pen: TGPPen;
+  Path: TGPGraphicsPath;
+  Brush: TGPSolidBrush;
+  X1, Y1, X2, Y2, X3, Y3: Double;
+begin
+  case Orientation of
+    TTriangleThumbOrientation.Up:
+    begin
+      X1 := (Width - 1.0) / 2.0;
+      Y1 := 0.0;
+      X2 := 0.0;
+      Y2 := Height - 1.0;
+      X3 := Width - 1.0;
+      Y3 := Height - 1.0;
+    end;
+
+    TTriangleThumbOrientation.Down:
+    begin
+      X1 := 0.0;
+      Y1 := 0.0;
+      X2 := Width - 1.0;
+      Y2 := 0.0;
+      X3 := (Width - 1.0) / 2.0;
+      Y3 := Height - 1.0;
+    end;
+
+    TTriangleThumbOrientation.Left:
+    begin
+      X1 := Width - 1.0;
+      Y1 := 0.0;
+      X2 := 0.0;
+      Y2 := (Height - 1.0) / 2.0;
+      X3 := Width - 1.0;
+      Y3 := Height - 1.0;
+    end;
+
+    else
+    begin
+      X1 := 0.0;
+      Y1 := 0.0;
+      X2 := Width - 1.0;
+      Y2 := (Height - 1.0) / 2.0;
+      X3 := 0.0;
+      Y3 := Height - 1.0;
+    end;
+  end;
+
+  Graphics := nil;
+  Pen := nil;
+  Path := nil;
+  Brush := nil;
+  try
+    Graphics := TGPGraphics.Create(Canvas.Handle);
+    Graphics.SetSmoothingMode(SmoothingModeHighQuality);
+
+    Pen := TGPPen.Create(ColorToGPColor(StrokeColor), IfThen((Width > 10) and (Height > 10), 1.5, 1.2));
+    Brush := TGPSolidBrush.Create(ColorToGPColor(FillColor));
+
+    Path := TGPGraphicsPath.Create();
+    Path.AddLine(X1 + X, Y1 + Y, X2 + X, Y2 + Y);
+    Path.AddLine(X2 + X, Y2 + Y, X3 + X, Y3 + Y);
+    Path.AddLine(X3 + X, Y3 + Y, X1 + X, Y1 + Y);
+
+    Graphics.FillPath(Brush, Path);
+    Graphics.DrawPath(Pen, Path);
+  finally
+    Graphics.Free();
+    Pen.Free();
+    Path.Free();
+    Brush.Free();
+  end;
+end;
+
+function TransparentBackgroundCase(Kind: TTransparentBackgroundKind; Size: Integer; X, Y: Integer): Boolean; inline;
+begin
+  case Kind of
+    TTransparentBackgroundKind.Chess:
+    begin
+      Result := Boolean(((X div Size) xor (Y div Size)) and 1);
+    end;
+    else
+    begin
+      Result := Boolean((((X - Y) - Ord((X - Y) < 0) * (Size - 1)) div Size) and 1);
+    end;
+  end;
+end;
+
+procedure DrawAxisLine(Canvas: TCanvas; X, Y, Size: Integer; IsVertical: Boolean; FillColor, StrokeColor: TColor; Opacity: Byte);
+var
+  Bitmap: TBitmap;
+begin
+  Bitmap := TBitmap.Create();
+  try
+    if IsVertical then
+    begin
+      Bitmap.SetSize(3, Size);
+    end else
+    begin
+      Bitmap.SetSize(Size, 3);
+    end;
+
+    if IsVertical then
+    begin
+      Bitmap.Canvas.FillRect(TRect.Create(0, 0, 3, Size), StrokeColor);
+      Bitmap.Canvas.FillRect(TRect.Create(1, 0, 2, Size), FillColor);
+    end else
+    begin
+      Bitmap.Canvas.FillRect(TRect.Create(0, 0, Size, 3), StrokeColor);
+      Bitmap.Canvas.FillRect(TRect.Create(0, 1, Size, 2), FillColor);
+    end;
+
+    if IsVertical then
+    begin
+      Canvas.Draw(X - 1, Y, Bitmap, Opacity);
+    end else
+    begin
+      Canvas.Draw(X, Y - 1, Bitmap, Opacity);
+    end;
+  finally
+    Bitmap.Free();
+  end;
+end;
+
+function HueToRgbComponent(MinValue, MaxValue, AdjustedHue: Double): Double;
+begin
+  // normalize: AdjustedHue in [0..6)
+  if AdjustedHue < 0 then
+  begin
+    AdjustedHue := AdjustedHue + 6.0;
+  end else
+  if AdjustedHue >= 6 then
+  begin
+    AdjustedHue := AdjustedHue - 6.0;
+  end;
+
+  if AdjustedHue < 1.0 then
+  begin
+    exit(MinValue + (MaxValue - MinValue) * AdjustedHue);
+  end else
+  if AdjustedHue < 3.0 then
+  begin
+    exit(MaxValue);
+  end else
+  if AdjustedHue < 4.0 then
+  begin
+    exit(MinValue + (MaxValue - MinValue) * (4.0 - AdjustedHue))
+  end else
+  begin
+    exit(MinValue);
+  end;
+end;
+
+{$IFOPT R+}{$DEFINE RANGECHECKS_ON}{$ENDIF}
+{$IFOPT Q+}{$DEFINE OVERFLOWCHECKS_ON}{$ENDIF}
+{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS OFF}
+procedure HslToRgb(Hue, Saturation, Lightness: Double; out Red, Green, Blue: Byte);
+var
+  R, G, B: Double;
+  MinValue, MaxValue: Double;
+begin
+  Hue := Frac(Hue) + Integer(Hue < 0.0);
+  //Hue := Hue - Floor(Hue);
+
+  Hue := Hue * 6.0;
+
+  if Saturation = 0.0 then
+  begin
+    R := Lightness;
+    G := Lightness;
+    B := Lightness;
+  end else
+  begin
+    if Lightness < 0.5 then
+    begin
+      MaxValue := Lightness * (1.0 + Saturation);
+    end else
+    begin
+      MaxValue := Lightness + Saturation - Lightness * Saturation;
+    end;
+
+    MinValue := 2.0 * Lightness - MaxValue;
+
+    R := HueToRGBComponent(MinValue, MaxValue, Hue + 2.0);
+    G := HueToRGBComponent(MinValue, MaxValue, Hue);
+    B := HueToRGBComponent(MinValue, MaxValue, Hue - 2.0);
+  end;
+
+  // this check may be unnecessary
+  R := EnsureRange(R, 0.0, 1.0);
+  G := EnsureRange(G, 0.0, 1.0);
+  B := EnsureRange(B, 0.0, 1.0);
+
+  Red := Trunc(R * 255.0 + 0.5);
+  Green := Trunc(G * 255.0 + 0.5);
+  Blue := Trunc(B * 255.0 + 0.5);
+end;
+{$IFDEF RANGECHECKS_ON}{$RANGECHECKS ON}{$ELSE}{$RANGECHECKS OFF}{$ENDIF}
+{$IFDEF OVERFLOWCHECKS_ON}{$OVERFLOWCHECKS ON}{$ELSE}{$OVERFLOWCHECKS OFF}{$ENDIF}
+
+procedure RgbToHsl(Red, Green, Blue: Byte; out Hue, Saturation, Lightness: Double);
+var
+  R, G, B: Double;
+  ColorMin, ColorMax, Delta: Double;
+begin
+  R := Red / 255.0;
+  G := Green / 255.0;
+  B := Blue / 255.0;
+
+  ColorMin := R;
+  if G < ColorMin then
+  begin
+    ColorMin := G;
+  end;
+  if B < ColorMin then
+  begin
+    ColorMin := B;
+  end;
+
+  ColorMax := R;
+  if G > ColorMax then
+  begin
+    ColorMax := G;
+  end;
+  if B > ColorMax then
+  begin
+    ColorMax := B;
+  end;
+
+  Delta := ColorMax - ColorMin;
+  Lightness := (ColorMax + ColorMin) / 2.0;
+
+  if Delta = 0 then
+  begin
+    Hue := 0.0;
+    Saturation := 0.0;
+  end else
+  begin
+    if Lightness < 0.5 then
+    begin
+      Saturation := Delta / (ColorMax + ColorMin);
+    end else
+    begin
+      Saturation := Delta / (2.0 - ColorMax - ColorMin);
+    end;
+
+    if R = ColorMax then
+    begin
+      Hue := (G - B) / Delta;
+      if G < B then
+      begin
+        Hue := Hue + 6.0;
+      end;
+    end else
+    if G = ColorMax then
+    begin
+      Hue := (B - R) / Delta + 2.0
+    end else
+    begin
+      Hue := (R - G) / Delta + 4.0;
+    end;
+
+    Hue := Hue / 6.0;
+  end;
+end;
+
+{$IFOPT R+}{$DEFINE RANGECHECKS_ON}{$ENDIF}
+{$IFOPT Q+}{$DEFINE OVERFLOWCHECKS_ON}{$ENDIF}
+{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS OFF}
+procedure HsvToRgb(Hue, Saturation, Value: Double; out Red, Green, Blue: Byte);
+var
+  SectorIndex: Integer;
+  Fractional: Double;
+  IntermediateP, IntermediateQ, IntermediateT: Double;
+  R, G, B: Double;
+begin
+  Hue := Frac(Hue) + Integer(Hue < 0.0);
+  //Hue := Hue - Floor(Hue);
+
+  if Saturation = 0.0 then
+  begin
+    R := Value;
+    G := Value;
+    B := Value;
+  end else
+  begin
+    Hue := Hue * 6.0;
+    SectorIndex := Trunc(Hue);
+    Fractional := Hue - SectorIndex;
+
+    IntermediateP := Value * (1.0 - Saturation);
+    IntermediateQ := Value * (1.0 - Saturation * Fractional);
+    IntermediateT := Value * (1.0 - Saturation * (1.0 - Fractional));
+
+    case SectorIndex of
+      0:
+      begin
+        R := Value;
+        G := IntermediateT;
+        B := IntermediateP;
+      end;
+      1:
+      begin
+        R := IntermediateQ;
+        G := Value;
+        B := IntermediateP;
+      end;
+      2:
+      begin
+        R := IntermediateP;
+        G := Value;
+        B := IntermediateT;
+      end;
+      3:
+      begin
+        R := IntermediateP;
+        G := IntermediateQ;
+        B := Value;
+      end;
+      4:
+      begin
+        R := IntermediateT;
+        G := IntermediateP;
+        B := Value;
+      end;
+      else
+        R := Value;
+        G := IntermediateP;
+        B := IntermediateQ;
+    end;
+  end;
+
+  // this check may be unnecessary
+  R := EnsureRange(R, 0.0, 1.0);
+  G := EnsureRange(G, 0.0, 1.0);
+  B := EnsureRange(B, 0.0, 1.0);
+
+  Red := Trunc(R * 255.0 + 0.5);
+  Green := Trunc(G * 255.0 + 0.5);
+  Blue := Trunc(B * 255.0 + 0.5);
+end;
+{$IFDEF RANGECHECKS_ON}{$RANGECHECKS ON}{$ELSE}{$RANGECHECKS OFF}{$ENDIF}
+{$IFDEF OVERFLOWCHECKS_ON}{$OVERFLOWCHECKS ON}{$ELSE}{$OVERFLOWCHECKS OFF}{$ENDIF}
+
+procedure RgbToHsv(Red, Green, Blue: Byte; out Hue, Saturation, Value: Double);
+var
+  R, G, B: Double;
+  MaxValue, MinValue, Delta: Double;
+begin
+  R := Red / 255.0;
+  G := Green / 255.0;
+  B := Blue / 255.0;
+
+  if R > G then
+  begin
+    MaxValue := R;
+  end else
+  begin
+    MaxValue := G;
+  end;
+
+  if MaxValue > B then
+  begin
+    MaxValue := MaxValue;
+  end else
+  begin
+    MaxValue := B;
+  end;
+
+  if R < G then
+  begin
+    MinValue := R;
+  end else
+  begin
+    MinValue := G;
+  end;
+
+  if MinValue < B then
+  begin
+    MinValue := MinValue;
+  end else
+  begin
+    MinValue := B;
+  end;
+
+  Value := MaxValue;
+  Delta := MaxValue - MinValue;
+
+  if MaxValue = 0.0 then
+  begin
+    Saturation := 0.0;
+  end else
+  begin
+    Saturation := Delta / MaxValue;
+  end;
+
+  if Delta = 0.0 then
+  begin
+    Hue := 0.0;
+  end else
+  begin
+    if MaxValue = R then
+    begin
+      Hue := (G - B) / Delta;
+    end else
+    if MaxValue = G then
+    begin
+      Hue := 2.0 + (B - R) / Delta;
+    end else
+    begin
+      Hue := 4.0 + (R - G) / Delta;
+    end;
+
+    Hue := Hue / 6.0;
+    if Hue < 0.0 then
+    begin
+      Hue := Hue + 1.0;
+    end;
+  end;
+end;
+
+procedure HslToHsv(HslHue, HslSaturation, HslLightness: Double; out HsvHue, HsvSaturation, HsvValue: Double);
+var
+  Temp: Double;
+begin
+  HsvHue := HslHue;
+
+  Temp := HslSaturation * Min(HslLightness, 1.0 - HslLightness);
+
+  HsvValue := HslLightness + Temp;
+  if HsvValue = 0.0 then
+  begin
+    HsvSaturation := 0.0
+  end else
+  begin
+    HsvSaturation := 2.0 * (1.0 - HslLightness / HsvValue);
+  end;
+end;
+
+procedure HsvToHsl(HsvHue, HsvSaturation, HsvValue: Double; out HslHue, HslSaturation, HslLightness: Double);
+begin
+  HslHue := HsvHue;
+
+  HslLightness := HsvValue * (1 - HsvSaturation / 2);
+  if (HslLightness = 0) or (HslLightness = 1) then
+  begin
+    HslSaturation := 0
+  end else
+  begin
+    HslSaturation := (HsvValue - HslLightness) / Min(HslLightness, 1 - HslLightness);
+  end;
 end;
 
 //------------------------------------------------------------------------------

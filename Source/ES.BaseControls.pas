@@ -1,7 +1,7 @@
 {******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.8                         }
-{                           errorsoft(c) 2009-2025                             }
+{                       EsVclComponents/EsVclCore v4.9                         }
+{                           errorsoft(c) 2009-2026                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -140,7 +140,7 @@ const
   CM_ESBASE = CM_BASE + $0800;
   CM_PARENT_BUFFEREDCHILDRENS_CHANGED = CM_ESBASE + 1;
 
-  EsVclCoreVersion = 4.8;
+  EsVclCoreVersion = 4.9;
 
 type
   TPaintEvent = procedure(Sender: TObject; Canvas: TCanvas; Rect: TRect) of object;
@@ -213,6 +213,7 @@ type
     procedure FixBufferedChildren(Reader: TReader);
     procedure FixParentBufferedChildren(Reader: TReader);
   protected
+    function IsAllowFocus(): Boolean; virtual;
     /// <summary>
     /// The canvas is similar to the canvas in TCustomControl,
     /// the canvas can be used ONLY in Paint, OnPaint, OnPainting
@@ -242,6 +243,9 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
+    function CanFocus(): Boolean; override;
+    procedure TrySetFocus();
     /// <summary>
     /// Call this to update the background when there is a use background cache
     /// </summary>
@@ -652,6 +656,11 @@ begin
   inherited;
 end;
 
+function TEsCustomControl.CanFocus(): Boolean;
+begin
+  Result := inherited CanFocus() and IsAllowFocus();
+end;
+
 procedure TEsCustomControl.CMParentBufferedChildrensChanged(var Message: TMessage);
 begin
   if FParentBufferedChildren then
@@ -870,6 +879,11 @@ begin
     DeleteDC(PaintBuffer.BufferDC);
 end;
 
+function TEsCustomControl.IsAllowFocus(): Boolean;
+begin
+  Result := True;
+end;
+
 function TEsCustomControl.IsBufferedChildrenStored: Boolean;
 begin
   Result := not ParentBufferedChildren;
@@ -955,6 +969,14 @@ end;
 procedure TEsCustomControl.SetTransparent(const Value: Boolean);
 begin
   ParentBackground := Value;
+end;
+
+procedure TEsCustomControl.TrySetFocus();
+begin
+  if CanFocus() then
+  begin
+    SetFocus();
+  end;
 end;
 
 procedure TEsCustomControl.UpdateText;

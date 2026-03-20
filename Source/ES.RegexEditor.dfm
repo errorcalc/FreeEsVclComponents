@@ -22,7 +22,7 @@ object EsRegexEditorForm: TEsRegexEditorForm
   object PatternEdit: TLabeledEdit
     Left = 8
     Top = 24
-    Width = 322
+    Width = 316
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     EditLabel.Width = 40
@@ -31,12 +31,11 @@ object EsRegexEditorForm: TEsRegexEditorForm
     TabOrder = 0
     Text = ''
     OnChange = PatternEditChange
-    ExplicitWidth = 316
   end
   object TestEdit: TEsRegexLabeledEdit
     Left = 8
     Top = 68
-    Width = 393
+    Width = 387
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     EditLabel.Width = 25
@@ -46,10 +45,9 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Text = ''
     AllowNeutral = False
     IndicateState = All
-    ExplicitWidth = 387
   end
   object PatternsButton: TButton
-    Left = 336
+    Left = 330
     Top = 22
     Width = 65
     Height = 25
@@ -57,7 +55,6 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Caption = 'Patterns...'
     TabOrder = 1
     OnClick = PatternsButtonClick
-    ExplicitLeft = 330
   end
   object FotterLayout: TEsLayout
     AlignWithMargins = True
@@ -72,8 +69,6 @@ object EsRegexEditorForm: TEsRegexEditorForm
     Align = alBottom
     ParentBackground = False
     TabOrder = 3
-    ExplicitTop = 89
-    ExplicitWidth = 387
     object CancelButton: TButton
       Left = 318
       Top = 0
@@ -83,7 +78,6 @@ object EsRegexEditorForm: TEsRegexEditorForm
       Caption = 'Cancel'
       TabOrder = 1
       OnClick = CancelButtonClick
-      ExplicitLeft = 312
     end
     object OkButton: TButton
       Left = 243
@@ -94,12 +88,11 @@ object EsRegexEditorForm: TEsRegexEditorForm
       Caption = 'OK'
       TabOrder = 0
       OnClick = OkButtonClick
-      ExplicitLeft = 237
     end
     object LinkLabelEs: TLinkLabel
       Left = 0
       Top = 6
-      Width = 110
+      Width = 105
       Height = 29
       Caption = '<a href="http://errorsoft.org">errorsoft.org</a>'
       TabOrder = 2

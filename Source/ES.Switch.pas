@@ -1,7 +1,7 @@
 ﻿{******************************************************************************}
 {                                                                              }
-{                       EsVclComponents/EsVclCore v4.7                         }
-{                           errorsoft(c) 2009-2025                             }
+{                       EsVclComponents/EsVclCore v4.9                         }
+{                           errorsoft(c) 2009-2026                             }
 {                                                                              }
 {                     More beautiful things: errorsoft.org                     }
 {                                                                              }
@@ -1128,11 +1128,11 @@ begin
       if FFrameColor = clDefault then
       begin
         if Assigned(FControl) and not IsStyledClientControl(FControl)  then
-          LFrameColor := RgbToArgb(ColorToRGB(TEsSwitch(FControl).Font.Color), 0)
+          LFrameColor := ColorToAlphaColor(ColorToRGB(TEsSwitch(FControl).Font.Color), 0)
         else
-          LFrameColor := RgbToArgb(ClientColorToRGB(clBtnText, FControl), 0);
+          LFrameColor := ColorToAlphaColor(ClientColorToRGB(clBtnText, FControl), 0);
       end else
-        LFrameColor := RgbToArgb(ClientColorToRGB(FFrameColor, FControl), 0);
+        LFrameColor := ColorToAlphaColor(ClientColorToRGB(FFrameColor, FControl), 0);
     end;
 
     9, 12:
@@ -1140,21 +1140,21 @@ begin
       if FMainColor = clDefault then
       begin
         if IsStyledClientControl(FControl) then
-          LMainColor := RgbToArgb(ClientColorToRGB(clHighlight, FControl))
+          LMainColor := ColorToAlphaColor(ClientColorToRGB(clHighlight, FControl))
         else
           if not GetMainColor(LMainColor) then
-            LMainColor := RgbToArgb(ClientColorToRGB(clHighlight, FControl));
+            LMainColor := ColorToAlphaColor(ClientColorToRGB(clHighlight, FControl));
       end else
-        LMainColor := RgbToArgb(ClientColorToRGB(FMainColor, FControl), 0);
+        LMainColor := ColorToAlphaColor(ClientColorToRGB(FMainColor, FControl), 0);
       LMainColor := LMainColor and $00FFFFFF;
     end;
 
     else
     begin
       if FThumbColor = clDefault then
-        LThumbColor := RgbToArgb(ClientColorToRGB(clWindow, FControl), 0)
+        LThumbColor := ColorToAlphaColor(ClientColorToRGB(clWindow, FControl), 0)
       else
-        LThumbColor := RgbToArgb(ClientColorToRGB(FThumbColor, FControl), 0);
+        LThumbColor := ColorToAlphaColor(ClientColorToRGB(FThumbColor, FControl), 0);
     end;
   end;
 
