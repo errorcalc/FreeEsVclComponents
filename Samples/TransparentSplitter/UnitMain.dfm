@@ -10,8 +10,10 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   StyleElements = [seFont, seClient]
   OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 15
   object GridPanel: TGridPanel
     Left = 0
@@ -22,7 +24,7 @@ object FormMain: TFormMain
     BevelOuter = bvNone
     ColumnCollection = <
       item
-        Value = 100.00000000000000000
+        Value = 100.000000000000000000
       end>
     ControlCollection = <
       item
@@ -37,10 +39,10 @@ object FormMain: TFormMain
       end>
     RowCollection = <
       item
-        Value = 50.00000000000000000
+        Value = 50.000000000000000000
       end
       item
-        Value = 50.00000000000000000
+        Value = 50.000000000000000000
       end
       item
         SizeStyle = ssAuto
@@ -150,28 +152,16 @@ object FormMain: TFormMain
             TabStop = False
             OnCollapsing = TreeViewTransparentSplitterCollapsing
             Items.NodeData = {
-              080300000009540054007200650065004E006F00640065003500000000000000
-              00000000FFFFFFFFFFFFFFFF0000000000000000000000000005000000010950
-              006C006100740066006F0072006D0073000000310000000000000000000000FF
-              FFFFFFFFFFFFFF00000000000000000000000000000000000107570069006E00
-              64006F007700730000002D0000000000000000000000FFFFFFFFFFFFFFFF0000
-              00000000000000000000000000000001054C0069006E007500780000002D0000
-              000000000000000000FFFFFFFFFFFFFFFF000000000000000000000000000000
-              000001054D00610063004F0053000000290000000000000000000000FFFFFFFF
-              FFFFFFFF0000000000000000000000000000000000010369004F005300000031
-              0000000000000000000000FFFFFFFFFFFFFFFF00000000000000000000000000
-              00000000010741006E00640072006F0069006400000037000000000000000000
-              0000FFFFFFFFFFFFFFFF0000000000000000000000000002000000010A460072
-              0061006D00650077006F0072006B0073000000290000000000000000000000FF
-              FFFFFFFFFFFFFF00000000000000000000000000000000000103560043004C00
-              0000290000000000000000000000FFFFFFFFFFFFFFFF00000000000000000000
-              00000000000000010346004D0058000000290000000000000000000000FFFFFF
-              FFFFFFFFFF000000000000000000000000000300000001034300500055000000
-              290000000000000000000000FFFFFFFFFFFFFFFF000000000000000000000000
-              000000000001035800380036000000290000000000000000000000FFFFFFFFFF
-              FFFFFF0000000000000000000000000000000000010358003600340000002900
-              00000000000000000000FFFFFFFFFFFFFFFF0000000000000000000000000000
-              0000000103410052004D00}
+              03010000002E0000000000000000000000FFFFFFFFFFFFFFFF00000000000000
+              0005000000010850006C006100740072006F006D007300320000000000000000
+              000000FFFFFFFFFFFFFFFF000000000000000000000000010A570069006E0064
+              006F00770073002000280029002A0000000000000000000000FFFFFFFFFFFFFF
+              FF00000000000000000000000001064F00530058002000280029002E00000000
+              00000000000000FFFFFFFFFFFFFFFF00000000000000000000000001084C0069
+              006E00750078002000280029002A0000000000000000000000FFFFFFFFFFFFFF
+              FF000000000000000000000000010669004F0053002000280029003200000000
+              00000000000000FFFFFFFFFFFFFFFF000000000000000000000000010A41006E
+              00640072006F0069006400200028002900}
           end
           object PanelTransparentSplitterBottom: TPanel
             Left = 0
@@ -253,10 +243,10 @@ object FormMain: TFormMain
             BevelOuter = bvNone
             ColumnCollection = <
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end>
             ControlCollection = <
               item
@@ -268,10 +258,10 @@ object FormMain: TFormMain
             ParentColor = True
             RowCollection = <
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end>
             TabOrder = 1
             DesignSize = (
@@ -368,7 +358,7 @@ object FormMain: TFormMain
       Left = 0
       Top = 220
       Width = 464
-      Height = 221
+      Height = 220
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 4
@@ -395,7 +385,7 @@ object FormMain: TFormMain
         Left = 4
         Top = 27
         Width = 456
-        Height = 190
+        Height = 189
         Margins.Left = 0
         Margins.Top = 4
         Margins.Right = 0
@@ -409,35 +399,33 @@ object FormMain: TFormMain
           Left = 189
           Top = 4
           Width = 10
-          Height = 178
+          Height = 177
           AutoSnap = False
           OnCanResize = SplitterLeftCanResize
           OnMoved = SplitterLeftMoved
-          ExplicitHeight = 177
         end
         object SplitterRight: TSplitter
           Left = 385
           Top = 4
           Width = 10
-          Height = 178
+          Height = 177
           Align = alRight
           AutoSnap = False
           OnMoved = SplitterRightMoved
           ExplicitLeft = 565
           ExplicitTop = -12
-          ExplicitHeight = 177
         end
         object PanelSplitterLeft: TPanel
           Left = 4
           Top = 4
           Width = 185
-          Height = 178
+          Height = 177
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 0
           object SplitterBottom: TSplitter
             Left = 0
-            Top = 147
+            Top = 146
             Width = 185
             Height = 10
             Cursor = crVSplit
@@ -462,7 +450,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 31
             Width = 185
-            Height = 116
+            Height = 115
             Align = alClient
             Indent = 17
             ReadOnly = True
@@ -470,32 +458,20 @@ object FormMain: TFormMain
             TabStop = False
             OnCollapsing = TreeViewTransparentSplitterCollapsing
             Items.NodeData = {
-              080300000009540054007200650065004E006F00640065003500000000000000
-              00000000FFFFFFFFFFFFFFFF0000000000000000000000000005000000010950
-              006C006100740066006F0072006D0073000000310000000000000000000000FF
-              FFFFFFFFFFFFFF00000000000000000000000000000000000107570069006E00
-              64006F007700730000002D0000000000000000000000FFFFFFFFFFFFFFFF0000
-              00000000000000000000000000000001054C0069006E007500780000002D0000
-              000000000000000000FFFFFFFFFFFFFFFF000000000000000000000000000000
-              000001054D00610063004F0053000000290000000000000000000000FFFFFFFF
-              FFFFFFFF0000000000000000000000000000000000010369004F005300000031
-              0000000000000000000000FFFFFFFFFFFFFFFF00000000000000000000000000
-              00000000010741006E00640072006F0069006400000037000000000000000000
-              0000FFFFFFFFFFFFFFFF0000000000000000000000000002000000010A460072
-              0061006D00650077006F0072006B0073000000290000000000000000000000FF
-              FFFFFFFFFFFFFF00000000000000000000000000000000000103560043004C00
-              0000290000000000000000000000FFFFFFFFFFFFFFFF00000000000000000000
-              00000000000000010346004D0058000000290000000000000000000000FFFFFF
-              FFFFFFFFFF000000000000000000000000000300000001034300500055000000
-              290000000000000000000000FFFFFFFFFFFFFFFF000000000000000000000000
-              000000000001035800380036000000290000000000000000000000FFFFFFFFFF
-              FFFFFF0000000000000000000000000000000000010358003600340000002900
-              00000000000000000000FFFFFFFFFFFFFFFF0000000000000000000000000000
-              0000000103410052004D00}
+              03010000002E0000000000000000000000FFFFFFFFFFFFFFFF00000000000000
+              0005000000010850006C006100740072006F006D007300320000000000000000
+              000000FFFFFFFFFFFFFFFF000000000000000000000000010A570069006E0064
+              006F00770073002000280029002A0000000000000000000000FFFFFFFFFFFFFF
+              FF00000000000000000000000001064F00530058002000280029002E00000000
+              00000000000000FFFFFFFFFFFFFFFF00000000000000000000000001084C0069
+              006E00750078002000280029002A0000000000000000000000FFFFFFFFFFFFFF
+              FF000000000000000000000000010669004F0053002000280029003200000000
+              00000000000000FFFFFFFFFFFFFFFF000000000000000000000000010A41006E
+              00640072006F0069006400200028002900}
           end
           object PanelSplitterBottom: TPanel
             Left = 0
-            Top = 157
+            Top = 156
             Width = 185
             Height = 21
             Align = alBottom
@@ -538,7 +514,7 @@ object FormMain: TFormMain
           Left = 199
           Top = 4
           Width = 186
-          Height = 178
+          Height = 177
           Align = alClient
           BevelKind = bkTile
           BevelOuter = bvNone
@@ -573,10 +549,10 @@ object FormMain: TFormMain
             BevelOuter = bvNone
             ColumnCollection = <
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end>
             ControlCollection = <
               item
@@ -588,10 +564,10 @@ object FormMain: TFormMain
             ParentColor = True
             RowCollection = <
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end
               item
-                Value = 50.00000000000000000
+                Value = 50.000000000000000000
               end>
             TabOrder = 1
             DesignSize = (
@@ -667,7 +643,7 @@ object FormMain: TFormMain
           Left = 395
           Top = 4
           Width = 53
-          Height = 178
+          Height = 177
           Align = alRight
           BevelKind = bkTile
           BevelOuter = bvNone

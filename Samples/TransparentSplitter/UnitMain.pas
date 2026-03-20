@@ -268,7 +268,7 @@ end;
 procedure TFormMain.Timer3Timer(Sender: TObject);
 const
   ModeStr: array [0..1] of string = (' (Release)', ' (Debug)');
-begin exit;
+begin
   TreeViewTransparentSplitter.Items[0][0].Text := TreeViewTransparentSplitter.Items[0][0].Text.Split([' '])[0] + ModeStr[Random(2)];
   TreeViewSplitter.Items[0][0].Text := TreeViewTransparentSplitter.Items[0][0].Text;
   TreeViewTransparentSplitter.Items[0][1].Text := TreeViewTransparentSplitter.Items[0][1].Text.Split([' '])[0] + ModeStr[Random(2)];
