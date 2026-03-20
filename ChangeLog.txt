@@ -193,3 +193,15 @@ With clDefault at SplitterColor property, the control will automatically select 
 
 [14.09.2025]
 - Support Delphi 13.0 Florence
+
+[20.03.2026]
+- Add two new controls: TEsRgbLinePicker and TEsAlphaLinePicker
+TEsRgbLinePicker - A linear RGB picker used to edit a single channel (Red, Green, Blue).
+TEsAlphaLinePicker - A linear picker for the alpha channel (0..255) with transparent background preview.
+The components provides powerful customization options for appearance and behavior, such as layout, UI colors, max and min values, reverse, and keyboard input settings.
+** In the future, it is planned to add components for working with HSL and HSV. **
+(See ColorPickers demo)
+- Support for older Delphi versions has been fixed
+- New functions for working with HSL and HSV spaces. (ES.ExGraphics.pas: HslToRgb, RgbToHsl, HsvToRgb, RgbToHsv, HslToHsv, HsvToHsl)
+- Refactor
+- Some other improvements

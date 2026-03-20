@@ -172,11 +172,11 @@ Features:
 
 ![Icon](Source/icons/TESRGBLINEPICKER32.bmp)
 **TEsRgbLinePicker** - A linear RGB picker used to edit a single channel (Red, Green, Blue).
-* Full focus support
+* The component provides powerful customization options for appearance and behavior, such as layout, UI colors, max and min values, reverse, and keyboard input settings.
 
 ![Icon](Source/icons/TESALPHALINEPICKER32.bmp)
 **TEsAlphaLinePicker** - A linear picker for the alpha channel (0..255) with transparent background preview.
-* Full focus support
+* The component provides powerful customization options for appearance and behavior, such as layout, UI colors, max and min values, reverse, and keyboard input settings.
 
 **Look at other projects on this GitHub perhaps you might be interested ...**
 
@@ -294,6 +294,15 @@ Features:
 **TEsTransparentSplitter** – наследуется от TSplitter, этот компонент отображает разделитель как прозрачную область выделения, устраняя многие проблемы с отрисовкой.  
 * Если в свойстве SplitterColor установлено значение clDefault, компонент автоматически выберет контрастный цвет для разделителя в зависимости от активной темы, но можно задать любой цвет вручную.  
 * Просто замените TSplitter на TEsTransparentSplitter в DFM-файле, чтобы получить современный вид.
+
+![Icon](Source/icons/TESRGBLINEPICKER32.bmp)
+**TEsRgbLinePicker** - Линейный RGB-пикер, используемый для редактирования одного канала (красный, зеленый, синий).
+* Компонент предоставляет широкие возможности настройки внешнего вида и поведения, такие как расположение, цвета пользовательского интерфейса, максимальные и минимальные значения, инверсия и настройки ввода с клавиатуры.
+
+![Icon](Source/icons/TESALPHALINEPICKER32.bmp)
+**TEsAlphaLinePicker** - Линейный инструмент выбора альфа-канала (0..255) с предварительным просмотром на прозрачном фоне.
+* Компонент предоставляет широкие возможности настройки внешнего вида и поведения, такие как расположение, цвета пользовательского интерфейса, максимальные и минимальные значения, инверсия и настройки ввода с клавиатуры.
+
 
 Пишите ваши отзывы, а также пожелания по улучшению :)
 
