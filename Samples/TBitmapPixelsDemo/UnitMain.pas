@@ -62,7 +62,7 @@ begin
     Bitmap.Assign(ImageSource.Picture.Graphic);
 
     // test
-    Time1 := GetTickCount64();
+    Time1 := GetTickCount();
     for I := 0 to 20 - 1 do
       for Y := 0 to Bitmap.Height - 1 do
       begin
@@ -78,7 +78,7 @@ begin
           Bitmap.Canvas.Pixels[X, Y] := TColor(Color);
         end;
       end;
-    Time1 := Int64(GetTickCount64()) - Time1;
+    Time1 := Int64(GetTickCount()) - Time1;
     // end test
 
     ImageProcessed.Picture.Assign(Bitmap);
@@ -96,7 +96,7 @@ begin
     Bitmap.PixelFormat := pf32bit;
 
     // test
-    Time2 := GetTickCount64();
+    Time2 := GetTickCount();
     for I := 0 to 20 - 1 do
       for Y := 0 to Bitmap.Height - 1 do
       begin
@@ -114,7 +114,7 @@ begin
           PColor[X] := TRGBQuad(Color);
         end;
       end;
-    Time2 := Int64(GetTickCount64()) - Time2;
+    Time2 := Int64(GetTickCount()) - Time2;
     // end test
 
     ImageProcessed.Picture.Assign(Bitmap);
@@ -131,7 +131,7 @@ begin
     Bitmap.Assign(ImageSource.Picture.Graphic);
 
     // test
-    Time3 := GetTickCount64();
+    Time3 := GetTickCount();
     Data.Map(Bitmap, TAccessMode.ReadWrite, True);
     try
       for I := 0 to 20 - 1 do
@@ -153,7 +153,7 @@ begin
     finally
       Data.Unmap();
     end;
-    Time3 := Int64(GetTickCount64()) - Time3;
+    Time3 := Int64(GetTickCount()) - Time3;
     // end test
 
     ImageProcessed.Picture.Assign(Bitmap);
@@ -416,7 +416,7 @@ var
   Pixel: TPixelRec;
   t: Double;
 begin
-  t := GetTickCount64() * 0.0004;
+  t := GetTickCount() * 0.0004;
   Data.Map(Bitmap, TAccessMode.Write, False);
   try
     for Y := 0 to Data.Height - 1 do
@@ -463,8 +463,9 @@ procedure TFormMain.TimerAnimationTimer(Sender: TObject);
 var
   Bitmap: TBitmap;
 begin
-  Bitmap := TBitmap.Create(150, 150);
+  Bitmap := TBitmap.Create();
   try
+    Bitmap.SetSize(150, 150);
     if RadioGroupMode.ItemIndex = 6 then
       Plasm(Bitmap)
     else

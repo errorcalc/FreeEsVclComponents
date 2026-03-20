@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, ES.BaseControls,
-  ES.Layouts, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXCtrls, Vcl.NumberBox,
+  ES.Layouts, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.WinXCtrls,
   ES.Switch, Vcl.Themes, Vcl.Buttons, Math;
 
 type
@@ -268,7 +268,7 @@ end;
 procedure TFormMain.Timer3Timer(Sender: TObject);
 const
   ModeStr: array [0..1] of string = (' (Release)', ' (Debug)');
-begin
+begin exit;
   TreeViewTransparentSplitter.Items[0][0].Text := TreeViewTransparentSplitter.Items[0][0].Text.Split([' '])[0] + ModeStr[Random(2)];
   TreeViewSplitter.Items[0][0].Text := TreeViewTransparentSplitter.Items[0][0].Text;
   TreeViewTransparentSplitter.Items[0][1].Text := TreeViewTransparentSplitter.Items[0][1].Text.Split([' '])[0] + ModeStr[Random(2)];

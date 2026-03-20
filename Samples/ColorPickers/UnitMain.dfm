@@ -13,8 +13,10 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   StyleElements = [seFont, seClient]
   OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 15
   object LabelLayout: TLabel
     Left = 0
@@ -176,6 +178,7 @@ object FormMain: TFormMain
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
+      Transparent = True
       Layout = tlCenter
       StyleElements = [seClient, seBorder]
     end

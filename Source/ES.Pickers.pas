@@ -489,18 +489,18 @@ begin
     case FLayout of
       TLinePickerLayout.ExternalArrows:
       begin
-        FThumbWidth := MulDiv(DefaultThumbExternalSize, CurrentPPI, 96);
-        FThumbHeight := MulDiv(DefaultThumbExternalSize, CurrentPPI, 96);
+        FThumbWidth := MulDiv(DefaultThumbExternalSize, GetControlPPI(Self), 96);
+        FThumbHeight := MulDiv(DefaultThumbExternalSize, GetControlPPI(Self), 96);
       end;
       TLinePickerLayout.InternalArrows:
       begin
-        FThumbWidth := MulDiv(DefaultThumbInternalSize, CurrentPPI, 96);
-        FThumbHeight := MulDiv(DefaultThumbInternalSize, CurrentPPI, 96);
+        FThumbWidth := MulDiv(DefaultThumbInternalSize, GetControlPPI(Self), 96);
+        FThumbHeight := MulDiv(DefaultThumbInternalSize, GetControlPPI(Self), 96);
       end;
       TLinePickerLayout.CenterArrows:
       begin
-        FThumbWidth := MulDiv(DefaultThumbCenterSize, CurrentPPI, 96);
-        FThumbHeight := MulDiv(DefaultThumbCenterSize, CurrentPPI, 96);
+        FThumbWidth := MulDiv(DefaultThumbCenterSize, GetControlPPI(Self), 96);
+        FThumbHeight := MulDiv(DefaultThumbCenterSize, GetControlPPI(Self), 96);
       end;
     end;
   end else

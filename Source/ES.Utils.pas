@@ -23,7 +23,7 @@ interface
 
 uses
   WinApi.Windows, System.SysUtils, System.Classes, System.UITypes, Vcl.Controls,
-  WinApi.Messages, Vcl.Graphics, Vcl.Themes, Vcl.ImgList, WinApi.DwmApi;
+  WinApi.Messages, Vcl.Graphics, Vcl.Themes, Vcl.ImgList, Vcl.Forms, WinApi.DwmApi;
 
 function IsShowFocusRect(Control: TWinControl): Boolean;
 function IsStyledClientControl(Control: TControl): Boolean;
@@ -57,6 +57,8 @@ procedure InitMainColor;
 
 function AllocateUtilWindow(const Method: TWndMethod): HWND;
 procedure DeallocateUtilWindow(Wnd: HWND);
+
+function GetControlPPI(Control: TControl): Integer;
 
 implementation
 
@@ -581,6 +583,15 @@ end;
 procedure DeallocateUtilWindow(Wnd: HWND);
 begin
   DestroyWindow(Wnd);
+end;
+
+function GetControlPPI(Control: TControl): Integer;
+begin
+  {$IFDEF VER330UP}
+  Result := Control.CurrentPPI;
+  {$ELSE}
+  Result := Screen.PixelsPerInch;
+  {$ENDIF}
 end;
 
 initialization
