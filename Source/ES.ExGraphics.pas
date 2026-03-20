@@ -112,6 +112,7 @@ type
 
   // Utils
   function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor; Inline;
+  function AlphaColorToColor(Color: TAlphaColor): TColor; Inline;
   procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
     HighQality: Boolean = False; EgdeFill: Boolean = False);
   procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
@@ -179,6 +180,11 @@ type
 function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor;
 begin
   Result := ((Color shl 16) and $00FF0000) or ((Color shr 16) and $000000FF) or (Color and $0000FF00) or (Alpha shl 24);
+end;
+
+function AlphaColorToColor(Color: TAlphaColor): TColor;
+begin
+  Result := RGB(TAlphaColorRec(Color).R, TAlphaColorRec(Color).G, TAlphaColorRec(Color).B);
 end;
 
 procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;

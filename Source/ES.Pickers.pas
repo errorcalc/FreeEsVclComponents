@@ -435,8 +435,8 @@ begin
   FThumbAutoSize := True;
 
   // inherited defaults
-  Width := 200;
-  Height := 30;
+  Width := 180;
+  Height := 24;
   TabStop := True;
   ControlStyle := ControlStyle + [csCaptureMouse];
 
@@ -990,9 +990,9 @@ end;
 
 procedure TEsAbstractLinePicker.PickerChanged();
 begin
-  if Assigned(FOnUserChange) and not(csLoading in ComponentState) then
+  if Assigned(FOnChange) and not(csLoading in ComponentState) then
   begin
-    FOnUserChange(Self);
+    FOnChange(Self);
   end;
 end;
 

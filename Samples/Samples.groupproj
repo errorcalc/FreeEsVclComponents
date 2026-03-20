@@ -48,6 +48,9 @@
         <Projects Include="TransparentSplitter\TransparentSplitter.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="ColorPickers\ColorPickers.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -191,14 +194,23 @@
     <Target Name="TransparentSplitter:Make">
         <MSBuild Projects="TransparentSplitter\TransparentSplitter.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ColorPickers">
+        <MSBuild Projects="ColorPickers\ColorPickers.dproj"/>
+    </Target>
+    <Target Name="ColorPickers:Clean">
+        <MSBuild Projects="ColorPickers\ColorPickers.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ColorPickers:Make">
+        <MSBuild Projects="ColorPickers\ColorPickers.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes;TBitmapPixelsDemo;TEsControlListCheckBoxDemo;TransparentSplitter"/>
+        <CallTarget Targets="NinePatchLayout;ActivityBar;BufferedChildrens;ImagesTest;Switch;RegExTest;PaintBox;Labels;Panel;ShapesOld;SydneySample;Shapes;TBitmapPixelsDemo;TEsControlListCheckBoxDemo;TransparentSplitter;ColorPickers"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean;TBitmapPixelsDemo:Clean;TEsControlListCheckBoxDemo:Clean;TransparentSplitter:Clean"/>
+        <CallTarget Targets="NinePatchLayout:Clean;ActivityBar:Clean;BufferedChildrens:Clean;ImagesTest:Clean;Switch:Clean;RegExTest:Clean;PaintBox:Clean;Labels:Clean;Panel:Clean;ShapesOld:Clean;SydneySample:Clean;Shapes:Clean;TBitmapPixelsDemo:Clean;TEsControlListCheckBoxDemo:Clean;TransparentSplitter:Clean;ColorPickers:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make;TBitmapPixelsDemo:Make;TEsControlListCheckBoxDemo:Make;TransparentSplitter:Make"/>
+        <CallTarget Targets="NinePatchLayout:Make;ActivityBar:Make;BufferedChildrens:Make;ImagesTest:Make;Switch:Make;RegExTest:Make;PaintBox:Make;Labels:Make;Panel:Make;ShapesOld:Make;SydneySample:Make;Shapes:Make;TBitmapPixelsDemo:Make;TEsControlListCheckBoxDemo:Make;TransparentSplitter:Make;ColorPickers:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
