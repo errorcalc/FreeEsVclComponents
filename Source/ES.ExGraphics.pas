@@ -111,13 +111,13 @@ type
   end;
 
   // Utils
-  function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor; Inline;
+  function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor; inline;
   function AlphaColorToColor(Color: TAlphaColor): TColor; Inline;
   procedure DrawBitmapHighQuality(Handle: THandle; ARect: TRect; Bitmap: TBitmap; Opacity: Byte = 255;
     HighQality: Boolean = False; EgdeFill: Boolean = False);
   procedure PngImageAssignToBitmap(Bitmap: TBitmap; PngImage: TPngImage; IsPremultipledBitmap: Boolean = True);
   procedure BitmapAssignToPngImage(PngImage: TPngImage; Bitmap: TBitmap; IsPremultipledBitmap: Boolean = True);
-  procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); Inline;
+  procedure GraphicAssignToBitmap(Bitmap: TBitmap; Graphic: TGraphic); inline;
   {$IFDEF USE_GDIPLUS}
   function BitmapToGPBitmap(Bitmap: TBitmap): TGPBitmap;
   {$ENDIF}
@@ -179,7 +179,7 @@ type
 
 function ColorToAlphaColor(Color: TColor; Alpha: Byte = 255): TAlphaColor;
 begin
-  Result := ((Color shl 16) and $00FF0000) or ((Color shr 16) and $000000FF) or (Color and $0000FF00) or (Alpha shl 24);
+  Result := ((Cardinal(Color) shl 16) and $00FF0000) or ((Cardinal(Color) shr 16) and $000000FF) or (Cardinal(Color) and $0000FF00) or (Alpha shl 24);
 end;
 
 function AlphaColorToColor(Color: TAlphaColor): TColor;
